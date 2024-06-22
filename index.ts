@@ -1,6 +1,7 @@
 const { MultiSelect } = require("enquirer");
-import { getTeamList , getTeam  } from "./functions/handleData";
+import { getTeamList, getTeam, handleOutput } from "./functions/handleData";
 import { Mine } from "./functions/miner";
+import path from "path";
 
 const func = await new MultiSelect({
   name: "function",
@@ -15,6 +16,11 @@ const team = await new MultiSelect({
   choices: getTeamList(),
 }).run();
 
-team.forEach(async (e:string) => {
-  await Mine(getTeam(e), func);
-})
+team.forEach(async (e: string) => {
+  const Data = await Mine(getTeam(e), func);
+  Bun.write(
+    path.join(__dirname, "json", e + ".json"),
+    JSON.stringify(Data, null, 2)
+  );
+  await handleOutput(e, Data);
+});

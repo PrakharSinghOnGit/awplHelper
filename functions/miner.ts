@@ -6,82 +6,39 @@ const { PendingXHR } = require("pending-xhr-puppeteer");
 const chromium = require("chromium");
 const env = Bun.env;
 const Debug = env.Debug?.toLocaleLowerCase() == "true";
+import path from "path";
+
+import { Levels, TargetSAOs, TargetSGOs, getURL } from "./helper";
+
+type DataItem = {
+  name: string;
+  level: string;
+  sao: number;
+  sgo: number;
+};
+
+type DataType = {
+  level: DataItem[];
+  target: DataItem[];
+  // cheque: DataItem[];
+};
+
 interface data {
   id: string;
   pass: string;
   name: string;
 }
+
+const Data: DataType = {
+  level: [],
+  target: [],
+};
+
 process.on("SIGINT", () => {
   console.log("Process Ended by User");
   process.exit();
 });
 puppeteer.use(stealthPlugin());
-const removeNonAlphaNum = (str: string) => str.replace(/\W/g, "");
-const getURL = (id: string, pass: string) =>
-  `https://asclepiuswellness.com/userpanel/uservalidationnew.aspx?memberid=${removeNonAlphaNum(
-    id
-  )}&pwd=${removeNonAlphaNum(pass)}`;
-const Levels = [
-  "Fresher",
-  "Bronze",
-  "Silver",
-  "Gold",
-  "Platinum",
-  "Emerald",
-  "Topaz",
-  "Ruby Star",
-  "Sapphire",
-  "Star Sapphire",
-  "Diamond",
-  "Blue Diamond",
-  "Black Diamond",
-  "Royal Diamond",
-  "Crown Diamond",
-  "Ambassador",
-  "Royal Ambassador",
-  "Crown Ambassador",
-  "Brand Ambassador",
-];
-const TargetSAOs = [
-  200,
-  800,
-  2000,
-  4400,
-  9200,
-  21200,
-  45200,
-  93200,
-  189200,
-  381200,
-  765200,
-  1533200,
-  3069200,
-  6141200,
-  12285200,
-  24573200,
-  49149200,
-  98301200,
-];
-const TargetSGOs = [
-  100,
-  400,
-  1000,
-  2200,
-  4600,
-  10600,
-  22600,
-  46600,
-  94600,
-  190600,
-  382600,
-  766600,
-  1534600,
-  3070600,
-  6142600,
-  12286600,
-  24574600,
-  49150600,
-];
 
 async function verify(id: string, pass: string) {
   try {
@@ -96,18 +53,21 @@ async function verify(id: string, pass: string) {
 type AllowedType = "lvl" | "trg" | "chq";
 async function handleData(type: AllowedType, data: any) {
   if (type === "lvl") {
-    console.log("Level Data", data);
+    console.log("Level", data.level.padEnd(16), data.name, data.sao, data.sgo);
+    Data.level.push(data);
   } else if (type === "trg") {
-    console.log("Target Data", data);
+    console.log("Target", data.level.padEnd(16), data.name, data.sao, data.sgo);
+    Data.target.push(data);
   } else if (type === "chq") {
-    console.log("Cheque Data", data);
+    console.log("Cheque", data);
+    // Data.cheque.push(data);
   } else {
     console.log("Invalid type");
   }
-}
-
-async function handleWrongCred(name: string, id: string, pass: string) {
-  console.log("Wrong Cred", name, id, pass);
+  Bun.write(
+    path.join(__dirname, "../json", "temp.json"),
+    JSON.stringify(Data, null, 2)
+  );
 }
 
 async function login(page: any, name: string, id: string, pass: string) {
@@ -121,7 +81,6 @@ async function login(page: any, name: string, id: string, pass: string) {
 }
 
 async function level(page: any, name: string, id: string, pass: string) {
-  //TODO ADD TARET URL
   await page.evaluate(
     (LevelURL: string) => window.open(LevelURL, "_self"),
     env.LevelURL
@@ -170,12 +129,14 @@ async function target(page: any, name: string, id: string, pass: string) {
     () =>
       document.querySelector("#ctl00_ContentPlaceHolder1_lblMsg")?.textContent
   );
-  if (noDs == "No such DS ") {
+  if (noDs != undefined) {
     handleData("trg", {
       id: id,
       pass: pass,
       name: name,
       level: "No DS",
+      sao: "-",
+      sgo: "-",
     });
     return;
   }
@@ -183,7 +144,7 @@ async function target(page: any, name: string, id: string, pass: string) {
     (await page.evaluate(() =>
       document
         .querySelector(
-          "#ctl00_ContentPlaceHolder1_CustomersGridView > tbody > tr:nth-child(2) > td:nth-child(2)"
+          "#ctl00_ContentPlaceHolder1_CustomersGridView > tbody > tr:nth-child(2) > td:nth-child(3)"
         )
         ?.textContent?.replace(" DS", "")
     )) ?? null;
@@ -191,7 +152,7 @@ async function target(page: any, name: string, id: string, pass: string) {
     (await page.evaluate(() =>
       Number(
         document.querySelector(
-          "#ctl00_ContentPlaceHolder1_CustomersGridView > tbody > tr:nth-child(2) > td:nth-child(5)"
+          "#ctl00_ContentPlaceHolder1_CustomersGridView > tbody > tr:nth-child(2) > td:nth-child(6)"
         )?.textContent
       )
     )) ?? null;
@@ -199,7 +160,7 @@ async function target(page: any, name: string, id: string, pass: string) {
     (await page.evaluate(() =>
       Number(
         document.querySelector(
-          "#ctl00_ContentPlaceHolder1_CustomersGridView > tbody > tr:nth-child(2) > td:nth-child(6)"
+          "#ctl00_ContentPlaceHolder1_CustomersGridView > tbody > tr:nth-child(2) > td:nth-child(7)"
         )?.textContent
       )
     )) ?? null;
@@ -208,8 +169,8 @@ async function target(page: any, name: string, id: string, pass: string) {
     pass: pass,
     name: name,
     level: level,
-    sao: pendingSao,
-    sgo: pendingSgo,
+    sao: Math.round(pendingSao),
+    sgo: Math.round(pendingSgo),
   });
 }
 
@@ -269,7 +230,10 @@ async function cheque(page: any, name: string, id: string, pass: string) {
   });
 }
 
-async function Mine(Team: { [key: string]: string }[], func: [string]) {
+async function Mine(
+  Team: { [key: string]: string }[],
+  func: [string]
+): Promise<DataType> {
   const cluster = await Cluster.launch({
     // browser Launch Properties
     concurrency: Cluster.CONCURRENCY_CONTEXT, // Incognito Pages gor each Worker
@@ -293,7 +257,7 @@ async function Mine(Team: { [key: string]: string }[], func: [string]) {
       { name, pass, id }: data
     ) => {
       // Error Handling
-      console.error("Error for ID: ", id, _err);
+      console.error("Error for ID: ", id, "Name: ", name, _err.message);
     }
   );
 
@@ -306,19 +270,35 @@ async function Mine(Team: { [key: string]: string }[], func: [string]) {
         else req.continue();
       });
       if (await verify(id, pass)) await login(page, name, id, pass);
-      else handleWrongCred(name, id, pass);
+      else {
+        console.log("Wrong Creadentials for ID: ", id, "Name: ", name);
+        let type: AllowedType = "lvl";
+        if (func.includes("LEVEL")) type = "lvl";
+        if (func.includes("TARGET")) type = "trg";
+        if (func.includes("CHEQUE")) type = "chq";
+        handleData(type, {
+          id: id,
+          pass: pass,
+          name: name,
+          level: "Wrong",
+          sao: "-",
+          sgo: "-",
+        });
+
+        return;
+      }
       if (func.includes("LEVEL")) await level(page, name, id, pass);
       if (func.includes("TARGET")) await target(page, name, id, pass);
       if (func.includes("CHEQUE")) await cheque(page, name, id, pass);
     }
   );
-  // Team.forEach(async (e) => {
-  //     await cluster.queue(e);
-  // });
-  // await cluster.queue({name:"Renu",id:"51364FB",pass:"1896"});
-  await cluster.queue({ name: "Sudheer", id: "aa4f9b", pass: "8990" });
+  Team.forEach(async (e) => {
+    await cluster.queue(e);
+  });
   await cluster.idle();
   await cluster.close();
+
+  return Data;
 }
 
 export { Mine };
