@@ -1,14 +1,21 @@
 const { MultiSelect } = require("enquirer");
-import { getTeamList, getTeam, handleOutput } from "./functions/handleData";
-import { Mine } from "./functions/miner";
+import { handleOutput } from "./functions/handleData";
 import path from "path";
 import fs from "fs";
 
-fs.readdirSync(path.join(__dirname, "json")).forEach(async (file) => {
-  if (file == "temp.json") return;
-  let name = file.replace(".json", "");
+let lists = fs
+  .readdirSync(path.join(__dirname, "json"))
+  .map((file) => file.replace(".json", ""));
+
+const list = await new MultiSelect({
+  name: "list",
+  message: "SELECT LIST",
+  choices: lists,
+}).run();
+
+list.forEach(async (e: string) => {
   let content = JSON.parse(
-    await Bun.file(path.join(__dirname, "json", file)).text()
+    fs.readFileSync(path.join(__dirname, "json", e + ".json"), "utf-8")
   );
-  await handleOutput(name, content);
+  await handleOutput(e, content);
 });

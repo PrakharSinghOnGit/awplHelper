@@ -16,11 +16,13 @@ const team = await new MultiSelect({
   choices: getTeamList(),
 }).run();
 
-team.forEach(async (e: string) => {
+for (let i = 0; i < team.length; i++) {
+  const e = team[i];
+  console.log("Mining for Team: ", e);
   const Data = await Mine(getTeam(e), func);
   Bun.write(
     path.join(__dirname, "json", e + ".json"),
     JSON.stringify(Data, null, 2)
   );
   await handleOutput(e, Data);
-});
+}

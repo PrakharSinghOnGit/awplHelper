@@ -146,13 +146,13 @@ function makeHTML(
 
       .tabs .content {
         z-index: 0;
-        overflow: scroll;
+        overflow-x: scroll;
+        overflow-y: hidden;
         width: 100%;
         position: absolute;
         background: var(--bg);
         left: 0;
         opacity: 0;
-        height: calc(100vh - 101px);
       }
 
       .content table {
@@ -207,7 +207,7 @@ function makeHTML(
     </style>
   </head>
   <body>
-    <h1 style="text-align: center; margin-bottom: 10px;">${leaderName}</h1>
+    <h1 style="text-align: center; margin: 10px;">${leaderName}</h1>
     <p
       style="
         position: absolute;
@@ -219,7 +219,7 @@ function makeHTML(
         margin: 0;
       "
     >
-      ${new Date().toDateString()}
+      ${new Date().toLocaleDateString("IN")}
     </p>
     <ul class="tabs">
       <li class="tab">
@@ -273,6 +273,7 @@ function sortData(data: DataItem[]) {
   const sortedData = [];
   const uniqueLevels = [...new Set(Levels)]; // Remove duplicates from Levels array
   uniqueLevels.unshift("No DS");
+  uniqueLevels.unshift("wrong");
   for (let i = 0; i < uniqueLevels.length; i++) {
     for (let j = 0; j < data.length; j++) {
       if (data[j].level === uniqueLevels[i]) {

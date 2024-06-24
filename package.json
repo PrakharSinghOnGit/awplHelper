@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "bun run index.ts",
-    "print": "bun run print.ts"
+    "print": "bun run print.ts",
+    "clear": "rm -rf out && mkdir out && rm -rf json && mkdir json"
   },
   "devDependencies": {
     "@types/bun": "^1.1.1"

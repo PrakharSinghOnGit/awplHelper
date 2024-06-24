@@ -53,10 +53,22 @@ async function verify(id: string, pass: string) {
 type AllowedType = "lvl" | "trg" | "chq";
 async function handleData(type: AllowedType, data: any) {
   if (type === "lvl") {
-    console.log("Level", data.level.padEnd(16), data.name, data.sao, data.sgo);
+    console.log(
+      "Level".padEnd(8),
+      data.level.padEnd(16),
+      data.sao.toString().padEnd(10),
+      data.sgo.toString().padEnd(10),
+      data.name
+    );
     Data.level.push(data);
   } else if (type === "trg") {
-    console.log("Target", data.level.padEnd(16), data.name, data.sao, data.sgo);
+    console.log(
+      "Target".padEnd(8),
+      data.level.padEnd(16),
+      data.sao.toString().padEnd(10),
+      data.sgo.toString().padEnd(10),
+      data.name
+    );
     Data.target.push(data);
   } else if (type === "chq") {
     console.log("Cheque", data);
@@ -271,19 +283,33 @@ async function Mine(
       });
       if (await verify(id, pass)) await login(page, name, id, pass);
       else {
-        console.log("Wrong Creadentials for ID: ", id, "Name: ", name);
-        let type: AllowedType = "lvl";
-        if (func.includes("LEVEL")) type = "lvl";
-        if (func.includes("TARGET")) type = "trg";
-        if (func.includes("CHEQUE")) type = "chq";
-        handleData(type, {
-          id: id,
-          pass: pass,
-          name: name,
-          level: "Wrong",
-          sao: "-",
-          sgo: "-",
-        });
+        if (func.includes("LEVEL"))
+          handleData("lvl", {
+            id: id,
+            pass: pass,
+            name: name,
+            level: "wrong",
+            sao: "-",
+            sgo: "-",
+          });
+        if (func.includes("TARGET"))
+          handleData("trg", {
+            id: id,
+            pass: pass,
+            name: name,
+            level: "wrong",
+            sao: "-",
+            sgo: "-",
+          });
+        if (func.includes("CHEQUE"))
+          handleData("chq", {
+            id: id,
+            pass: pass,
+            name: name,
+            level: "wrong",
+            sao: "-",
+            sgo: "-",
+          });
 
         return;
       }
