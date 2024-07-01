@@ -1,0 +1,822 @@
+{
+  "level": [
+    {
+      "id": "E4A2E38",
+      "pass": "1508",
+      "name": "LAJWANTI RAWAT",
+      "level": "Platinum",
+      "sao": 0,
+      "sgo": 785
+    },
+    {
+      "id": "D21F097",
+      "pass": "6383",
+      "name": "PRAMOD",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "06B892f",
+      "pass": "1348",
+      "name": "BASU",
+      "level": "Platinum",
+      "sao": 0,
+      "sgo": 2287
+    },
+    {
+      "id": "F3AC41F",
+      "pass": "1072",
+      "name": "POOJA",
+      "level": "Fresher",
+      "sao": 200,
+      "sgo": 100
+    },
+    {
+      "id": "E421134",
+      "pass": "8310",
+      "name": "MOHAN ROY",
+      "level": "Gold",
+      "sao": 0,
+      "sgo": 1200
+    },
+    {
+      "id": "4B3F12C",
+      "pass": "1386",
+      "name": "GANES DWIVEDI  ",
+      "level": "Platinum",
+      "sao": 0,
+      "sgo": 2352
+    },
+    {
+      "id": "D2C0990",
+      "pass": "1630",
+      "name": "JAIBIR NEGI",
+      "level": "Emerald",
+      "sao": 0,
+      "sgo": 3840
+    },
+    {
+      "id": "A7C6E31 ",
+      "pass": "2482",
+      "name": "BALVINDER SINGH",
+      "level": "Ruby Star",
+      "sao": 46028,
+      "sgo": 0
+    },
+    {
+      "id": "FB8CE09",
+      "pass": "1618",
+      "name": "RAKESH",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 258
+    },
+    {
+      "id": "7D82354",
+      "pass": "1162",
+      "name": "UPENDRA SINGH",
+      "level": "Platinum",
+      "sao": 0,
+      "sgo": 1902
+    },
+    {
+      "id": "FFA30F6",
+      "pass": "6635",
+      "name": "HARISH",
+      "level": "Silver",
+      "sao": 880,
+      "sgo": 600
+    },
+    {
+      "id": "37c465c",
+      "pass": "1927",
+      "name": "MEENA RANI",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 48
+    },
+    {
+      "id": "71A5347",
+      "pass": "1413",
+      "name": "PRITHVI PAL",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 69
+    },
+    {
+      "id": "8A0F22B",
+      "pass": "7060",
+      "name": "MUKESH",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "2Be40b3",
+      "pass": "1652",
+      "name": "DASRATH SINGH ",
+      "level": "Emerald",
+      "sao": 4638,
+      "sgo": 0
+    },
+    {
+      "id": "BC392CB",
+      "pass": "2019",
+      "name": "MUKESH SANGELA ",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "466CAE6",
+      "pass": "1168",
+      "name": "MANMOHAN SINGH",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "73FEc31",
+      "pass": "1783",
+      "name": "RAMESH CHANDRA",
+      "level": "Gold",
+      "sao": 0,
+      "sgo": 473
+    },
+    {
+      "id": "867dC3E",
+      "pass": "2984",
+      "name": "MUKESH KHATRI ",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 187
+    },
+    {
+      "id": "96FF643  ",
+      "pass": "2482",
+      "name": "ANJU",
+      "level": "Ruby Star",
+      "sao": 2097,
+      "sgo": 9301
+    },
+    {
+      "id": "3719220",
+      "pass": "2031",
+      "name": "DEEPA RAWAT",
+      "level": "Topaz",
+      "sao": 21231,
+      "sgo": 9698
+    },
+    {
+      "id": "097E771",
+      "pass": "1618",
+      "name": "JYOTI PANDEY",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "8E6D5B9",
+      "pass": "1999",
+      "name": "ANITA MODI",
+      "level": "Sapphire",
+      "sao": 19817,
+      "sgo": 0
+    },
+    {
+      "id": "8158129",
+      "pass": "6434",
+      "name": "PRAKHAR SINGH RAWAT",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 300
+    },
+    {
+      "id": "8200FBD",
+      "pass": "2014",
+      "name": "HITESH JOSHI",
+      "level": "Topaz",
+      "sao": 21280,
+      "sgo": 5554
+    },
+    {
+      "id": "E914CC7",
+      "pass": "7018",
+      "name": "SHANKER SINGH ",
+      "level": "Ruby Star",
+      "sao": 22584,
+      "sgo": 0
+    },
+    {
+      "id": "7420A48",
+      "pass": "1073",
+      "name": "SEEMA",
+      "level": "Emerald",
+      "sao": 7789,
+      "sgo": 2404
+    },
+    {
+      "id": "2187c96",
+      "pass": "1506",
+      "name": "JAGAT SINGH ",
+      "level": "Ruby Star",
+      "sao": 0,
+      "sgo": 9171
+    },
+    {
+      "id": "8A1869E",
+      "pass": "5050",
+      "name": "SHUBHAM BUDAKOTI",
+      "level": "Emerald",
+      "sao": 7609,
+      "sgo": 5051
+    },
+    {
+      "id": "2B26B76",
+      "pass": "1476",
+      "name": "PUSHKHAR SINGH",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 229
+    },
+    {
+      "id": "0A8C0C9",
+      "pass": "1451",
+      "name": "MEGAN",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "C677ef1",
+      "pass": "1722",
+      "name": "Ritesh",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "6DDAEC0",
+      "pass": "1004",
+      "name": "DALBIR SINGH",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "2EC39A2",
+      "pass": "8877",
+      "name": "DHARAMPAL",
+      "level": "Topaz",
+      "sao": 8116,
+      "sgo": 9669
+    },
+    {
+      "id": "B4E52CA",
+      "pass": "1782",
+      "name": "NAVEEN BISHT",
+      "level": "Platinum",
+      "sao": 0,
+      "sgo": 2290
+    },
+    {
+      "id": "FBDB4C2",
+      "pass": "1667",
+      "name": "TARSEM",
+      "level": "Platinum",
+      "sao": 4789,
+      "sgo": 0
+    },
+    {
+      "id": "B391D95",
+      "pass": "1616",
+      "name": "SANJAY MALHOTRA",
+      "level": "Gold",
+      "sao": 900,
+      "sgo": 0
+    },
+    {
+      "id": "D4c4cf2",
+      "pass": "8698",
+      "name": "MOHIB KHAN",
+      "level": "Platinum",
+      "sao": 2285,
+      "sgo": 0
+    },
+    {
+      "id": "9C7f225",
+      "pass": "5983",
+      "name": "Vijendra Sajjan",
+      "level": "Fresher",
+      "sao": 148,
+      "sgo": 48
+    },
+    {
+      "id": "314A8d9",
+      "pass": "7193",
+      "name": "Sunil Nainwal",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "B89ca9F",
+      "pass": "1879",
+      "name": "Kuldeep",
+      "level": "Silver",
+      "sao": 0,
+      "sgo": 372
+    },
+    {
+      "id": "EEB9B29",
+      "pass": "2773",
+      "name": "MEHMUD KHAN",
+      "level": "Topaz",
+      "sao": 19054,
+      "sgo": 0
+    },
+    {
+      "id": "BB6D6E0",
+      "pass": "4305",
+      "name": "AMJAD KHAN",
+      "level": "Gold",
+      "sao": 292,
+      "sgo": 0
+    },
+    {
+      "id": "99Aebcd",
+      "pass": "4630",
+      "name": "Shashi Kant",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 300
+    },
+    {
+      "id": "074cbc4",
+      "pass": "1664",
+      "name": "Subhod",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 167
+    },
+    {
+      "id": "62536ec",
+      "pass": "2117",
+      "name": "Vijay Jain",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 300
+    },
+    {
+      "id": "44F7A07",
+      "pass": "1038",
+      "name": "SANTOSH",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "A9ef527",
+      "pass": "1179",
+      "name": "MOHAMMAD SHARIF",
+      "level": "Platinum",
+      "sao": 568,
+      "sgo": 0
+    },
+    {
+      "id": "73FEC31",
+      "pass": "1783",
+      "name": "RAMESH CHANDRA KUNIYAL",
+      "level": "Gold",
+      "sao": 0,
+      "sgo": 473
+    },
+    {
+      "id": "C677EF1",
+      "pass": "1980",
+      "name": "RITESH CHANDRA",
+      "level": "Silver",
+      "sao": 0,
+      "sgo": 479
+    },
+    {
+      "id": "2958C53",
+      "pass": "1300",
+      "name": "SUNEEL DATT",
+      "level": "Fresher",
+      "sao": 121,
+      "sgo": 100
+    }
+  ],
+  "target": [
+    {
+      "id": "E4A2E38",
+      "pass": "1508",
+      "name": "LAJWANTI RAWAT",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "06B892f",
+      "pass": "1348",
+      "name": "BASU",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "D21F097",
+      "pass": "6383",
+      "name": "PRAMOD",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "F3AC41F",
+      "pass": "1072",
+      "name": "POOJA",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "D2C0990",
+      "pass": "1630",
+      "name": "JAIBIR NEGI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "E421134",
+      "pass": "8310",
+      "name": "MOHAN ROY",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "FFA30F6",
+      "pass": "6635",
+      "name": "HARISH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "FB8CE09",
+      "pass": "1618",
+      "name": "RAKESH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "4B3F12C",
+      "pass": "1386",
+      "name": "GANES DWIVEDI  ",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "7D82354",
+      "pass": "1162",
+      "name": "UPENDRA SINGH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "8A0F22B",
+      "pass": "7060",
+      "name": "MUKESH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "71A5347",
+      "pass": "1413",
+      "name": "PRITHVI PAL",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "37c465c",
+      "pass": "1927",
+      "name": "MEENA RANI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "2Be40b3",
+      "pass": "1652",
+      "name": "DASRATH SINGH ",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "BC392CB",
+      "pass": "2019",
+      "name": "MUKESH SANGELA ",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "A7C6E31 ",
+      "pass": "2482",
+      "name": "BALVINDER SINGH",
+      "level": "Ruby Star",
+      "sao": 8202,
+      "sgo": 8295
+    },
+    {
+      "id": "466CAE6",
+      "pass": "1168",
+      "name": "MANMOHAN SINGH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "73FEc31",
+      "pass": "1783",
+      "name": "RAMESH CHANDRA",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "867dC3E",
+      "pass": "2984",
+      "name": "MUKESH KHATRI ",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "3719220",
+      "pass": "2031",
+      "name": "DEEPA RAWAT",
+      "level": "Topaz",
+      "sao": 5686,
+      "sgo": 5933
+    },
+    {
+      "id": "96FF643  ",
+      "pass": "2482",
+      "name": "ANJU",
+      "level": "Ruby Star",
+      "sao": 5642,
+      "sgo": 8019
+    },
+    {
+      "id": "097E771",
+      "pass": "1618",
+      "name": "JYOTI PANDEY",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "8200FBD",
+      "pass": "2014",
+      "name": "HITESH JOSHI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "8158129",
+      "pass": "6434",
+      "name": "PRAKHAR SINGH RAWAT",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "8E6D5B9",
+      "pass": "1999",
+      "name": "ANITA MODI",
+      "level": "Sapphire",
+      "sao": 8464,
+      "sgo": 10257
+    },
+    {
+      "id": "E914CC7",
+      "pass": "7018",
+      "name": "SHANKER SINGH ",
+      "level": "Ruby Star",
+      "sao": 7649,
+      "sgo": 7408
+    },
+    {
+      "id": "8A1869E",
+      "pass": "5050",
+      "name": "SHUBHAM BUDAKOTI",
+      "level": "Emerald",
+      "sao": 4090,
+      "sgo": 3920
+    },
+    {
+      "id": "2B26B76",
+      "pass": "1476",
+      "name": "PUSHKHAR SINGH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "7420A48",
+      "pass": "1073",
+      "name": "SEEMA",
+      "level": "Emerald",
+      "sao": 3937,
+      "sgo": 3949
+    },
+    {
+      "id": "2187c96",
+      "pass": "1506",
+      "name": "JAGAT SINGH ",
+      "level": "Ruby Star",
+      "sao": 5261,
+      "sgo": 8013
+    },
+    {
+      "id": "0A8C0C9",
+      "pass": "1451",
+      "name": "MEGAN",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "C677ef1",
+      "pass": "1722",
+      "name": "Ritesh",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "6DDAEC0",
+      "pass": "1004",
+      "name": "DALBIR SINGH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "B4E52CA",
+      "pass": "1782",
+      "name": "NAVEEN BISHT",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "2EC39A2",
+      "pass": "8877",
+      "name": "DHARAMPAL",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "B391D95",
+      "pass": "1616",
+      "name": "SANJAY MALHOTRA",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "FBDB4C2",
+      "pass": "1667",
+      "name": "TARSEM",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "D4c4cf2",
+      "pass": "8698",
+      "name": "MOHIB KHAN",
+      "level": "Platinum",
+      "sao": 2400,
+      "sgo": 2190
+    },
+    {
+      "id": "B89ca9F",
+      "pass": "1879",
+      "name": "Kuldeep",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "314A8d9",
+      "pass": "7193",
+      "name": "Sunil Nainwal",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "99Aebcd",
+      "pass": "4630",
+      "name": "Shashi Kant",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "62536ec",
+      "pass": "2117",
+      "name": "Vijay Jain",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "EEB9B29",
+      "pass": "2773",
+      "name": "MEHMUD KHAN",
+      "level": "Topaz",
+      "sao": 4708,
+      "sgo": 4644
+    },
+    {
+      "id": "BB6D6E0",
+      "pass": "4305",
+      "name": "AMJAD KHAN",
+      "level": "Gold",
+      "sao": 1700,
+      "sgo": 1790
+    },
+    {
+      "id": "9C7f225",
+      "pass": "5983",
+      "name": "Vijendra Sajjan",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "074cbc4",
+      "pass": "1664",
+      "name": "Subhod",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "44F7A07",
+      "pass": "1038",
+      "name": "SANTOSH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "A9ef527",
+      "pass": "1179",
+      "name": "MOHAMMAD SHARIF",
+      "level": "Platinum",
+      "sao": 1990,
+      "sgo": 2132
+    },
+    {
+      "id": "73FEC31",
+      "pass": "1783",
+      "name": "RAMESH CHANDRA KUNIYAL",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "C677EF1",
+      "pass": "1980",
+      "name": "RITESH CHANDRA",
+      "level": "Silver",
+      "sao": 1346,
+      "sgo": 1484
+    },
+    {
+      "id": "2958C53",
+      "pass": "1300",
+      "name": "SUNEEL DATT",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    }
+  ]
+}

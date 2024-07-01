@@ -1,13 +1,231 @@
 {
   "level": [
     {
+      "id": "96FF643",
+      "pass": "2482",
+      "name": "ANJU DHASMANA",
+      "level": "Ruby Star",
+      "sao": 2097,
+      "sgo": 9301
+    },
+    {
+      "id": "8E6D5B9",
+      "pass": "1999",
+      "name": "ANITA MODI",
+      "level": "Sapphire",
+      "sao": 19817,
+      "sgo": 0
+    },
+    {
+      "id": "DE2B804",
+      "pass": "2482",
+      "name": "SUNIL PANT",
+      "level": "Star Sapphire",
+      "sao": 45614,
+      "sgo": 91260
+    },
+    {
+      "id": "BC392CB",
+      "pass": "2026",
+      "name": "MUKESH SANGELA",
+      "level": "Topaz",
+      "sao": 8001,
+      "sgo": 0
+    },
+    {
+      "id": "069222C",
+      "pass": "1412",
+      "name": "JITENDER MODI ",
+      "level": "Topaz",
+      "sao": 23981,
+      "sgo": 0
+    },
+    {
+      "id": "E914CC7",
+      "pass": "7018",
+      "name": "SHANKAR RATHOR",
+      "level": "Ruby Star",
+      "sao": 22584,
+      "sgo": 0
+    },
+    {
+      "id": "7D5763A",
+      "pass": "9840",
+      "name": "MULKRAJ",
+      "level": "Ruby Star",
+      "sao": 9876,
+      "sgo": 16739
+    },
+    {
+      "id": "2187C96",
+      "pass": "1506",
+      "name": "JAGAT SINGH",
+      "level": "Ruby Star",
+      "sao": 0,
+      "sgo": 9171
+    },
+    {
+      "id": "D2B3162",
+      "pass": "1705",
+      "name": "GEETA THAKUR",
+      "level": "Ruby Star",
+      "sao": 19753,
+      "sgo": 22490
+    },
+    {
+      "id": "A606E52",
+      "pass": "1976",
+      "name": "HARISH SORARI",
+      "level": "Diamond",
+      "sao": 283269,
+      "sgo": 178053
+    },
+    {
+      "id": "45C8BBA",
+      "pass": "9898",
+      "name": "D N PANDAY",
+      "level": "Sapphire",
+      "sao": 83661,
+      "sgo": 0
+    },
+    {
+      "id": "A7C6E31",
+      "pass": "2482",
+      "name": "BALBINDER",
+      "level": "Ruby Star",
+      "sao": 46028,
+      "sgo": 0
+    },
+    {
+      "id": "8200FBD",
+      "pass": "2014",
+      "name": "HITESH JOSHI",
+      "level": "Topaz",
+      "sao": 21280,
+      "sgo": 5554
+    },
+    {
       "id": "77A8020",
       "pass": "1905",
-      "name": "Raj",
+      "name": "RAJENDER VYAS",
       "level": "Star Sapphire",
       "sao": 0,
       "sgo": 73125
     }
   ],
-  "target": []
+  "target": [
+    {
+      "id": "96FF643",
+      "pass": "2482",
+      "name": "ANJU DHASMANA",
+      "level": "Ruby Star",
+      "sao": 5642,
+      "sgo": 8019
+    },
+    {
+      "id": "8E6D5B9",
+      "pass": "1999",
+      "name": "ANITA MODI",
+      "level": "Sapphire",
+      "sao": 8464,
+      "sgo": 10257
+    },
+    {
+      "id": "DE2B804",
+      "pass": "2482",
+      "name": "SUNIL PANT",
+      "level": "Star Sapphire",
+      "sao": 18721,
+      "sgo": 23678
+    },
+    {
+      "id": "BC392CB",
+      "pass": "2026",
+      "name": "MUKESH SANGELA",
+      "level": "Topaz",
+      "sao": 5918,
+      "sgo": 5090
+    },
+    {
+      "id": "069222C",
+      "pass": "1412",
+      "name": "JITENDER MODI ",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "7D5763A",
+      "pass": "9840",
+      "name": "MULKRAJ",
+      "level": "Ruby Star",
+      "sao": 5980,
+      "sgo": 6229
+    },
+    {
+      "id": "E914CC7",
+      "pass": "7018",
+      "name": "SHANKAR RATHOR",
+      "level": "Ruby Star",
+      "sao": 7649,
+      "sgo": 7408
+    },
+    {
+      "id": "D2B3162",
+      "pass": "1705",
+      "name": "GEETA THAKUR",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "8200FBD",
+      "pass": "2014",
+      "name": "HITESH JOSHI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "77A8020",
+      "pass": "1905",
+      "name": "RAJENDER VYAS",
+      "level": "Star Sapphire",
+      "sao": 10543,
+      "sgo": 19259
+    },
+    {
+      "id": "2187C96",
+      "pass": "1506",
+      "name": "JAGAT SINGH",
+      "level": "Ruby Star",
+      "sao": 5261,
+      "sgo": 8013
+    },
+    {
+      "id": "A7C6E31",
+      "pass": "2482",
+      "name": "BALBINDER",
+      "level": "Ruby Star",
+      "sao": 8202,
+      "sgo": 8295
+    },
+    {
+      "id": "A606E52",
+      "pass": "1976",
+      "name": "HARISH SORARI",
+      "level": "Diamond",
+      "sao": 35102,
+      "sgo": 41442
+    }
+  ]
+}{
+      "id": "45C8BBA",
+      "pass": "9898",
+      "name": "D N PANDAY",
+      "level": "Sapphire",
+      "sao": 10881,
+      "sgo": 9625
+    }
+  ]
 }

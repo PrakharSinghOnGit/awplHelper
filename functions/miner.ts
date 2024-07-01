@@ -5,6 +5,7 @@ const { Cluster } = require("puppeteer-cluster");
 const { PendingXHR } = require("pending-xhr-puppeteer");
 const chromium = require("chromium");
 const env = Bun.env;
+import chalk from 'chalk';
 const Debug = env.Debug?.toLocaleLowerCase() == "true";
 import path from "path";
 
@@ -56,22 +57,30 @@ async function verify(id: string, pass: string) {
 
 type AllowedType = "lvl" | "trg" | "chq";
 async function handleData(type: AllowedType, data: any) {
+  let join = chalk.dim('-');
+let pad = (str:String,amt:number,clr:any) => (str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str));
   if (type === "lvl") {
     console.log(
-      "Level".padEnd(8),
-      data.level.padEnd(16),
-      data.sao.toString().padEnd(10),
-      data.sgo.toString().padEnd(10),
-      data.name
+      chalk.dim(">"),
+      pad("Level", 8, chalk.blue.bold),
+      pad(data.level, 16, chalk.green.bold),
+      pad(data.sao.toString(), 10, chalk.yellow.bold),
+      pad(data.sgo.toString(), 10, chalk.yellow.bold),
+      pad(data.id, 8, chalk.magenta.bold),
+      pad(data.pass, 6, chalk.cyan.bold),
+      chalk.blue.bold(data.name)
     );
     Data.level.push(data);
   } else if (type === "trg") {
     console.log(
-      "Target".padEnd(8),
-      data.level.padEnd(16),
-      data.sao.toString().padEnd(10),
-      data.sgo.toString().padEnd(10),
-      data.name
+      chalk.dim(">"),
+      pad("Target", 8, chalk.magenta.bold),
+      pad(data.level, 16, chalk.green.bold),
+      pad(data.sao.toString(), 10, chalk.yellow.bold),
+      pad(data.sgo.toString(), 10, chalk.yellow.bold),
+      pad(data.id, 8, chalk.magenta.bold),
+      pad(data.pass, 6, chalk.cyan.bold),
+      chalk.blue.bold(data.name)
     );
     Data.target.push(data);
   } else if (type === "chq") {
@@ -102,7 +111,6 @@ async function level(page: any, name: string, id: string, pass: string) {
     env.LevelURL
   );
   await page.waitForNavigation({ waitUntil: "networkidle2" });
-  await page.screenshot({ path: 'page.png', fullPage: 'true' });
   let sao = await page.evaluate(() =>
     Number(
       document.querySelector(
@@ -153,6 +161,7 @@ async function target(page: any, name: string, id: string, pass: string) {
       sao: "-",
       sgo: "-",
     });
+    await page.screenshot({ path: id + ".png", fullPage: 'true' });
     return;
   }
   let level =
