@@ -321,10 +321,9 @@ async function Mine(
       if (func.includes("CHEQUE")) await cheque(page, name, id, pass);
     }
   );
-  // Team.forEach(async (e) => {
-  //   await cluster.queue(e);
-  // });
-  await cluster.queue({ id: "77A8020", pass: "1905", name: "Raj" });
+  Team.forEach(async (e) => {
+    await cluster.queue(e);
+  });
   await cluster.idle();
   await cluster.close();
 
