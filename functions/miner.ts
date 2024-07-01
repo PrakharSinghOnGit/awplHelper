@@ -43,6 +43,10 @@ puppeteer.use(stealthPlugin());
 async function verify(id: string, pass: string) {
   try {
     const response = await axios.get(getURL(id, pass));
+    if (response.data.includes("Plz Try After some Time :")) {
+      console.log("Plz Try After some Time :");
+      process.exit();
+    }
     if (response.data.includes("alert")) return false;
   } catch (e) {
     throw new Error("Network Issue", { cause: e });
@@ -98,6 +102,7 @@ async function level(page: any, name: string, id: string, pass: string) {
     env.LevelURL
   );
   await page.waitForNavigation({ waitUntil: "networkidle2" });
+  await page.screenshot({ path: 'page.png', fullPage: 'true' });
   let sao = await page.evaluate(() =>
     Number(
       document.querySelector(
@@ -112,20 +117,18 @@ async function level(page: any, name: string, id: string, pass: string) {
       )?.textContent
     )
   );
-  let pendingSao = Math.round(
-    (TargetSAOs.find((targetSao) => targetSao > sao) ?? 0) - sao
-  );
-  let pendingSgo = Math.round(
-    (TargetSGOs.find((targetSgo) => targetSgo > sgo) ?? 0) - sgo
-  );
-  let level = Levels[TargetSAOs.findIndex((targetSao) => targetSao > sao)];
+
+  const minIndex = Math.min(TargetSAOs.findIndex(targetSAO => sao < targetSAO), TargetSGOs.findIndex(targetSGO => sgo < targetSGO));
+  const pendingSAO = Math.round((minIndex === -1 ? 0 : TargetSAOs[minIndex] - sao) < 0 ? 0 : TargetSAOs[minIndex] - sao);
+  const pendingSGO = Math.round((minIndex === -1 ? 0 : TargetSGOs[minIndex] - sgo) < 0 ? 0 : TargetSGOs[minIndex] - sgo);
+  const level = Levels[minIndex];
   handleData("lvl", {
     id: id,
     pass: pass,
     name: name,
     level: level,
-    sao: pendingSao,
-    sgo: pendingSgo,
+    sao: pendingSAO,
+    sgo: pendingSGO,
   });
 }
 
@@ -318,9 +321,10 @@ async function Mine(
       if (func.includes("CHEQUE")) await cheque(page, name, id, pass);
     }
   );
-  Team.forEach(async (e) => {
-    await cluster.queue(e);
-  });
+  // Team.forEach(async (e) => {
+  //   await cluster.queue(e);
+  // });
+  await cluster.queue({ id: "77A8020", pass: "1905", name: "Raj" });
   await cluster.idle();
   await cluster.close();
 
