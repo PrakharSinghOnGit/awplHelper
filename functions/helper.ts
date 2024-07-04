@@ -1,3 +1,6 @@
+import type { DataItem } from "./types";
+
+
 const Levels = [
   "Fresher",
   "Bronze",
@@ -64,8 +67,19 @@ const TargetSGOs = [
 const removeNonAlphaNum = (str: string) => str.replace(/\W/g, "");
 
 const getURL = (id: string, pass: string) =>
-  `https://asclepiuswellness.com/userpanel/uservalidationnew.aspx?memberid=${removeNonAlphaNum(
-    id
-  )}&pwd=${removeNonAlphaNum(pass)}`;
+  `https://asclepiuswellness.com/userpanel/uservalidationnew.aspx?memberid=${removeNonAlphaNum(id)}&pwd=${removeNonAlphaNum(pass)}`;
 
-export { Levels, TargetSAOs, TargetSGOs, getURL };
+const pad = (str:String,amt:number,clr:any,join:String) => 
+  (str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str));
+
+const mergeLvlData = (ChequeData: DataItem[], LevelData : DataItem[]) => {
+    ChequeData.forEach((chequeItem) => {
+      const matchingLevel = LevelData.find((levelItem) => levelItem.id === chequeItem.id);
+      if (matchingLevel) {
+        chequeItem.level = matchingLevel.level;
+      }
+    });
+    return ChequeData;
+}
+
+export { Levels, TargetSAOs, TargetSGOs, getURL, pad , mergeLvlData };

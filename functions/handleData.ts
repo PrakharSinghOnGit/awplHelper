@@ -1,19 +1,10 @@
 import fs from "fs";
 import path from "path";
 import { Levels } from "./helper";
+import type { DataItem , Data} from "./types";
 
-type DataItem = {
-  name: string;
-  level: string;
-  sao: number;
-  sgo: number;
-};
 
-type Data = {
-  level: DataItem[];
-  target: DataItem[];
-  // cheque: DataItem[];
-};
+
 
 function getTeamList() {
   let list = fs

@@ -8,31 +8,13 @@ const env = Bun.env;
 import chalk from 'chalk';
 const Debug = env.Debug?.toLocaleLowerCase() == "true";
 import path from "path";
-
-import { Levels, TargetSAOs, TargetSGOs, getURL } from "./helper";
-
-type DataItem = {
-  name: string;
-  level: string;
-  sao: number;
-  sgo: number;
-};
-
-type DataType = {
-  level: DataItem[];
-  target: DataItem[];
-  // cheque: DataItem[];
-};
-
-interface data {
-  id: string;
-  pass: string;
-  name: string;
-}
+import type { DataType , data } from "./types";
+import { Levels, TargetSAOs, TargetSGOs, getURL , pad } from "./helper";
 
 const Data: DataType = {
   level: [],
   target: [],
+  cheque: [],
 };
 
 process.on("SIGINT", () => {
@@ -58,28 +40,27 @@ async function verify(id: string, pass: string) {
 type AllowedType = "lvl" | "trg" | "chq";
 async function handleData(type: AllowedType, data: any) {
   let join = chalk.dim('.');
-let pad = (str:String,amt:number,clr:any) => (str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str));
   if (type === "lvl") {
     console.log(
       chalk.dim(">"),
-      pad("Level", 8, chalk.blue.bold),
-      pad(data.level, 16, chalk.green.bold),
-      pad(data.sao.toString(), 10, chalk.yellow.bold),
-      pad(data.sgo.toString(), 10, chalk.yellow.bold),
-      pad(data.id, 8, chalk.magenta.bold),
-      pad(data.pass, 6, chalk.cyan.bold),
+      pad("Level", 8, chalk.blue.bold,join),
+      pad(data.level, 16, chalk.green.bold,join),
+      pad(data.sao.toString(), 10, chalk.yellow.bold,join),
+      pad(data.sgo.toString(), 10, chalk.yellow.bold,join),
+      pad(data.id, 8, chalk.magenta.bold,join),
+      pad(data.pass, 6, chalk.cyan.bold,join),
       chalk.blue.bold(data.name)
     );
     Data.level.push(data);
   } else if (type === "trg") {
     console.log(
       chalk.dim(">"),
-      pad("Target", 8, chalk.magenta.bold),
-      pad(data.level, 16, chalk.green.bold),
-      pad(data.sao.toString(), 10, chalk.yellow.bold),
-      pad(data.sgo.toString(), 10, chalk.yellow.bold),
-      pad(data.id, 8, chalk.magenta.bold),
-      pad(data.pass, 6, chalk.cyan.bold),
+      pad("Target", 8, chalk.magenta.bold,join),
+      pad(data.level, 16, chalk.green.bold,join),
+      pad(data.sao.toString(), 10, chalk.yellow.bold,join),
+      pad(data.sgo.toString(), 10, chalk.yellow.bold,join),
+      pad(data.id, 8, chalk.magenta.bold,join),
+      pad(data.pass, 6, chalk.cyan.bold,join),
       chalk.blue.bold(data.name)
     );
     Data.target.push(data);
@@ -278,7 +259,7 @@ async function Mine(
     "taskerror",
     async (
       _err: { message: string; cause: string },
-      { name, pass, id }: data
+      { name, id }: data
     ) => {
       // Error Handling
       console.error("Error for ID: ", id, "Name: ", name, _err.message);
@@ -330,9 +311,10 @@ async function Mine(
       if (func.includes("CHEQUE")) await cheque(page, name, id, pass);
     }
   );
-  Team.forEach(async (e) => {
-    await cluster.queue(e);
-  });
+  // Team.forEach(async (e) => {
+  //   await cluster.queue(e);
+  // });
+  await cluster.queue({ id: "aa4f9b", pass: "8990", name: "SUD" });
   await cluster.idle();
   await cluster.close();
 
