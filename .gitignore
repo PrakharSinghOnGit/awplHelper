@@ -2,6 +2,9 @@
 
 # Logs
 
+
+
+
 logs
 _.log
 npm-debug.log_
@@ -56,6 +59,7 @@ build/Release
 
 # Dependency directories
 
+json/
 node_modules/
 jspm_packages/
 
@@ -113,6 +117,7 @@ web_modules/
 # Next.js build output
 
 .next
+json
 out
 
 # Nuxt.js build / generate output

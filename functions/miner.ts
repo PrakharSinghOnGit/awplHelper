@@ -57,7 +57,7 @@ async function verify(id: string, pass: string) {
 
 type AllowedType = "lvl" | "trg" | "chq";
 async function handleData(type: AllowedType, data: any) {
-  let join = chalk.dim('-');
+  let join = chalk.dim('.');
 let pad = (str:String,amt:number,clr:any) => (str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str));
   if (type === "lvl") {
     console.log(
@@ -161,7 +161,7 @@ async function target(page: any, name: string, id: string, pass: string) {
       sao: "-",
       sgo: "-",
     });
-    await page.screenshot({ path: id + ".png", fullPage: 'true' });
+    // await page.screenshot({ path: "../ScreenShot/" + id + ".png", fullPage: 'false' });
     return;
   }
   let level =
