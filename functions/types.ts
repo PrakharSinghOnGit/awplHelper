@@ -2,10 +2,13 @@ type DataItem = {
     id: string;
     name: string;
     level: string;
-    sao: number;
-    sgo: number;
+    pass?: string;
+    sao?: number;
+    sgo?: number;
+    data?: any;
   };
   
+
   type DataType = {
     level: DataItem[];
     target: DataItem[];
@@ -18,12 +21,4 @@ type DataItem = {
     name: string;
   }
 
-  type Data = {
-    level: DataItem[];
-    target: DataItem[];
-    cheque: DataItem[];
-  };
-  
-
-
-  export type { DataItem, DataType, data , Data };
+  export type { DataItem, DataType, data };

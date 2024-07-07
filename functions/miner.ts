@@ -38,35 +38,48 @@ async function verify(id: string, pass: string) {
 }
 
 type AllowedType = "lvl" | "trg" | "chq";
-async function handleData(type: AllowedType, data: any) {
+async function handleData(type: AllowedType, data: any , tL:number,tT:number,tC:number) {
   let join = chalk.dim('.');
+  let stL = (tL<10) ? '0'+tL : tL;
+  let stT = (tT<10) ? '0'+tT : tT;
+  let stC = (tC<10) ? '0'+tC : tC;
   if (type === "lvl") {
     console.log(
+      chalk.blue.bold(stL)+'|'+chalk.magenta.bold(stT)+'|'+chalk.cyan.bold(stC),
       chalk.dim(">"),
-      pad("Level", 8, chalk.blue.bold,join),
-      pad(data.level, 16, chalk.green.bold,join),
-      pad(data.sao.toString(), 10, chalk.yellow.bold,join),
-      pad(data.sgo.toString(), 10, chalk.yellow.bold,join),
-      pad(data.id, 8, chalk.magenta.bold,join),
-      pad(data.pass, 6, chalk.cyan.bold,join),
+      pad("Level", 8, chalk.blue.bold,join) +
+      pad(data.level, 16, chalk.green.bold,join) +
+      pad(data.sao.toString(), 10, chalk.yellow.bold,join) +
+      pad(data.sgo.toString(), 10, chalk.yellow.bold,join) +
+      pad(data.id, 8, chalk.magenta.bold,join) +
+      pad(data.pass, 6, chalk.cyan.bold,join) +
       chalk.blue.bold(data.name)
     );
     Data.level.push(data);
   } else if (type === "trg") {
     console.log(
+      chalk.blue.bold(stL)+'|'+chalk.magenta.bold(stT)+'|'+chalk.cyan.bold(stC),
       chalk.dim(">"),
-      pad("Target", 8, chalk.magenta.bold,join),
-      pad(data.level, 16, chalk.green.bold,join),
-      pad(data.sao.toString(), 10, chalk.yellow.bold,join),
-      pad(data.sgo.toString(), 10, chalk.yellow.bold,join),
-      pad(data.id, 8, chalk.magenta.bold,join),
-      pad(data.pass, 6, chalk.cyan.bold,join),
+      pad("Target", 8, chalk.magenta.bold,join) +
+      pad(data.level, 16, chalk.green.bold,join) +
+      pad(data.sao.toString(), 10, chalk.yellow.bold,join) +
+      pad(data.sgo.toString(), 10, chalk.yellow.bold,join) +
+      pad(data.id, 8, chalk.magenta.bold,join) +
+      pad(data.pass, 6, chalk.cyan.bold,join) +
       chalk.blue.bold(data.name)
     );
     Data.target.push(data);
   } else if (type === "chq") {
-    console.log("Cheque", data);
-    // Data.cheque.push(data);
+    console.log(
+      chalk.blue.bold(stL)+'|'+chalk.magenta.bold(stT)+'|'+chalk.cyan.bold(stC),
+      chalk.dim(">"),
+      pad("Cheque", 8, chalk.cyan.bold,join) +
+      pad("Nbr of Weeks : " + data.data.length, 36, chalk.yellow.bold,join) +
+      pad(data.id, 8, chalk.magenta.bold,join) +
+      pad(data.pass, 6, chalk.cyan.bold,join) +
+      chalk.blue.bold(data.name)
+    );
+    Data.cheque.push(data);
   } else {
     console.log("Invalid type");
   }
@@ -76,7 +89,7 @@ async function handleData(type: AllowedType, data: any) {
   );
 }
 
-async function login(page: any, name: string, id: string, pass: string) {
+async function login(page: any, id: string, pass: string) {
   page.on("dialog", async (dialog: any) => {
     let alertText = dialog.message();
     await dialog.dismiss();
@@ -86,7 +99,7 @@ async function login(page: any, name: string, id: string, pass: string) {
   return;
 }
 
-async function level(page: any, name: string, id: string, pass: string) {
+async function level(page: any, name: string, id: string, pass: string,tL:number,tT:number,tC:number) {
   await page.evaluate(
     (LevelURL: string) => window.open(LevelURL, "_self"),
     env.LevelURL
@@ -118,10 +131,10 @@ async function level(page: any, name: string, id: string, pass: string) {
     level: level,
     sao: pendingSAO,
     sgo: pendingSGO,
-  });
+  },tL--,tT,tC);
 }
 
-async function target(page: any, name: string, id: string, pass: string) {
+async function target(page: any, name: string, id: string, pass: string,tL:number,tT:number,tC:number) {
   const pending = new PendingXHR(page);
   await page.evaluate(
     (TargetURL: string) => window.open(TargetURL, "_self"),
@@ -141,7 +154,7 @@ async function target(page: any, name: string, id: string, pass: string) {
       level: "No DS",
       sao: "-",
       sgo: "-",
-    });
+    },tL,tT--,tC);
     // await page.screenshot({ path: "../ScreenShot/" + id + ".png", fullPage: 'false' });
     return;
   }
@@ -176,33 +189,38 @@ async function target(page: any, name: string, id: string, pass: string) {
     level: level,
     sao: Math.round(pendingSao),
     sgo: Math.round(pendingSgo),
-  });
+  },tL,tT--,tC);
 }
 
-async function cheque(page: any, name: string, id: string, pass: string) {
+async function cheque(page: any, name: string, id: string, pass: string , tL:number,tT:number,tC:number, retry:number) {
   const pending = new PendingXHR(page);
-  await page.evaluate(() =>
-    window.open(
-      "https://www.asclepiuswellness.com/userpanel/UserLevelNew.aspx",
-      "_self"
-    )
-  );
-  await page.waitForNavigation({ waitUntil: "networkidle2" });
-  await pending.waitForAllXhrFinished();
-  await page.evaluate(() => {
-    const pad = (nbr: number) => (nbr < 10 ? "0" + nbr : nbr);
-    let d = new Date();
-    var omb =
-      pad(d.getDate()) +
-      "/" +
-      pad(Number(d.getMonth() == 0 ? "12" : d.getMonth())) +
-      "/" +
-      (d.getMonth() == 0 ? d.getFullYear() - 1 : d.getFullYear());
+  try {
+    await page.evaluate(() =>
+      window.open(
+        "https://www.asclepiuswellness.com/userpanel/UserLevelNew.aspx",
+        "_self"
+     )
+    );
+      await page.waitForNavigation({ waitUntil: "networkidle2" });
+      await pending.waitForAllXhrFinished();
+  } catch (e) {
+    if ((e as Error).message.includes("Navigation timeout")) {
+      console.log(chalk.red("Timeout for ID:"), id,"Pass:", pass,"Name:", name,"Status:", retry == 0 ? "Retry Limit Exceeded" : "Retrying...",retry);
+      if (retry == 0) return;
+      await cheque(page, name, id, pass, tL, tT, tC, retry - 1);
+      return
+    }
+  }
+  const pad = (nbr: number) => (nbr < 10 ? "0" + nbr : nbr);
+  let d = new Date();
+  var omb = pad(d.getDate()) + "/" + pad(Number(d.getMonth() == 0 ? "12" : d.getMonth())) + "/" + (d.getMonth() == 0 ? d.getFullYear() - 1 : d.getFullYear());
+  await page.evaluate((omb:string) => {
     (document.querySelector(
       "#ctl00_ContentPlaceHolder1_txtFrom"
     ) as HTMLInputElement).value = omb;
-  });
+  },omb);
   await page.click("#ctl00_ContentPlaceHolder1_btnshow");
+  await page.waitForNavigation({ waitUntil: "networkidle2" });
   await pending.waitForAllXhrFinished();
   let data = await page.evaluate(() => {
     let childCount = document.querySelector("tbody")?.childElementCount ?? 5;
@@ -232,13 +250,16 @@ async function cheque(page: any, name: string, id: string, pass: string) {
     pass: pass,
     name: name,
     data: data,
-  });
+  },tL,tT,tC--);
 }
 
 async function Mine(
   Team: { [key: string]: string }[],
   func: [string]
 ): Promise<DataType> {
+  let tL = Team.length;
+  let tT = Team.length;
+  let tC = Team.length;
   const cluster = await Cluster.launch({
     // browser Launch Properties
     concurrency: Cluster.CONCURRENCY_CONTEXT, // Incognito Pages gor each Worker
@@ -259,10 +280,10 @@ async function Mine(
     "taskerror",
     async (
       _err: { message: string; cause: string },
-      { name, id }: data
+      { name, id,pass }: data
     ) => {
       // Error Handling
-      console.error("Error for ID: ", id, "Name: ", name, _err.message);
+      console.error("Error for ID:", id,"Pass", pass,"Name: ", name, _err.message);
     }
   );
 
@@ -274,7 +295,7 @@ async function Mine(
         if (block.includes(req.resourceType())) req.abort();
         else req.continue();
       });
-      if (await verify(id, pass)) await login(page, name, id, pass);
+      if (await verify(id, pass)) await login(page, id, pass);
       else {
         if (func.includes("LEVEL"))
           handleData("lvl", {
@@ -284,7 +305,7 @@ async function Mine(
             level: "wrong",
             sao: "-",
             sgo: "-",
-          });
+          },tL--,tT,tC);
         if (func.includes("TARGET"))
           handleData("trg", {
             id: id,
@@ -293,28 +314,30 @@ async function Mine(
             level: "wrong",
             sao: "-",
             sgo: "-",
-          });
+          },tL,tT--,tC);
         if (func.includes("CHEQUE"))
           handleData("chq", {
             id: id,
             pass: pass,
             name: name,
             level: "wrong",
-            sao: "-",
-            sgo: "-",
-          });
+            data : [ {
+              payDate: "-",
+              amount: 0
+              }
+            ]
+          },tL,tT,tC--);
 
         return;
       }
-      if (func.includes("LEVEL")) await level(page, name, id, pass);
-      if (func.includes("TARGET")) await target(page, name, id, pass);
-      if (func.includes("CHEQUE")) await cheque(page, name, id, pass);
+      if (func.includes("LEVEL")) await level(page, name, id, pass,tL,tT,tC);
+      if (func.includes("TARGET")) await target(page, name, id, pass,tL,tT,tC);
+      if (func.includes("CHEQUE")) await cheque(page, name, id, pass,tL,tT,tC,Number(env.Retry));
     }
   );
-  // Team.forEach(async (e) => {
-  //   await cluster.queue(e);
-  // });
-  await cluster.queue({ id: "aa4f9b", pass: "8990", name: "SUD" });
+  Team.forEach(async (e) => {
+    await cluster.queue(e);
+  });
   await cluster.idle();
   await cluster.close();
 

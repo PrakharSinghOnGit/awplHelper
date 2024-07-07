@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Levels } from "./helper";
-import type { DataItem , Data} from "./types";
+import type { DataItem , DataType} from "./types";
 
 
 
@@ -39,10 +39,12 @@ function csvToJson(csv: string) {
 function makeHTML(
   leaderName: String,
   levelData: DataItem[],
-  targetData: DataItem[]
+  targetData: DataItem[],
+  chequeData: DataItem[]
 ) {
   let LevelHtmlTable = "";
   let TargetHtmlTable = "";
+  let ChequeHtmlTable = "";
   levelData.forEach((item, index) => {
     LevelHtmlTable += `<tr>
     <td>${index + 1}</td>
@@ -63,6 +65,24 @@ function makeHTML(
     </tr>`;
   });
 
+  const dates = new Set();
+  let chequeHeader = '';
+  chequeData.forEach(item => {
+    Object.keys(item.data).forEach(date => dates.add(date));
+  });
+  dates.forEach(date => chequeHeader += `<th>${date}</th>`);
+
+  chequeData.forEach((item, index) => {
+      let chequeBodyData = '';
+      dates.forEach(date => chequeBodyData += `<td style="color:var(--${item.data[date as string] ? 'g' : 'r'})">${item.data[date as string] || 0}</td>`);
+      ChequeHtmlTable += `<tr>
+      <td>${index + 1}</td>
+      <td>${item.name}</td>
+      <td>${item.level}</td>
+      ${chequeBodyData}
+      </tr>`;
+  });
+
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -77,9 +97,6 @@ function makeHTML(
         --border: #30363d;
         --focus: rgb(0, 36, 126);
         --evenRow: #18202b;
-        --tab1: #79c0ff;
-        --tab2: #ff993f;
-        --tab3: #d2a8ff;
         --clm1: #79c0ff;
         --clm2: #ff993f;
         --clm3: #7ee778;
@@ -187,7 +204,7 @@ function makeHTML(
 
       .tabs > .tab > [id^="tab"]:checked + label {
         top: 0;
-        background: var(--clm3);
+        background: var(--focus);
         color: var(--bg);
         font-size: x-large;
       }
@@ -254,10 +271,49 @@ function makeHTML(
           </table>
         </div>
       </li>
+
+      <li class="tab">
+        <input type="radio" name="tabs" id="tab3" />
+        <label for="tab3">Cheque</label>
+        <div id="tab-content3" class="content">
+          <table>
+            <thead>
+              <tr>
+                <th>Sno</th>
+                <th>Name</th>
+                <th>Level</th>
+                ${chequeHeader}
+              </tr>
+            </thead>
+            <tbody id="cheque-body">
+              ${ChequeHtmlTable}
+            </tbody>
+          </table>
+        </div>
+      </li>
+
     </ul>
   </body>
 </html>
 `;
+}
+
+async function formatChequeData(chequeData: DataItem[]) {
+  return chequeData.map(item => {
+    let formattedData:any = {};
+    item.data.forEach((entry:any) => {
+      if (entry.payDate !== '-') {
+        formattedData[entry.payDate] = entry.amount;
+      }
+    });
+    return {
+      id: item.id,
+      pass: item.pass,
+      name: item.name,
+      level: item.level,
+      data: formattedData
+    };
+  });
 }
 
 function sortData(data: DataItem[]) {
@@ -280,10 +336,12 @@ async function save(leaderName: String, html: string) {
   Bun.write(path.join(__dirname, "../out", leaderName + ".html"), html);
 }
 
-async function handleOutput(leaderName: string, Data: Data) {
+async function handleOutput(leaderName: string, Data: DataType) {
   Data.level = sortData(Data.level);
   Data.target = sortData(Data.target);
-  await save(leaderName, makeHTML(leaderName, Data.level, Data.target));
+  Data.cheque = sortData(Data.cheque);
+  const FormattedChequeData = await formatChequeData(Data.cheque);
+  await save(leaderName, makeHTML(leaderName, Data.level, Data.target, FormattedChequeData));
   console.log(
     "Output HTML saved to",
     Bun.pathToFileURL(path.join(__dirname, "../out", leaderName + ".html")).href
