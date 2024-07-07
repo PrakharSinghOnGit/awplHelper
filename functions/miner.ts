@@ -11,6 +11,7 @@ import path from "path";
 import type { DataType , data } from "./types";
 import { Levels, TargetSAOs, TargetSGOs, getURL , pad } from "./helper";
 
+const Rem = [0,0,0]
 const Data: DataType = {
   level: [],
   target: [],
@@ -37,50 +38,64 @@ async function verify(id: string, pass: string) {
   return true;
 }
 
-type AllowedType = "lvl" | "trg" | "chq";
-async function handleData(type: AllowedType, data: any , tL:number,tT:number,tC:number) {
+type AllowedType = "lvl" | "trg" | "chq" | "ret";
+async function handleData(type: AllowedType, data: any, ret?: number) {
   let join = chalk.dim('.');
-  let stL = (tL<10) ? '0'+tL : tL;
-  let stT = (tT<10) ? '0'+tT : tT;
-  let stC = (tC<10) ? '0'+tC : tC;
+  let stL = (Rem[0]<10) ? '0'+Rem[0] : Rem[0];
+  let stT = (Rem[1]<10) ? '0'+Rem[1] : Rem[1];
+  let stC = (Rem[2]<10) ? '0'+Rem[2] : Rem[2];
   if (type === "lvl") {
+    Rem[0]--;
     console.log(
-      chalk.blue.bold(stL)+'|'+chalk.magenta.bold(stT)+'|'+chalk.cyan.bold(stC),
+      chalk.blue(stL)+'|'+chalk.dim(stT)+'|'+chalk.dim(stC),
       chalk.dim(">"),
-      pad("Level", 8, chalk.blue.bold,join) +
-      pad(data.level, 16, chalk.green.bold,join) +
-      pad(data.sao.toString(), 10, chalk.yellow.bold,join) +
-      pad(data.sgo.toString(), 10, chalk.yellow.bold,join) +
-      pad(data.id, 8, chalk.magenta.bold,join) +
-      pad(data.pass, 6, chalk.cyan.bold,join) +
-      chalk.blue.bold(data.name)
+      pad("Level", 8, chalk.blue,join) +
+      pad(data.level, 16, chalk.green,join) +
+      pad(data.sao.toString(), 10, chalk.yellow,join) +
+      pad(data.sgo.toString(), 10, chalk.yellow,join) +
+      pad(data.id, 8, chalk.magenta,join) +
+      pad(data.pass, 6, chalk.cyan,join) +
+      chalk.blue(data.name)
     );
     Data.level.push(data);
   } else if (type === "trg") {
+    Rem[1]--;
     console.log(
-      chalk.blue.bold(stL)+'|'+chalk.magenta.bold(stT)+'|'+chalk.cyan.bold(stC),
+      chalk.dim(stL)+'|'+chalk.magenta(stT)+'|'+chalk.dim(stC),
       chalk.dim(">"),
-      pad("Target", 8, chalk.magenta.bold,join) +
-      pad(data.level, 16, chalk.green.bold,join) +
-      pad(data.sao.toString(), 10, chalk.yellow.bold,join) +
-      pad(data.sgo.toString(), 10, chalk.yellow.bold,join) +
-      pad(data.id, 8, chalk.magenta.bold,join) +
-      pad(data.pass, 6, chalk.cyan.bold,join) +
-      chalk.blue.bold(data.name)
+      pad("Target", 8, chalk.magenta,join) +
+      pad(data.level, 16, chalk.green,join) +
+      pad(data.sao.toString(), 10, chalk.yellow,join) +
+      pad(data.sgo.toString(), 10, chalk.yellow,join) +
+      pad(data.id, 8, chalk.magenta,join) +
+      pad(data.pass, 6, chalk.cyan,join) +
+      chalk.blue(data.name)
     );
     Data.target.push(data);
   } else if (type === "chq") {
+    Rem[2]--;
     console.log(
-      chalk.blue.bold(stL)+'|'+chalk.magenta.bold(stT)+'|'+chalk.cyan.bold(stC),
+      chalk.dim(stL)+'|'+chalk.dim(stT)+'|'+chalk.cyan(stC),
       chalk.dim(">"),
-      pad("Cheque", 8, chalk.cyan.bold,join) +
-      pad("Nbr of Weeks : " + data.data.length, 36, chalk.yellow.bold,join) +
-      pad(data.id, 8, chalk.magenta.bold,join) +
-      pad(data.pass, 6, chalk.cyan.bold,join) +
-      chalk.blue.bold(data.name)
+      pad("Cheque", 8, chalk.cyan,join) +
+      pad("Nbr of Weeks : " + data.data.length, 36, chalk.yellow,join) +
+      pad(data.id, 8, chalk.magenta,join) +
+      pad(data.pass, 6, chalk.cyan,join) +
+      chalk.blue(data.name)
     );
     Data.cheque.push(data);
-  } else {
+  } else if (type === "ret") {
+    console.log(
+      chalk.dim(stL)+'|'+chalk.dim(stT)+'|'+chalk.red(stC),
+      chalk.dim(">"),
+      pad("Retry Left: " + ret, 44, chalk.red,join) +
+      pad(data.id, 8, chalk.magenta,join) +
+      pad(data.pass, 6, chalk.cyan,join) +
+      chalk.blue(data.name)
+    );
+  } 
+
+  else {
     console.log("Invalid type");
   }
   Bun.write(
@@ -99,7 +114,7 @@ async function login(page: any, id: string, pass: string) {
   return;
 }
 
-async function level(page: any, name: string, id: string, pass: string,tL:number,tT:number,tC:number) {
+async function level(page: any, name: string, id: string, pass: string) {
   await page.evaluate(
     (LevelURL: string) => window.open(LevelURL, "_self"),
     env.LevelURL
@@ -131,10 +146,10 @@ async function level(page: any, name: string, id: string, pass: string,tL:number
     level: level,
     sao: pendingSAO,
     sgo: pendingSGO,
-  },tL--,tT,tC);
+  });
 }
 
-async function target(page: any, name: string, id: string, pass: string,tL:number,tT:number,tC:number) {
+async function target(page: any, name: string, id: string, pass: string) {
   const pending = new PendingXHR(page);
   await page.evaluate(
     (TargetURL: string) => window.open(TargetURL, "_self"),
@@ -154,7 +169,7 @@ async function target(page: any, name: string, id: string, pass: string,tL:numbe
       level: "No DS",
       sao: "-",
       sgo: "-",
-    },tL,tT--,tC);
+    });
     // await page.screenshot({ path: "../ScreenShot/" + id + ".png", fullPage: 'false' });
     return;
   }
@@ -189,12 +204,11 @@ async function target(page: any, name: string, id: string, pass: string,tL:numbe
     level: level,
     sao: Math.round(pendingSao),
     sgo: Math.round(pendingSgo),
-  },tL,tT--,tC);
+  });
 }
 
-async function cheque(page: any, name: string, id: string, pass: string , tL:number,tT:number,tC:number, retry:number) {
+async function cheque(page: any, name: string, id: string, pass: string) {
   const pending = new PendingXHR(page);
-  try {
     await page.evaluate(() =>
       window.open(
         "https://www.asclepiuswellness.com/userpanel/UserLevelNew.aspx",
@@ -203,14 +217,6 @@ async function cheque(page: any, name: string, id: string, pass: string , tL:num
     );
       await page.waitForNavigation({ waitUntil: "networkidle2" });
       await pending.waitForAllXhrFinished();
-  } catch (e) {
-    if ((e as Error).message.includes("Navigation timeout")) {
-      console.log(chalk.red("Timeout for ID:"), id,"Pass:", pass,"Name:", name,"Status:", retry == 0 ? "Retry Limit Exceeded" : "Retrying...",retry);
-      if (retry == 0) return;
-      await cheque(page, name, id, pass, tL, tT, tC, retry - 1);
-      return
-    }
-  }
   const pad = (nbr: number) => (nbr < 10 ? "0" + nbr : nbr);
   let d = new Date();
   var omb = pad(d.getDate()) + "/" + pad(Number(d.getMonth() == 0 ? "12" : d.getMonth())) + "/" + (d.getMonth() == 0 ? d.getFullYear() - 1 : d.getFullYear());
@@ -250,16 +256,16 @@ async function cheque(page: any, name: string, id: string, pass: string , tL:num
     pass: pass,
     name: name,
     data: data,
-  },tL,tT,tC--);
+  });
 }
 
 async function Mine(
   Team: { [key: string]: string }[],
   func: [string]
 ): Promise<DataType> {
-  let tL = Team.length;
-  let tT = Team.length;
-  let tC = Team.length;
+  Rem[0] = Team.length;
+  Rem[1] = Team.length;
+  Rem[2] = Team.length;
   const cluster = await Cluster.launch({
     // browser Launch Properties
     concurrency: Cluster.CONCURRENCY_CONTEXT, // Incognito Pages gor each Worker
@@ -305,7 +311,7 @@ async function Mine(
             level: "wrong",
             sao: "-",
             sgo: "-",
-          },tL--,tT,tC);
+          });
         if (func.includes("TARGET"))
           handleData("trg", {
             id: id,
@@ -314,7 +320,7 @@ async function Mine(
             level: "wrong",
             sao: "-",
             sgo: "-",
-          },tL,tT--,tC);
+          });
         if (func.includes("CHEQUE"))
           handleData("chq", {
             id: id,
@@ -326,13 +332,30 @@ async function Mine(
               amount: 0
               }
             ]
-          },tL,tT,tC--);
+          });
 
         return;
       }
-      if (func.includes("LEVEL")) await level(page, name, id, pass,tL,tT,tC);
-      if (func.includes("TARGET")) await target(page, name, id, pass,tL,tT,tC);
-      if (func.includes("CHEQUE")) await cheque(page, name, id, pass,tL,tT,tC,Number(env.Retry));
+      if (func.includes("LEVEL")) await level(page, name, id, pass);
+      if (func.includes("TARGET")) await target(page, name, id, pass);
+      try {
+        if (func.includes("CHEQUE")) {
+          let retryCount = Number(env.Retry);
+          while (retryCount > 0) {
+            try {
+              await cheque(page, name, id, pass);
+              break;
+            } catch (e) {
+              if ((e as Error).message.includes("Navigation timeout")) {
+                handleData("ret", { id: id, pass: pass, name: name }, retryCount);
+                retryCount--;
+              } else throw e;
+            }
+          }
+          if (retryCount === 0) 
+            handleData("chq", { id: id,pass: pass,name: name,data : [ {payDate: "-",amount: 0}]});
+        }
+      } catch (e) { throw e}; 
     }
   );
   Team.forEach(async (e) => {
