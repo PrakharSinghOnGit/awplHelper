@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { Levels } from "./helper";
 import type { DataItem , DataType} from "./types";
+import chalk from "chalk";
 
 
 
@@ -342,10 +343,7 @@ async function handleOutput(leaderName: string, Data: DataType) {
   Data.cheque = sortData(Data.cheque);
   const FormattedChequeData = await formatChequeData(Data.cheque);
   await save(leaderName, makeHTML(leaderName, Data.level, Data.target, FormattedChequeData));
-  console.log(
-    "Output HTML saved to",
-    Bun.pathToFileURL(path.join(__dirname, "../out", leaderName + ".html")).href
-  );
+  console.log(chalk.yellowBright.bold("Output HTML SAVED AT: "), chalk.green.bold.underline(path.join(__dirname, `../out/${leaderName}.html`)));
 }
 
 export { getTeamList, getTeam, handleOutput };

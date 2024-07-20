@@ -1,5 +1,11 @@
+import chalk from "chalk";
 import type { DataItem } from "./types";
-
+import cliWidth from "cli-width";
+import child_process from "child_process";
+const { MultiSelect } = require("enquirer");
+import { handleOutput } from "./handleData";
+import path from "path";
+import fs from "fs";
 
 const Levels = [
   "Fresher",
@@ -22,7 +28,6 @@ const Levels = [
   "Crown Ambassador",
   "Brand Ambassador",
 ];
-
 const TargetSAOs = [
   200,
   800,
@@ -67,19 +72,68 @@ const TargetSGOs = [
 const removeNonAlphaNum = (str: string) => str.replace(/\W/g, "");
 
 const getURL = (id: string, pass: string) =>
-  `https://asclepiuswellness.com/userpanel/uservalidationnew.aspx?memberid=${removeNonAlphaNum(id)}&pwd=${removeNonAlphaNum(pass)}`;
+  `https://asclepiuswellness.com/userpanel/uservalidationnew.aspx?memberid=${removeNonAlphaNum(
+    id
+  )}&pwd=${removeNonAlphaNum(pass)}`;
 
-const pad = (str:String,amt:number,clr:any,join:String) => 
-  (str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str));
+const pad = (str: String, amt: number, clr: any, join: String) =>
+  str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str);
 
-const mergeLvlData = (ChequeData: DataItem[], LevelData : DataItem[]) => {
-    ChequeData.forEach((chequeItem) => {
-      const matchingLevel = LevelData.find((levelItem) => levelItem.id === chequeItem.id);
-      if (matchingLevel) {
-        chequeItem.level = matchingLevel.level;
-      }
-    });
-    return ChequeData;
-}
+const mergeLvlData = (ChequeData: DataItem[], LevelData: DataItem[]) => {
+  ChequeData.forEach((chequeItem) => {
+    const matchingLevel = LevelData.find(
+      (levelItem) => levelItem.id === chequeItem.id
+    );
+    if (matchingLevel) {
+      chequeItem.level = matchingLevel.level;
+    }
+  });
+  return ChequeData;
+};
+const terminate = () => {
+  console.log(chalk.dim("-=".repeat(cliWidth() / 4)));
+};
+const openOUT = () => {
+  console.log(chalk.green("Opening the Output of the AWPL Miner..."));
+  child_process.exec("start out");
+};
+const clear = () => {
+  fs.readdirSync(path.join(__dirname, "../out")).forEach((file) => {
+    fs.unlinkSync(path.join(__dirname, "../out", file));
+  });
+  fs.readdirSync(path.join(__dirname, "../json")).forEach((file) => {
+    fs.unlinkSync(path.join(__dirname, "../json", file));
+  });
+  console.log(chalk.green("Output Cleared..."));
+};
+const print = async () => {
+  let lists = fs
+    .readdirSync(path.join(__dirname, "../json"))
+    .map((file) => file.replace(".json", ""));
 
-export { Levels, TargetSAOs, TargetSGOs, getURL, pad , mergeLvlData };
+  const list = await new MultiSelect({
+    name: "list",
+    message: "SELECT LIST",
+    choices: lists,
+  }).run();
+
+  list.forEach(async (e: string) => {
+    let content = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "../json", e + ".json"), "utf-8")
+    );
+    await handleOutput(e, content);
+  });
+};
+
+export {
+  Levels,
+  TargetSAOs,
+  TargetSGOs,
+  getURL,
+  pad,
+  mergeLvlData,
+  terminate,
+  openOUT,
+  clear,
+  print,
+};

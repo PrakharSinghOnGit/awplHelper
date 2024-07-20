@@ -266,6 +266,9 @@ async function Mine(
   Rem[0] = Team.length;
   Rem[1] = Team.length;
   Rem[2] = Team.length;
+  Data.level = [];
+  Data.target = [];
+  Data.cheque = [];
   const cluster = await Cluster.launch({
     // browser Launch Properties
     concurrency: Cluster.CONCURRENCY_CONTEXT, // Incognito Pages gor each Worker
