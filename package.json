@@ -18,6 +18,7 @@
     "chromium": "^3.0.3",
     "cli-width": "^4.1.0",
     "commander": "^12.1.0",
+    "discord.js": "^14.15.3",
     "enquirer": "^2.4.1",
     "pending-xhr-puppeteer": "^2.3.3",
     "puppeteer-cluster": "^0.24.0",

@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-
 const startTime = Date.now();
 const { MultiSelect } = require("enquirer");
 import { getTeamList, getTeam, handleOutput } from "./functions/handleData";
@@ -10,18 +9,28 @@ import {
   clear,
   openOUT,
   print,
+  getTimeLeft
 } from "./functions/helper";
 import path from "path";
 import chalk from "chalk";
 import { Command } from "commander";
 const program = new Command();
-
+import { env } from "bun";
+import {
+  sendDiscordMessage,
+  getDiscordChannel,
+  client,
+} from "./functions/Discord";
+const channel = await getDiscordChannel(client, env.DiscordChannelID || ""); // Use async function for clarity
+if (!channel) {
+  console.error(`Channel with ID ${env.DiscordChannelID} not found`);
+  process.exit(1);
+}
 const Main = async () => {
   const func = await new MultiSelect({
     name: "function",
     message: "SELECT FUNCTION",
     choices: ["LEVEL", "TARGET", "CHEQUE"],
-    //initial: ["LEVEL", "TARGET", "CHEQUE"]
   }).run();
 
   const team = await new MultiSelect({
@@ -51,18 +60,18 @@ const Main = async () => {
       JSON.stringify(Data, null, 2)
     );
     await handleOutput(name, Data);
+    try {
+      await sendDiscordMessage(
+        channel,
+        "Completed Mine of "+name,
+        path.join(__dirname, "../out/" + name + ".html")
+      );
+    } catch (error) {
+      console.log(chalk.red("!Error sending message or file"));
+    }
   }
-
-  const endTime = Date.now();
-  const timeTaken = endTime - startTime;
-  const hours = Math.floor(timeTaken / 3600000);
-  const minutes = Math.floor((timeTaken % 3600000) / 60000);
-  const seconds = Math.floor((timeTaken % 60000) / 1000);
-  const milliseconds = timeTaken % 1000;
-  console.log(
-    chalk.bold("Time Taken:"),
-    chalk.yellow.bold(`${hours}h ${minutes}m ${seconds}s ${milliseconds}ms`)
-  );
+  console.log(chalk.green("Mining Completed..."));
+  console.log(chalk.green("Time Taken:"), getTimeLeft(startTime));
 };
 
 program
@@ -70,10 +79,7 @@ program
   .version("0.0.1")
   .description("A simple CLI for managing AWPL automation project");
 
-program
-.command("start")
-.description("Start the AWPL Miner")
-.action(Main);
+program.command("start").description("Start the AWPL Miner").action(Main);
 
 program
   .command("print")

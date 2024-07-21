@@ -125,6 +125,17 @@ const print = async () => {
   });
 };
 
+function getTimeLeft(startTime: number) {
+  const endTime = Date.now();
+  const timeTaken = endTime - startTime;
+  const hours = Math.floor(timeTaken / 3600000);
+  const minutes = Math.floor((timeTaken % 3600000) / 60000);
+  const seconds = Math.floor((timeTaken % 60000) / 1000);
+  const milliseconds = timeTaken % 1000;
+  return `${hours}h ${minutes}m ${seconds}s ${milliseconds}ms`;
+}
+
+
 export {
   Levels,
   TargetSAOs,
@@ -136,4 +147,5 @@ export {
   openOUT,
   clear,
   print,
+  getTimeLeft
 };
