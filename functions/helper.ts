@@ -163,10 +163,11 @@ function csvToJson(csv: string) {
   let headers = lines[0].split(",");
   let result = [];
   for (let i = 1; i < lines.length; i++) {
+    if(lines[i].toString().startsWith('!')) continue;
     let obj: { [key: string]: string } = {};
     let currentline = lines[i].split(",");
     for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = currentline[j];
+      obj[headers[j]] = currentline[j].toUpperCase().trim();
     }
     result.push(obj);
   }

@@ -29,7 +29,7 @@ console.log(env.DiscordChannelID);
 const Main = async () => {
   const func = await askFunc();
   const team = await askTeam();
-  if(await askDiscord()) client.login(env.DiscordToken);
+  // if(await askDiscord()) client.login(env.DiscordToken);
   for (let i = 0; i < team.length; i++) {
     const localTime = Date.now();
     const name = team[i];
