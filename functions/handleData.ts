@@ -1,41 +1,7 @@
-import fs from "fs";
 import path from "path";
 import { Levels } from "./helper";
 import type { DataItem , DataType} from "./types";
 import chalk from "chalk";
-
-
-
-
-function getTeamList() {
-  let list = fs
-    .readdirSync(path.join(__dirname, "../data"))
-    .map((file) => file.replace(".csv", ""));
-  return list;
-}
-
-function getTeam(team: string) {
-  let data = fs.readFileSync(
-    path.join(__dirname, "../data", `${team}.csv`),
-    "utf-8"
-  );
-  return csvToJson(data);
-}
-
-function csvToJson(csv: string) {
-  let lines = csv.replaceAll("\r", "").split("\n");
-  let headers = lines[0].split(",");
-  let result = [];
-  for (let i = 1; i < lines.length; i++) {
-    let obj: { [key: string]: string } = {};
-    let currentline = lines[i].split(",");
-    for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = currentline[j];
-    }
-    result.push(obj);
-  }
-  return result;
-}
 
 function makeHTML(
   leaderName: String,
@@ -346,4 +312,4 @@ async function handleOutput(leaderName: string, Data: DataType) {
   console.log(chalk.yellowBright.bold("Output HTML SAVED AT: "), chalk.green.bold.underline(path.join(__dirname, `../out/${leaderName}.html`)));
 }
 
-export { getTeamList, getTeam, handleOutput };
+export { handleOutput };

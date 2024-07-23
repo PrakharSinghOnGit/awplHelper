@@ -1,45 +1,37 @@
 #!/usr/bin/env bun
 const startTime = Date.now();
-const { MultiSelect } = require("enquirer");
-import { getTeamList, getTeam, handleOutput } from "./functions/handleData";
+import { handleOutput } from "./functions/handleData";
 import { Mine } from "./functions/miner";
+import path from "path";
+import chalk from "chalk";
+import { Command } from "commander";
+const program = new Command();
+const env = Bun.env;
+import { resumeMine } from "./functions/resumeMine";
 import {
   mergeLvlData,
   terminate,
   clear,
   openOUT,
   print,
-  getTimeLeft
+  getTimeLeft,
+  askTeam,
+  askFunc,
+  getTeam,
+  askDiscord,
 } from "./functions/helper";
-import path from "path";
-import chalk from "chalk";
-import { Command } from "commander";
-const program = new Command();
-import { env } from "bun";
 import {
   sendDiscordMessage,
-  getDiscordChannel,
   client,
 } from "./functions/Discord";
-const channel = await getDiscordChannel(client, env.DiscordChannelID || ""); // Use async function for clarity
-if (!channel) {
-  console.error(`Channel with ID ${env.DiscordChannelID} not found`);
-  process.exit(1);
-}
+
+console.log(env.DiscordChannelID);
 const Main = async () => {
-  const func = await new MultiSelect({
-    name: "function",
-    message: "SELECT FUNCTION",
-    choices: ["LEVEL", "TARGET", "CHEQUE"],
-  }).run();
-
-  const team = await new MultiSelect({
-    name: "team",
-    message: "SELECT TEAM",
-    choices: getTeamList(),
-  }).run();
-
+  const func = await askFunc();
+  const team = await askTeam();
+  if(await askDiscord()) client.login(env.DiscordToken);
   for (let i = 0; i < team.length; i++) {
+    const localTime = Date.now();
     const name = team[i];
     const teamData = getTeam(name);
     terminate();
@@ -62,8 +54,9 @@ const Main = async () => {
     await handleOutput(name, Data);
     try {
       await sendDiscordMessage(
-        channel,
-        "Completed Mine of "+name,
+        `Completed Mine of ${name}
+        Time Taken: ${getTimeLeft(localTime)}
+        `,
         path.join(__dirname, "../out/" + name + ".html")
       );
     } catch (error) {
@@ -95,5 +88,10 @@ program
   .command("out")
   .description("Opens the Output of the AWPL Miner")
   .action(openOUT);
+
+program
+  .command("resume")
+  .description("Resume the AWPL Miner")
+  .action(resumeMine);
 
 program.parse(process.argv);

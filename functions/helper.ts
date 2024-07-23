@@ -68,17 +68,15 @@ const TargetSGOs = [
   24574600,
   49150600,
 ];
-
 const removeNonAlphaNum = (str: string) => str.replace(/\W/g, "");
-
-const getURL = (id: string, pass: string) =>
-  `https://asclepiuswellness.com/userpanel/uservalidationnew.aspx?memberid=${removeNonAlphaNum(
+const getURL = (id: string, pass: string):string => {
+  return `https://asclepiuswellness.com/userpanel/uservalidationnew.aspx?memberid=${removeNonAlphaNum(
     id
   )}&pwd=${removeNonAlphaNum(pass)}`;
-
-const pad = (str: String, amt: number, clr: any, join: String) =>
-  str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str);
-
+}
+const pad = (str: String, amt: number, clr: any, join: String):string => {
+  return str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str);
+}
 const mergeLvlData = (ChequeData: DataItem[], LevelData: DataItem[]) => {
   ChequeData.forEach((chequeItem) => {
     const matchingLevel = LevelData.find(
@@ -106,7 +104,7 @@ const clear = () => {
   });
   console.log(chalk.green("Output Cleared..."));
 };
-const print = async () => {
+async function print() {
   let lists = fs
     .readdirSync(path.join(__dirname, "../json"))
     .map((file) => file.replace(".json", ""));
@@ -124,7 +122,6 @@ const print = async () => {
     await handleOutput(e, content);
   });
 };
-
 function getTimeLeft(startTime: number) {
   const endTime = Date.now();
   const timeTaken = endTime - startTime;
@@ -134,7 +131,54 @@ function getTimeLeft(startTime: number) {
   const milliseconds = timeTaken % 1000;
   return `${hours}h ${minutes}m ${seconds}s ${milliseconds}ms`;
 }
-
+function askTeam() {
+  return new MultiSelect({
+    name: "team",
+    message: "SELECT TEAM",
+    choices: getTeamList(),
+  }).run();
+}
+function askFunc() {
+  return new MultiSelect({
+    name: "func",
+    message: "SELECT FUNCTION",
+    choices: ["LEVEL", "TARGET", "CHEQUE"],
+  }).run();
+}
+function getTeamList() {
+  let list = fs
+    .readdirSync(path.join(__dirname, "../data"))
+    .map((file) => file.replace(".csv", ""));
+  return list;
+}
+function getTeam(team: string) {
+  let data = fs.readFileSync(
+    path.join(__dirname, "../data", `${team}.csv`),
+    "utf-8"
+  );
+  return csvToJson(data);
+}
+function csvToJson(csv: string) {
+  let lines = csv.replaceAll("\r", "").split("\n");
+  let headers = lines[0].split(",");
+  let result = [];
+  for (let i = 1; i < lines.length; i++) {
+    let obj: { [key: string]: string } = {};
+    let currentline = lines[i].split(",");
+    for (let j = 0; j < headers.length; j++) {
+      obj[headers[j]] = currentline[j];
+    }
+    result.push(obj);
+  }
+  return result;
+}
+function askDiscord() {
+  return new MultiSelect({
+    name: "discord",
+    message: "SEND TO DISCORD?",
+    choices: ["YES", "NO"],
+  }).run();
+}
 
 export {
   Levels,
@@ -147,5 +191,10 @@ export {
   openOUT,
   clear,
   print,
-  getTimeLeft
+  getTimeLeft,
+  askTeam,
+  askFunc,
+  getTeamList,
+  getTeam,
+  askDiscord,
 };
