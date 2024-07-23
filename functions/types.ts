@@ -2,7 +2,7 @@ type DataItem = {
     id: string;
     name: string;
     level: string;
-    pass?: string;
+    pass: string;
     sao?: number;
     sgo?: number;
     data?: any;

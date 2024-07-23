@@ -1,7 +1,6 @@
 import { Client, GatewayIntentBits, TextChannel } from 'discord.js';
 import chalk from 'chalk';
 
-
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,

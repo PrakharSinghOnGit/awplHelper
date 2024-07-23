@@ -25,7 +25,6 @@ import {
   client,
 } from "./functions/Discord";
 
-console.log(env.DiscordChannelID);
 const Main = async () => {
   const func = await askFunc();
   const team = await askTeam();

@@ -1,8 +1,8 @@
 import chalk from "chalk";
-import type { DataItem } from "./types";
+import type { DataItem,data } from "./types";
 import cliWidth from "cli-width";
 import child_process from "child_process";
-const { MultiSelect } = require("enquirer");
+const { MultiSelect, Confirm  } = require("enquirer");
 import { handleOutput } from "./handleData";
 import path from "path";
 import fs from "fs";
@@ -158,26 +158,32 @@ function getTeam(team: string) {
   );
   return csvToJson(data);
 }
-function csvToJson(csv: string) {
+function csvToJson(csv: string) :data[] {
   let lines = csv.replaceAll("\r", "").split("\n");
   let headers = lines[0].split(",");
-  let result = [];
+  let result: data[] = [];
   for (let i = 1; i < lines.length; i++) {
     if(lines[i].toString().startsWith('!')) continue;
-    let obj: { [key: string]: string } = {};
+    let obj: data = { id: "", pass: "", name: "" };
     let currentline = lines[i].split(",");
     for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = currentline[j].toUpperCase().trim();
+      obj[headers[j] as keyof data] = currentline[j].toUpperCase().trim();
     }
     result.push(obj);
   }
   return result;
 }
-function askDiscord() {
-  return new MultiSelect({
-    name: "discord",
-    message: "SEND TO DISCORD?",
-    choices: ["YES", "NO"],
+async function askDiscord() {
+  return await new Confirm({
+    name: 'question',
+    message: 'Send Output via Discord?'
+  }).run();
+}
+
+async function askRetryWrong():Promise<boolean> {
+  return await new Confirm({
+    name: 'question',
+    message: 'retry wrong passwords?'
   }).run();
 }
 
@@ -198,4 +204,5 @@ export {
   getTeamList,
   getTeam,
   askDiscord,
+  askRetryWrong,
 };
