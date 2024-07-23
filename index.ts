@@ -43,7 +43,7 @@ const Main = async () => {
       chalk.green.bold(teamData.length)
     );
     terminate();
-    const Data = await Mine(teamData, func);
+    const Data = await Mine(teamData, func, name);
     if (func.includes("CHEQUE")) {
       Data.cheque = mergeLvlData(Data.cheque, Data.level);
     }

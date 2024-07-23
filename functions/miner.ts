@@ -17,6 +17,7 @@ const Data: DataType = {
   target: [],
   cheque: [],
 };
+let LEADER_NAME:string;
 
 process.on("SIGINT", () => {
   console.log("Process Ended by User");
@@ -39,7 +40,7 @@ async function verify(id: string, pass: string) {
 }
 
 type AllowedType = "lvl" | "trg" | "chq" | "ret";
-async function handleData(type: AllowedType, data: any, ret?: number) {
+async function handleData(type: AllowedType, data: any, ret?: number ) {
   let join = chalk.dim('.');
   let stL = (Rem[0]<10) ? '0'+Rem[0] : Rem[0];
   let stT = (Rem[1]<10) ? '0'+Rem[1] : Rem[1];
@@ -93,13 +94,11 @@ async function handleData(type: AllowedType, data: any, ret?: number) {
       pad(data.pass, 6, chalk.cyan,join) +
       chalk.blue(data.name)
     );
-  } 
-
-  else {
+  } else {
     console.log("Invalid type");
   }
   Bun.write(
-    path.join(__dirname, "../json", "temp.json"),
+    path.join(__dirname, "../json", LEADER_NAME + ".json"),
     JSON.stringify(Data, null, 2)
   );
 }
@@ -261,7 +260,8 @@ async function cheque(page: any, name: string, id: string, pass: string) {
 
 async function Mine(
   Team: { [key: string]: string }[],
-  func: [string]
+  func: [string],
+  leaderName: string
 ): Promise<DataType> {
   Rem[0] = Team.length;
   Rem[1] = Team.length;
@@ -269,6 +269,7 @@ async function Mine(
   Data.level = [];
   Data.target = [];
   Data.cheque = [];
+  LEADER_NAME = leaderName;
   const cluster = await Cluster.launch({
     // browser Launch Properties
     concurrency: Cluster.CONCURRENCY_CONTEXT, // Incognito Pages gor each Worker
