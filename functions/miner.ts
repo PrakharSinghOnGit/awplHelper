@@ -259,7 +259,7 @@ async function cheque(page: any, name: string, id: string, pass: string) {
 }
 
 async function Mine(
-  Team: { [key: string]: string }[],
+  Team: data[],
   func: [string],
   leaderName: string
 ): Promise<DataType> {
