@@ -28,7 +28,7 @@ import {
 const Main = async () => {
   const func = await askFunc();
   const team = await askTeam();
-  // if(await askDiscord()) client.login(env.DiscordToken);
+  if(await askDiscord()) client.login(env.DiscordToken);
   for (let i = 0; i < team.length; i++) {
     const localTime = Date.now();
     const name = team[i];
@@ -56,7 +56,7 @@ const Main = async () => {
         `Completed Mine of ${name}
         Time Taken: ${getTimeLeft(localTime)}
         `,
-        path.join(__dirname, "../out/" + name + ".html")
+        path.join(__dirname, "./out/" + name + ".html")
       );
     } catch (error) {
       console.log(chalk.red("!Error sending message or file"));

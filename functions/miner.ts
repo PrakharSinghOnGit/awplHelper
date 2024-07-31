@@ -340,8 +340,38 @@ async function Mine(
 
         return;
       }
-      if (func.includes("LEVEL")) await level(page, name, id, pass);
-      if (func.includes("TARGET")) await target(page, name, id, pass);
+      if (func.includes("LEVEL")) {
+        let retryCount = Number(env.Retry);
+        while (retryCount > 0) {
+          try {
+        await level(page, name, id, pass);
+        break;
+          } catch (e) {
+        if ((e as Error).message.includes("Navigation timeout")) {
+          handleData("ret", { id: id, pass: pass, name: name }, retryCount);
+          retryCount--;
+        } else throw e;
+          }
+        }
+        if (retryCount === 0) 
+          handleData("lvl", { id: id, pass: pass, name: name, level: "retry" });
+      }
+      if (func.includes("TARGET")) {
+        let retryCount = Number(env.Retry);
+        while (retryCount > 0) {
+          try {
+        await target(page, name, id, pass);
+        break;
+          } catch (e) {
+        if ((e as Error).message.includes("Navigation timeout")) {
+          handleData("ret", { id: id, pass: pass, name: name }, retryCount);
+          retryCount--;
+        } else throw e;
+          }
+        }
+        if (retryCount === 0) 
+          handleData("trg", { id: id, pass: pass, name: name, level: "retry" });
+      }
       try {
         if (func.includes("CHEQUE")) {
           let retryCount = Number(env.Retry);

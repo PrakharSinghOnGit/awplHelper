@@ -70,20 +70,20 @@ async function resumeMine() {
     );
     const missingItems = findMissingData(prevData, teamData, includeWrong);
     console.log("Missing items:", missingItems);
-    const newData = await Mine(missingItems, func, name);
-    const Data:DataType = {
-      level: prevData.level.concat(newData.level),
-      target: prevData.target.concat(newData.target),
-      cheque: prevData.cheque.concat(newData.cheque),
-    };
-    if (func.includes("CHEQUE")) {
-      Data.cheque = mergeLvlData(Data.cheque, Data.level);
-    }
-    Bun.write(
-      path.join(__dirname, "json", name + ".json"),
-      JSON.stringify(Data, null, 2)
-    );
-    await handleOutput(name, Data);
+    // const newData = await Mine(missingItems, func, name);
+    // const Data:DataType = {
+    //   level: prevData.level.concat(newData.level),
+    //   target: prevData.target.concat(newData.target),
+    //   cheque: prevData.cheque.concat(newData.cheque),
+    // };
+    // if (func.includes("CHEQUE")) {
+    //   Data.cheque = mergeLvlData(Data.cheque, Data.level);
+    // }
+    // Bun.write(
+    //   path.join(__dirname, "json", name + ".json"),
+    //   JSON.stringify(Data, null, 2)
+    // );
+    // await handleOutput(name, Data);
   }
 }
 
