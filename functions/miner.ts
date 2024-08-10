@@ -235,13 +235,13 @@ async function cheque(page: any, name: string, id: string, pass: string) {
         let pdt = document.querySelector(
           "#ctl00_ContentPlaceHolder1_gvIncome > tbody > tr:nth-child(" +
             i +
-            ") > td:nth-child(24)"
+            ") > td:nth-child(25)"
         )?.textContent;
         let amt = Number(
           document.querySelector(
             "#ctl00_ContentPlaceHolder1_gvIncome > tbody > tr:nth-child(" +
               i +
-              ") > td:nth-child(26)"
+              ") > td:nth-child(27)"
           )?.textContent
         );
         data.push({ payDate: pdt?.substring(0, pdt.length - 5), amount: amt });
