@@ -1,6 +1,6 @@
 import path from "path";
 import { Levels } from "./helper";
-import type { DataItem , DataType} from "./types";
+import type { DataItem, DataType } from "./types";
 import chalk from "chalk";
 
 function makeHTML(
@@ -33,16 +33,21 @@ function makeHTML(
   });
 
   const dates = new Set();
-  let chequeHeader = '';
-  chequeData.forEach(item => {
-    Object.keys(item.data).forEach(date => dates.add(date));
+  let chequeHeader = "";
+  chequeData.forEach((item) => {
+    Object.keys(item.data).forEach((date) => dates.add(date));
   });
-  dates.forEach(date => chequeHeader += `<th>${date}</th>`);
+  dates.forEach((date) => (chequeHeader += `<th>${date}</th>`));
 
   chequeData.forEach((item, index) => {
-      let chequeBodyData = '';
-      dates.forEach(date => chequeBodyData += `<td style="color:var(--${item.data[date as string] ? 'g' : 'r'})">${item.data[date as string] || 0}</td>`);
-      ChequeHtmlTable += `<tr>
+    let chequeBodyData = "";
+    dates.forEach(
+      (date) =>
+        (chequeBodyData += `<td style="color:var(--${
+          item.data[date as string] ? "g" : "r"
+        })">${item.data[date as string] || 0}</td>`)
+    );
+    ChequeHtmlTable += `<tr>
       <td>${index + 1}</td>
       <td>${item.name}</td>
       <td>${item.level}</td>
@@ -266,10 +271,10 @@ function makeHTML(
 }
 
 async function formatChequeData(chequeData: DataItem[]) {
-  return chequeData.map(item => {
-    let formattedData:any = {};
-    item.data.forEach((entry:any) => {
-      if (entry.payDate !== '-') {
+  return chequeData.map((item) => {
+    let formattedData: any = {};
+    item.data.forEach((entry: any) => {
+      if (entry.payDate !== "-") {
         formattedData[entry.payDate] = entry.amount;
       }
     });
@@ -278,25 +283,32 @@ async function formatChequeData(chequeData: DataItem[]) {
       pass: item.pass,
       name: item.name,
       level: item.level,
-      data: formattedData
+      data: formattedData,
     };
   });
 }
 
 function sortData(data: DataItem[]) {
   const sortedData = [];
-  const uniqueLevels = [...new Set(Levels)]; // Remove duplicates from Levels array
-  uniqueLevels.unshift("No DS");
-  uniqueLevels.unshift("wrong");
-  for (let i = 0; i < uniqueLevels.length; i++) {
+  Levels.unshift("No DS");
+  Levels.unshift("wrong");
+  for (let i = 0; i < Levels.length; i++) {
     for (let j = 0; j < data.length; j++) {
-      if (data[j].level === uniqueLevels[i]) {
+      if (data[j].level.toUpperCase() === Levels[i].toUpperCase()) {
         sortedData.push(data[j]);
       }
     }
   }
-  sortedData.reverse();
-  return sortedData;
+  // remove duplicates from sortedData
+  const unique = new Set();
+  const filtered = sortedData.filter((item) => {
+    if (unique.has(item.name)) {
+      return false;
+    }
+    unique.add(item.name);
+    return true;
+  });
+  return filtered.reverse();
 }
 
 async function save(leaderName: String, html: string) {
@@ -308,8 +320,16 @@ async function handleOutput(leaderName: string, Data: DataType) {
   Data.target = sortData(Data.target);
   Data.cheque = sortData(Data.cheque);
   const FormattedChequeData = await formatChequeData(Data.cheque);
-  await save(leaderName, makeHTML(leaderName, Data.level, Data.target, FormattedChequeData));
-  console.log(chalk.yellowBright.bold("Output HTML SAVED AT: "), chalk.green.bold.underline(path.join(__dirname, `../out/${leaderName}.html`)));
+  await save(
+    leaderName,
+    makeHTML(leaderName, Data.level, Data.target, FormattedChequeData)
+  );
+  console.log(
+    chalk.yellowBright.bold("Output HTML SAVED AT: "),
+    chalk.green.bold.underline(
+      path.join(__dirname, `../out/${leaderName}.html`)
+    )
+  );
 }
 
 export { handleOutput };

@@ -1,8 +1,8 @@
 import chalk from "chalk";
-import type { DataItem,data } from "./types";
+import type { DataItem, data } from "./types";
 import cliWidth from "cli-width";
 import child_process from "child_process";
-const { MultiSelect, Confirm  } = require("enquirer");
+const { MultiSelect, Confirm } = require("enquirer");
 import { handleOutput } from "./handleData";
 import path from "path";
 import fs from "fs";
@@ -69,14 +69,14 @@ const TargetSGOs = [
   49150600,
 ];
 const removeNonAlphaNum = (str: string) => str.replace(/\W/g, "");
-const getURL = (id: string, pass: string):string => {
+const getURL = (id: string, pass: string): string => {
   return `https://asclepiuswellness.com/userpanel/uservalidationnew.aspx?memberid=${removeNonAlphaNum(
     id
   )}&pwd=${removeNonAlphaNum(pass)}`;
-}
-const pad = (str: String, amt: number, clr: any, join: String):string => {
+};
+const pad = (str: String, amt: number, clr: any, join: String): string => {
   return str.length < amt ? clr(str) + join.repeat(amt - str.length) : clr(str);
-}
+};
 const mergeLvlData = (ChequeData: DataItem[], LevelData: DataItem[]) => {
   ChequeData.forEach((chequeItem) => {
     const matchingLevel = LevelData.find(
@@ -121,7 +121,7 @@ async function print() {
     );
     await handleOutput(e, content);
   });
-};
+}
 function getTimeLeft(startTime: number) {
   const endTime = Date.now();
   const timeTaken = endTime - startTime;
@@ -158,12 +158,12 @@ function getTeam(team: string) {
   );
   return csvToJson(data);
 }
-function csvToJson(csv: string) :data[] {
+function csvToJson(csv: string): data[] {
   let lines = csv.replaceAll("\r", "").split("\n");
   let headers = lines[0].split(",");
   let result: data[] = [];
   for (let i = 1; i < lines.length; i++) {
-    if(lines[i].toString().startsWith('!')) continue;
+    if (lines[i].toString().startsWith("!")) continue;
     let obj: data = { id: "", pass: "", name: "" };
     let currentline = lines[i].split(",");
     for (let j = 0; j < headers.length; j++) {
@@ -175,15 +175,15 @@ function csvToJson(csv: string) :data[] {
 }
 async function askDiscord() {
   return await new Confirm({
-    name: 'question',
-    message: 'Send Output via Discord?'
+    name: "question",
+    message: "Send Output via Discord?",
   }).run();
 }
 
-async function askRetryWrong():Promise<boolean> {
+async function askRetryWrong(): Promise<boolean> {
   return await new Confirm({
-    name: 'question',
-    message: 'retry wrong passwords?'
+    name: "question",
+    message: "retry wrong passwords?",
   }).run();
 }
 

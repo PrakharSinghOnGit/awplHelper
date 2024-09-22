@@ -1,0 +1,462 @@
+{
+  "level": [
+    {
+      "id": "2958C53",
+      "pass": "1300",
+      "name": "SUNEEL DATT",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "A7C6E31",
+      "pass": "2482",
+      "name": "BALVINDER SINGH",
+      "level": "Ruby Star",
+      "sao": 45645,
+      "sgo": 0
+    },
+    {
+      "id": "2EC39A2",
+      "pass": "8877",
+      "name": "DHARAMPAL",
+      "level": "Topaz",
+      "sao": 7431,
+      "sgo": 9639
+    },
+    {
+      "id": "E421134",
+      "pass": "8310",
+      "name": "MOHAN ROY",
+      "level": "Gold",
+      "sao": 0,
+      "sgo": 1197
+    },
+    {
+      "id": "8E6D5B9",
+      "pass": "1999",
+      "name": "ANITA MODI",
+      "level": "Sapphire",
+      "sao": 15179,
+      "sgo": 0
+    },
+    {
+      "id": "2BE40B3",
+      "pass": "1652",
+      "name": "DASRATH SINGH",
+      "level": "Emerald",
+      "sao": 4144,
+      "sgo": 0
+    },
+    {
+      "id": "2187C96",
+      "pass": "1506",
+      "name": "JAGAT SINGH",
+      "level": "Ruby Star",
+      "sao": 0,
+      "sgo": 8943
+    },
+    {
+      "id": "96FF643",
+      "pass": "2482",
+      "name": "ANJU",
+      "level": "Ruby Star",
+      "sao": 0,
+      "sgo": 9209
+    },
+    {
+      "id": "8200FBD",
+      "pass": "2014",
+      "name": "HITESH JOSHI",
+      "level": "Topaz",
+      "sao": 19704,
+      "sgo": 5554
+    },
+    {
+      "id": "3719220",
+      "pass": "2031",
+      "name": "DEEPA RAWAT",
+      "level": "Topaz",
+      "sao": 21191,
+      "sgo": 9676
+    },
+    {
+      "id": "BC392CB",
+      "pass": "2019",
+      "name": "MUKESH SANGELA",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "466CAE6",
+      "pass": "1168",
+      "name": "MANMOHAN SINGH",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "8A1869E",
+      "pass": "5050",
+      "name": "SHUBHAM BUDAKOTI",
+      "level": "Emerald",
+      "sao": 7444,
+      "sgo": 4836
+    },
+    {
+      "id": "E914CC7",
+      "pass": "7018",
+      "name": "SHANKER SINGH",
+      "level": "Ruby Star",
+      "sao": 20952,
+      "sgo": 0
+    },
+    {
+      "id": "BB6D6E0",
+      "pass": "4305",
+      "name": "AMJAD KHAN",
+      "level": "Platinum",
+      "sao": 4582,
+      "sgo": 224
+    },
+    {
+      "id": "EEB9B29",
+      "pass": "2773",
+      "name": "MEHMUD KHAN",
+      "level": "Topaz",
+      "sao": 17395,
+      "sgo": 0
+    }
+  ],
+  "target": [
+    {
+      "id": "8E6D5B9",
+      "pass": "1999",
+      "name": "ANITA MODI",
+      "level": "13000",
+      "sao": 11470,
+      "sgo": 11368
+    },
+    {
+      "id": "2EC39A2",
+      "pass": "8877",
+      "name": "DHARAMPAL",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "A7C6E31",
+      "pass": "2482",
+      "name": "BALVINDER SINGH",
+      "level": "6500",
+      "sao": 6490,
+      "sgo": 6222
+    },
+    {
+      "id": "2958C53",
+      "pass": "1300",
+      "name": "SUNEEL DATT",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "E421134",
+      "pass": "8310",
+      "name": "MOHAN ROY",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "2187C96",
+      "pass": "1506",
+      "name": "JAGAT SINGH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "8200FBD",
+      "pass": "2014",
+      "name": "HITESH JOSHI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "2BE40B3",
+      "pass": "1652",
+      "name": "DASRATH SINGH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "96FF643",
+      "pass": "2482",
+      "name": "ANJU",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "3719220",
+      "pass": "2031",
+      "name": "DEEPA RAWAT",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "BC392CB",
+      "pass": "2019",
+      "name": "MUKESH SANGELA",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "466CAE6",
+      "pass": "1168",
+      "name": "MANMOHAN SINGH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "BB6D6E0",
+      "pass": "4305",
+      "name": "AMJAD KHAN",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "E914CC7",
+      "pass": "7018",
+      "name": "SHANKER SINGH",
+      "level": "6500",
+      "sao": 5171,
+      "sgo": 6197
+    },
+    {
+      "id": "8A1869E",
+      "pass": "5050",
+      "name": "SHUBHAM BUDAKOTI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "EEB9B29",
+      "pass": "2773",
+      "name": "MEHMUD KHAN",
+      "level": "4200",
+      "sao": 3473,
+      "sgo": 3397
+    }
+  ],
+  "cheque": [
+    {
+      "id": "2EC39A2",
+      "pass": "8877",
+      "name": "DHARAMPAL",
+      "data": [
+        {
+          "payDate": "24/08",
+          "amount": 475
+        }
+      ],
+      "level": "Topaz"
+    },
+    {
+      "id": "2958C53",
+      "pass": "1300",
+      "name": "SUNEEL DATT",
+      "data": [],
+      "level": "Fresher"
+    },
+    {
+      "id": "A7C6E31",
+      "pass": "2482",
+      "name": "BALVINDER SINGH",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 475
+        },
+        {
+          "payDate": "17/08",
+          "amount": 950
+        },
+        {
+          "payDate": "09/08",
+          "amount": 950
+        }
+      ],
+      "level": "Ruby Star"
+    },
+    {
+      "id": "E421134",
+      "pass": "8310",
+      "name": "MOHAN ROY",
+      "data": [],
+      "level": "Gold"
+    },
+    {
+      "id": "8E6D5B9",
+      "pass": "1999",
+      "name": "ANITA MODI",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 15675
+        },
+        {
+          "payDate": "17/08",
+          "amount": 4275
+        },
+        {
+          "payDate": "09/08",
+          "amount": 7125
+        }
+      ],
+      "level": "Sapphire"
+    },
+    {
+      "id": "2BE40B3",
+      "pass": "1652",
+      "name": "DASRATH SINGH",
+      "data": [
+        {
+          "payDate": "24/08",
+          "amount": 475
+        },
+        {
+          "payDate": "17/08",
+          "amount": 475
+        }
+      ],
+      "level": "Emerald"
+    },
+    {
+      "id": "96FF643",
+      "pass": "2482",
+      "name": "ANJU",
+      "data": [],
+      "level": "Ruby Star"
+    },
+    {
+      "id": "3719220",
+      "pass": "2031",
+      "name": "DEEPA RAWAT",
+      "data": [],
+      "level": "Topaz"
+    },
+    {
+      "id": "8200FBD",
+      "pass": "2014",
+      "name": "HITESH JOSHI",
+      "data": [],
+      "level": "Topaz"
+    },
+    {
+      "id": "BC392CB",
+      "pass": "2019",
+      "name": "MUKESH SANGELA",
+      "level": "wrong",
+      "data": [
+        {
+          "payDate": "-",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "id": "466CAE6",
+      "pass": "1168",
+      "name": "MANMOHAN SINGH",
+      "data": [],
+      "level": "Fresher"
+    },
+    {
+      "id": "8A1869E",
+      "pass": "5050",
+      "name": "SHUBHAM BUDAKOTI",
+      "data": [
+        {
+          "payDate": "17/08",
+          "amount": 950
+        },
+        {
+          "payDate": "09/08",
+          "amount": 1425
+        }
+      ],
+      "level": "Emerald"
+    },
+    {
+      "id": "E914CC7",
+      "pass": "7018",
+      "name": "SHANKER SINGH",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 12350
+        },
+        {
+          "payDate": "09/08",
+          "amount": 2850
+        }
+      ],
+      "level": "Ruby Star"
+    },
+    {
+      "id": "BB6D6E0",
+      "pass": "4305",
+      "name": "AMJAD KHAN",
+      "data": [
+        {
+          "payDate": "31/07",
+          "amount": 19000
+        }
+      ],
+      "level": "Platinum"
+    },
+    {
+      "id": "2187C96",
+      "pass": "1506",
+      "name": "JAGAT SINGH",
+      "data": [
+        {
+          "payDate": "09/08",
+          "amount": 1425
+        }
+      ],
+      "level": "Ruby Star"
+    },
+    {
+      "id": "EEB9B29",
+      "pass": "2773",
+      "name": "MEHMUD KHAN",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 7125
+        },
+        {
+          "payDate": "17/08",
+          "amount": 2850
+        },
+        {
+          "payDate": "01/08",
+          "amount": 950
+        }
+      ],
+      "level": "Topaz"
+    }
+  ]
+}

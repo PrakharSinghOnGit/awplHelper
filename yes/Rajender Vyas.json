@@ -1,0 +1,1007 @@
+{
+  "level": [
+    {
+      "id": "FC5C7BE",
+      "pass": "2020",
+      "name": "ROHAN RAWAT",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "E3EC21",
+      "pass": "5942",
+      "name": "CHANDRA MOHAN",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "4105BBF",
+      "pass": "2020",
+      "name": "PADAMA THAPA",
+      "level": "Topaz",
+      "sao": 17146,
+      "sgo": 0
+    },
+    {
+      "id": "94B422C",
+      "pass": "7048",
+      "name": "BHIM BAHADUR",
+      "level": "Silver",
+      "sao": 0,
+      "sgo": 403
+    },
+    {
+      "id": "7D5763A",
+      "pass": "9840",
+      "name": "MUJKRAJ",
+      "level": "Ruby Star",
+      "sao": 5973,
+      "sgo": 14899
+    },
+    {
+      "id": "12E6905",
+      "pass": "2020",
+      "name": "TULSI DEVI",
+      "level": "Platinum",
+      "sao": 0,
+      "sgo": 360
+    },
+    {
+      "id": "E9BF3A1",
+      "pass": "1704",
+      "name": "MAMTA",
+      "level": "Topaz",
+      "sao": 10822,
+      "sgo": 4867
+    },
+    {
+      "id": "B452B17",
+      "pass": "1534",
+      "name": "BHIM BAHADUR",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "4578147",
+      "pass": "1821",
+      "name": "ANJU SHAHI",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 299
+    },
+    {
+      "id": "CB80358",
+      "pass": "8184",
+      "name": "BRIJMOHAN",
+      "level": "Silver",
+      "sao": 0,
+      "sgo": 535
+    },
+    {
+      "id": "09CF1C7",
+      "pass": "1851",
+      "name": "MEEN BAHADUR",
+      "level": "Platinum",
+      "sao": 0,
+      "sgo": 1045
+    },
+    {
+      "id": "CDB020E",
+      "pass": "1666",
+      "name": "LAXMI SHAHI",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "820E82F",
+      "pass": "1722",
+      "name": "DHAN MAYA",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "51364FB",
+      "pass": "1896",
+      "name": "RENU",
+      "level": "Fresher",
+      "sao": 0,
+      "sgo": 100
+    },
+    {
+      "id": "F11EFE6",
+      "pass": "1414",
+      "name": "MUKTA THAPA",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 195
+    },
+    {
+      "id": "13AB124",
+      "pass": "5456",
+      "name": "NAND JANG",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 240
+    },
+    {
+      "id": "F252EED",
+      "pass": "1187",
+      "name": "ASMITA GURUNG",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 193
+    },
+    {
+      "id": "5FB2139",
+      "pass": "7879",
+      "name": "KALPANA PUN",
+      "level": "Gold",
+      "sao": 0,
+      "sgo": 954
+    },
+    {
+      "id": "A9A218C",
+      "pass": "1681",
+      "name": "BIRENDRA SINGH",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 300
+    },
+    {
+      "id": "E1481BF",
+      "pass": "4409",
+      "name": "RAKESH PANDEY",
+      "level": "Gold",
+      "sao": 730,
+      "sgo": 772
+    },
+    {
+      "id": "69493D0",
+      "pass": "1631",
+      "name": "GEETA RANA",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 118
+    },
+    {
+      "id": "0A20ACB",
+      "pass": "2062",
+      "name": "VIRENDRA THAPA",
+      "level": "Gold",
+      "sao": 2370,
+      "sgo": 519
+    },
+    {
+      "id": "4E90C49",
+      "pass": "2958",
+      "name": "AMITA PANDEY",
+      "level": "Gold",
+      "sao": 2003,
+      "sgo": 1038
+    },
+    {
+      "id": "146BC50",
+      "pass": "3702",
+      "name": "BABITA DEVI",
+      "level": "Silver",
+      "sao": 281,
+      "sgo": 108
+    },
+    {
+      "id": "EC098B6",
+      "pass": "2799",
+      "name": "DEVKALA RANA",
+      "level": "Silver",
+      "sao": 0,
+      "sgo": 299
+    },
+    {
+      "id": "71CBC0D",
+      "pass": "3507",
+      "name": "MANJU THAPA",
+      "level": "Platinum",
+      "sao": 2062,
+      "sgo": 0
+    },
+    {
+      "id": "6215A34",
+      "pass": "4846",
+      "name": "CHANDRA JYOTI",
+      "level": "Silver",
+      "sao": 0,
+      "sgo": 494
+    },
+    {
+      "id": "4EB66B1",
+      "pass": "1763",
+      "name": "BIBINA CHAKMA",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 296
+    },
+    {
+      "id": "3F2038A",
+      "pass": "1411",
+      "name": "BABITA DEVI",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 197
+    },
+    {
+      "id": "748686A",
+      "pass": "6467",
+      "name": "BINISA",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 28
+    },
+    {
+      "id": "F5BE469",
+      "pass": "1250",
+      "name": "BHARAT",
+      "level": "Platinum",
+      "sao": 2936,
+      "sgo": 909
+    },
+    {
+      "id": "A1E4200",
+      "pass": "1015",
+      "name": "SANJU KUMARI",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 190
+    },
+    {
+      "id": "C60F78A",
+      "pass": "2091",
+      "name": "SUPRIYA KUMARI",
+      "level": "Silver",
+      "sao": 0,
+      "sgo": 422
+    },
+    {
+      "id": "1A81CD9",
+      "pass": "1726",
+      "name": "PINTU PRAJAPATI",
+      "level": "Gold",
+      "sao": 0,
+      "sgo": 325
+    },
+    {
+      "id": "8324589",
+      "pass": "2134",
+      "name": "RIMPY DEVI",
+      "level": "Platinum",
+      "sao": 2949,
+      "sgo": 2359
+    },
+    {
+      "id": "D21F204",
+      "pass": "3143",
+      "name": "KIRAN",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "50F1191",
+      "pass": "1810",
+      "name": "SANJANA KUMARI",
+      "level": "Bronze",
+      "sao": 0,
+      "sgo": 219
+    },
+    {
+      "id": "419B7DF",
+      "pass": "1663",
+      "name": "SARITA MISHRA",
+      "level": "Silver",
+      "sao": 939,
+      "sgo": 469
+    }
+  ],
+  "target": [
+    {
+      "id": "FC5C7BE",
+      "pass": "2020",
+      "name": "ROHAN RAWAT",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "E3EC21",
+      "pass": "5942",
+      "name": "CHANDRA MOHAN",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "7D5763A",
+      "pass": "9840",
+      "name": "MUJKRAJ",
+      "level": "6500",
+      "sao": 5677,
+      "sgo": 6405
+    },
+    {
+      "id": "4105BBF",
+      "pass": "2020",
+      "name": "PADAMA THAPA",
+      "level": "4200",
+      "sao": 3925,
+      "sgo": 3652
+    },
+    {
+      "id": "12E6905",
+      "pass": "2020",
+      "name": "TULSI DEVI",
+      "level": "2500",
+      "sao": 2259,
+      "sgo": 2481
+    },
+    {
+      "id": "94B422C",
+      "pass": "7048",
+      "name": "BHIM BAHADUR",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "E9BF3A1",
+      "pass": "1704",
+      "name": "MAMTA",
+      "level": "4200",
+      "sao": 3698,
+      "sgo": 4154
+    },
+    {
+      "id": "B452B17",
+      "pass": "1534",
+      "name": "BHIM BAHADUR",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "CB80358",
+      "pass": "8184",
+      "name": "BRIJMOHAN",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "09CF1C7",
+      "pass": "1851",
+      "name": "MEEN BAHADUR",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "4578147",
+      "pass": "1821",
+      "name": "ANJU SHAHI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "820E82F",
+      "pass": "1722",
+      "name": "DHAN MAYA",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "CDB020E",
+      "pass": "1666",
+      "name": "LAXMI SHAHI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "51364FB",
+      "pass": "1896",
+      "name": "RENU",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "13AB124",
+      "pass": "5456",
+      "name": "NAND JANG",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "F11EFE6",
+      "pass": "1414",
+      "name": "MUKTA THAPA",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "F252EED",
+      "pass": "1187",
+      "name": "ASMITA GURUNG",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "5FB2139",
+      "pass": "7879",
+      "name": "KALPANA PUN",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "69493D0",
+      "pass": "1631",
+      "name": "GEETA RANA",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "A9A218C",
+      "pass": "1681",
+      "name": "BIRENDRA SINGH",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "E1481BF",
+      "pass": "4409",
+      "name": "RAKESH PANDEY",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "0A20ACB",
+      "pass": "2062",
+      "name": "VIRENDRA THAPA",
+      "level": "1800",
+      "sao": 1771,
+      "sgo": 1786
+    },
+    {
+      "id": "4E90C49",
+      "pass": "2958",
+      "name": "AMITA PANDEY",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "146BC50",
+      "pass": "3702",
+      "name": "BABITA DEVI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "EC098B6",
+      "pass": "2799",
+      "name": "DEVKALA RANA",
+      "level": "1400",
+      "sao": 1082,
+      "sgo": 1373
+    },
+    {
+      "id": "6215A34",
+      "pass": "4846",
+      "name": "CHANDRA JYOTI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "71CBC0D",
+      "pass": "3507",
+      "name": "MANJU THAPA",
+      "level": "2500",
+      "sao": 2409,
+      "sgo": 2155
+    },
+    {
+      "id": "4EB66B1",
+      "pass": "1763",
+      "name": "BIBINA CHAKMA",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "748686A",
+      "pass": "6467",
+      "name": "BINISA",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "3F2038A",
+      "pass": "1411",
+      "name": "BABITA DEVI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "A1E4200",
+      "pass": "1015",
+      "name": "SANJU KUMARI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "F5BE469",
+      "pass": "1250",
+      "name": "BHARAT",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "C60F78A",
+      "pass": "2091",
+      "name": "SUPRIYA KUMARI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "D21F204",
+      "pass": "3143",
+      "name": "KIRAN",
+      "level": "wrong",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "1A81CD9",
+      "pass": "1726",
+      "name": "PINTU PRAJAPATI",
+      "level": "1800",
+      "sao": 1721,
+      "sgo": 1787
+    },
+    {
+      "id": "419B7DF",
+      "pass": "1663",
+      "name": "SARITA MISHRA",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "50F1191",
+      "pass": "1810",
+      "name": "SANJANA KUMARI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    },
+    {
+      "id": "8324589",
+      "pass": "2134",
+      "name": "RIMPY DEVI",
+      "level": "No DS",
+      "sao": "-",
+      "sgo": "-"
+    }
+  ],
+  "cheque": [
+    {
+      "id": "FC5C7BE",
+      "pass": "2020",
+      "name": "ROHAN RAWAT",
+      "level": "wrong",
+      "data": [
+        {
+          "payDate": "-",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "id": "E3EC21",
+      "pass": "5942",
+      "name": "CHANDRA MOHAN",
+      "level": "wrong",
+      "data": [
+        {
+          "payDate": "-",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "id": "4105BBF",
+      "pass": "2020",
+      "name": "PADAMA THAPA",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 2850
+        },
+        {
+          "payDate": "24/08",
+          "amount": 950
+        },
+        {
+          "payDate": "17/08",
+          "amount": 3325
+        },
+        {
+          "payDate": "09/08",
+          "amount": 2850
+        },
+        {
+          "payDate": "01/08",
+          "amount": 1425
+        }
+      ],
+      "level": "Topaz"
+    },
+    {
+      "id": "7D5763A",
+      "pass": "9840",
+      "name": "MUJKRAJ",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 950
+        },
+        {
+          "payDate": "24/08",
+          "amount": 2850
+        },
+        {
+          "payDate": "17/08",
+          "amount": 3800
+        },
+        {
+          "payDate": "09/08",
+          "amount": 5225
+        }
+      ],
+      "level": "Ruby Star"
+    },
+    {
+      "id": "12E6905",
+      "pass": "2020",
+      "name": "TULSI DEVI",
+      "data": [
+        {
+          "payDate": "17/08",
+          "amount": 1900
+        },
+        {
+          "payDate": "09/08",
+          "amount": 950
+        },
+        {
+          "payDate": "01/08",
+          "amount": 400
+        }
+      ],
+      "level": "Platinum"
+    },
+    {
+      "id": "94B422C",
+      "pass": "7048",
+      "name": "BHIM BAHADUR",
+      "data": [],
+      "level": "Silver"
+    },
+    {
+      "id": "E9BF3A1",
+      "pass": "1704",
+      "name": "MAMTA",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 475
+        },
+        {
+          "payDate": "17/08",
+          "amount": 950
+        },
+        {
+          "payDate": "09/08",
+          "amount": 475
+        }
+      ],
+      "level": "Topaz"
+    },
+    {
+      "id": "B452B17",
+      "pass": "1534",
+      "name": "BHIM BAHADUR",
+      "data": [],
+      "level": "Fresher"
+    },
+    {
+      "id": "4578147",
+      "pass": "1821",
+      "name": "ANJU SHAHI",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "CB80358",
+      "pass": "8184",
+      "name": "BRIJMOHAN",
+      "data": [],
+      "level": "Silver"
+    },
+    {
+      "id": "09CF1C7",
+      "pass": "1851",
+      "name": "MEEN BAHADUR",
+      "data": [],
+      "level": "Platinum"
+    },
+    {
+      "id": "820E82F",
+      "pass": "1722",
+      "name": "DHAN MAYA",
+      "level": "wrong",
+      "data": [
+        {
+          "payDate": "-",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "id": "CDB020E",
+      "pass": "1666",
+      "name": "LAXMI SHAHI",
+      "data": [],
+      "level": "Fresher"
+    },
+    {
+      "id": "51364FB",
+      "pass": "1896",
+      "name": "RENU",
+      "data": [],
+      "level": "Fresher"
+    },
+    {
+      "id": "F11EFE6",
+      "pass": "1414",
+      "name": "MUKTA THAPA",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "13AB124",
+      "pass": "5456",
+      "name": "NAND JANG",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "5FB2139",
+      "pass": "7879",
+      "name": "KALPANA PUN",
+      "data": [],
+      "level": "Gold"
+    },
+    {
+      "id": "A9A218C",
+      "pass": "1681",
+      "name": "BIRENDRA SINGH",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "E1481BF",
+      "pass": "4409",
+      "name": "RAKESH PANDEY",
+      "data": [],
+      "level": "Gold"
+    },
+    {
+      "id": "69493D0",
+      "pass": "1631",
+      "name": "GEETA RANA",
+      "data": [
+        {
+          "payDate": "01/08",
+          "amount": 475
+        }
+      ],
+      "level": "Bronze"
+    },
+    {
+      "id": "0A20ACB",
+      "pass": "2062",
+      "name": "VIRENDRA THAPA",
+      "data": [],
+      "level": "Gold"
+    },
+    {
+      "id": "F252EED",
+      "pass": "1187",
+      "name": "ASMITA GURUNG",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "4E90C49",
+      "pass": "2958",
+      "name": "AMITA PANDEY",
+      "data": [],
+      "level": "Gold"
+    },
+    {
+      "id": "146BC50",
+      "pass": "3702",
+      "name": "BABITA DEVI",
+      "data": [],
+      "level": "Silver"
+    },
+    {
+      "id": "71CBC0D",
+      "pass": "3507",
+      "name": "MANJU THAPA",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 3325
+        },
+        {
+          "payDate": "17/08",
+          "amount": 950
+        },
+        {
+          "payDate": "01/08",
+          "amount": 1900
+        }
+      ],
+      "level": "Platinum"
+    },
+    {
+      "id": "4EB66B1",
+      "pass": "1763",
+      "name": "BIBINA CHAKMA",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "3F2038A",
+      "pass": "1411",
+      "name": "BABITA DEVI",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "EC098B6",
+      "pass": "2799",
+      "name": "DEVKALA RANA",
+      "data": [
+        {
+          "payDate": "30/08",
+          "amount": 475
+        }
+      ],
+      "level": "Silver"
+    },
+    {
+      "id": "748686A",
+      "pass": "6467",
+      "name": "BINISA",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "6215A34",
+      "pass": "4846",
+      "name": "CHANDRA JYOTI",
+      "data": [],
+      "level": "Silver"
+    },
+    {
+      "id": "F5BE469",
+      "pass": "1250",
+      "name": "BHARAT",
+      "data": [
+        {
+          "payDate": "17/08",
+          "amount": 475
+        }
+      ],
+      "level": "Platinum"
+    },
+    {
+      "id": "A1E4200",
+      "pass": "1015",
+      "name": "SANJU KUMARI",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "C60F78A",
+      "pass": "2091",
+      "name": "SUPRIYA KUMARI",
+      "data": [],
+      "level": "Silver"
+    },
+    {
+      "id": "D21F204",
+      "pass": "3143",
+      "name": "KIRAN",
+      "level": "wrong",
+      "data": [
+        {
+          "payDate": "-",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "id": "8324589",
+      "pass": "2134",
+      "name": "RIMPY DEVI",
+      "data": [],
+      "level": "Platinum"
+    },
+    {
+      "id": "50F1191",
+      "pass": "1810",
+      "name": "SANJANA KUMARI",
+      "data": [],
+      "level": "Bronze"
+    },
+    {
+      "id": "419B7DF",
+      "pass": "1663",
+      "name": "SARITA MISHRA",
+      "data": [],
+      "level": "Silver"
+    },
+    {
+      "id": "1A81CD9",
+      "pass": "1726",
+      "name": "PINTU PRAJAPATI",
+      "data": [
+        {
+          "payDate": "24/08",
+          "amount": 475
+        },
+        {
+          "payDate": "09/08",
+          "amount": 475
+        },
+        {
+          "payDate": "01/08",
+          "amount": 475
+        }
+      ],
+      "level": "Gold"
+    }
+  ]
+}
