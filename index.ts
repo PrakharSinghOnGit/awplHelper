@@ -6,7 +6,6 @@ import path from "path";
 import chalk from "chalk";
 import { Command } from "commander";
 const program = new Command();
-const env = Bun.env;
 import { resumeMine } from "./functions/resumeMine";
 import {
   mergeLvlData,
@@ -18,19 +17,11 @@ import {
   askTeam,
   askFunc,
   getTeam,
-  askDiscord,
 } from "./functions/helper";
-import {
-  sendDiscordMessage,
-  client,
-} from "./functions/Discord";
-
 const Main = async () => {
   const func = await askFunc();
   const team = await askTeam();
-  if(await askDiscord()) client.login(env.DiscordToken);
   for (let i = 0; i < team.length; i++) {
-    const localTime = Date.now();
     const name = team[i];
     const teamData = getTeam(name);
     terminate();
@@ -51,16 +42,6 @@ const Main = async () => {
       JSON.stringify(Data, null, 2)
     );
     await handleOutput(name, Data);
-    try {
-      await sendDiscordMessage(
-        `Completed Mine of ${name}
-        Time Taken: ${getTimeLeft(localTime)}
-        `,
-        path.join(__dirname, "./out/" + name + ".html")
-      );
-    } catch (error) {
-      console.log(chalk.red("!Error sending message or file"));
-    }
   }
   console.log(chalk.green("Mining Completed..."));
   console.log(chalk.green("Time Taken:"), getTimeLeft(startTime));
