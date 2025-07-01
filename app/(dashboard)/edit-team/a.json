@@ -1,0 +1,28 @@
+[
+  {
+    "leaderName": "a",
+    "members": [
+      {
+        "name": "aa",
+        "id": 123
+      },
+      {
+        "name": "bb",
+        "id": 456
+      }
+    ]
+  },
+  {
+    "leaderName": "b",
+    "members": [
+      {
+        "name": "bb",
+        "id": 456
+      },
+      {
+        "name": "cc",
+        "id": 789
+      }
+    ]
+  }
+]

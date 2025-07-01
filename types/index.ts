@@ -19,8 +19,8 @@ export type levels =
   | "Brand Ambassador";
 
 export type TeamMember = {
+  uuid: string;
   id: string;
   name: string;
   pass: string;
-  level: levels | null;
 };

@@ -1,0 +1,141 @@
+"use client";
+
+import * as React from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { TeamMember } from "@/types";
+import { Plus, Save, Trash2 } from "lucide-react";
+
+type EditMemberProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  member: TeamMember | null;
+  onSave: (
+    member: Omit<TeamMember, "uuid"> & { uuid?: string },
+    isNew: boolean
+  ) => void;
+  onDelete: (uuid: string) => void;
+};
+
+export function EditMember({
+  open,
+  onOpenChange,
+  member,
+  onSave,
+  onDelete,
+}: EditMemberProps) {
+  const isNew = !member;
+
+  const handleSave = (name: string, id: string, pass: string) => {
+    onSave(
+      {
+        ...(member?.uuid ? { uuid: member.uuid } : {}),
+        id,
+        name,
+        pass,
+      },
+      isNew
+    );
+  };
+
+  return (
+    <Drawer onOpenChange={onOpenChange} open={open}>
+      <DrawerContent>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave(
+              (document.getElementById("name") as HTMLInputElement).value,
+              (document.getElementById("Id") as HTMLInputElement).value,
+              (document.getElementById("pass") as HTMLInputElement).value
+            );
+            onOpenChange(false);
+          }}
+        >
+          <DrawerHeader>
+            <DrawerTitle>{isNew ? "Add Member" : "Edit Member"}</DrawerTitle>
+            <DrawerDescription>
+              Make sure the id and password are correct.
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="p-3 flex flex-col gap-3">
+            <div className="flex flex-row">
+              <Label className="min-w-[25%]" htmlFor="name">
+                Name :
+              </Label>
+              <Input
+                id="name"
+                defaultValue={member?.name ?? ""}
+                placeholder="Enter Name..."
+                required
+              />
+            </div>
+            <div className="flex flex-row">
+              <Label className="min-w-[25%]" htmlFor="Id">
+                User Id :
+              </Label>
+              <Input
+                type="text"
+                id="Id"
+                defaultValue={member?.id ?? ""}
+                placeholder="Enter User Id..."
+                required
+              />
+            </div>
+            <div className="flex flex-row">
+              <Label className="min-w-[25%]" htmlFor="pass">
+                Password :
+              </Label>
+              <Input
+                type="text"
+                id="pass"
+                defaultValue={member?.pass ?? ""}
+                placeholder="Enter Password..."
+                required
+              />
+            </div>
+          </div>
+          <DrawerFooter className="flex justify-end flex-row p-3">
+            {!isNew && (
+              <Button
+                type="button"
+                className="gap-1"
+                variant="destructive"
+                onClick={() => {
+                  onOpenChange(false);
+                  onDelete(member.uuid);
+                }}
+              >
+                <Trash2 />
+                Delete
+              </Button>
+            )}
+
+            <Button variant="default" className="gap-1" type="submit">
+              {isNew ? <Plus strokeWidth={3} /> : <Save />}
+              {isNew ? "Add" : "Save"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
+              Cancel
+            </Button>
+          </DrawerFooter>
+        </form>
+      </DrawerContent>
+    </Drawer>
+  );
+}

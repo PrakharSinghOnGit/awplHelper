@@ -44,7 +44,7 @@ export function AppSidebar() {
               href="/dashboard"
               className="flex items-center gap-2"
             >
-              <BarChart2 className="h-5 w-5" />
+              <BarChart2 size={"lg"} className="h-5 w-5" />
               Dashboard
             </SidebarMenuButton>
           </SidebarMenuItem>

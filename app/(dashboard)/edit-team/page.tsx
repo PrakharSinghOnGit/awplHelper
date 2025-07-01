@@ -1,7 +1,6 @@
 "use client";
 
-import * as React from "react";
-
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,130 +24,101 @@ import {
 import { TeamMember } from "@/types";
 import { DownloadIcon, Plus, Search, ArrowUpDown, Edit } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-
-const data: TeamMember[] = [
-  {
-    id: "aabbcc",
-    level: "Ambassador",
-    pass: "5135",
-    name: "vv",
-  },
-  {
-    id: "ababab",
-    level: "Ambassador",
-    pass: "5135",
-    name: "b",
-  },
-  {
-    id: "abcabc",
-    level: "Ambassador",
-    pass: "5135",
-    name: "c",
-  },
-  {
-    id: "acacac",
-    level: "Ambassador",
-    pass: "5135",
-    name: "de",
-  },
-  {
-    id: "cacaca",
-    level: "Ambassador",
-    pass: "5135",
-    name: "fg",
-  },
-  {
-    id: "bcbcbc",
-    level: "Ambassador",
-    pass: "5135",
-    name: "zz",
-  },
-];
-
-function handleEdit(id: string) {
-  console.log(id);
-}
-
-function handleExport() {}
-
-export const columns: ColumnDef<TeamMember>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="has-[>svg]:px-0 m-0 p-0 w-full rounded-none justify-start"
-          variant="ghost"
-          onClick={() =>
-            column.toggleSorting(
-              !column.getIsSorted()
-                ? false
-                : column.getIsSorted() === "asc"
-                ? true
-                : false
-            )
-          }
-        >
-          Name
-          <ArrowUpDown strokeWidth={2} />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "id",
-    header: "User Id",
-    cell: ({ row }) => <div className="uppercase">{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "pass",
-    header: "Pass",
-    cell: ({ row }) => row.getValue("pass"),
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    header: "Edit",
-    cell: ({ row }) => {
-      return (
-        <Button onClick={() => handleEdit(row.id)} variant="outline" size="sm">
-          <Edit />
-        </Button>
-      );
-    },
-  },
-];
+import { EditMember } from "@/components/EditMember";
 
 export default function EditTeam() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const columnsData: ColumnDef<TeamMember>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            className="has-[>svg]:px-0 m-0 p-0 w-full rounded-none justify-start"
+            variant="ghost"
+            onClick={() =>
+              column.toggleSorting(
+                !column.getIsSorted()
+                  ? false
+                  : column.getIsSorted() === "asc"
+                  ? true
+                  : false
+              )
+            }
+          >
+            Name
+            <ArrowUpDown strokeWidth={2} />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      accessorKey: "id",
+      header: "User Id",
+      cell: ({ row }) => <div className="uppercase">{row.getValue("id")}</div>,
+    },
+    {
+      accessorKey: "pass",
+      header: "Pass",
+      cell: ({ row }) => row.getValue("pass"),
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      header: "Edit",
+      cell: ({ row }) => {
+        const member = row.original;
+        return (
+          <Button
+            onClick={() => handleEdit(false, member)}
+            variant="outline"
+            size="sm"
+          >
+            <Edit />
+          </Button>
+        );
+      },
+    },
+  ];
+
+  useEffect(() => {
+    fetch("/api/team")
+      .then((res) => res.json())
+      .then(setMembers);
+  }, []);
 
   const table = useReactTable({
-    data,
-    columns,
+    data: members,
+    columns: columnsData,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -160,6 +130,83 @@ export default function EditTeam() {
       rowSelection,
     },
   });
+
+  const handleEdit = (isNew: boolean, member: TeamMember | null) => {
+    if (isNew) {
+      setSelectedMember(null);
+      setIsDialogOpen(true);
+      return;
+    }
+    setSelectedMember(member);
+    setIsDialogOpen(true);
+  };
+
+  const handleExport = (leaderName: string) => {
+    if (!members.length) return;
+
+    let csv = "sno, name, id, pass\n";
+    members.forEach((member, index) => {
+      csv += `${index + 1}, ${member.name}, ${member.id}, ${member.pass}\n`;
+    });
+    const d = new Date();
+    const timestamp = `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
+    const filename = `${leaderName}_team_${timestamp}.csv`;
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = filename;
+
+    if (navigator.userAgent.toLowerCase().includes("android")) {
+      window.open(url, "_blank");
+    } else {
+      link.click();
+    }
+
+    URL.revokeObjectURL(url);
+  };
+
+  const handleSave = async (
+    updatedMember: Partial<TeamMember> & { id: string },
+    isNew?: boolean
+  ) => {
+    if (isNew) {
+      await fetch("/api/team", {
+        method: "POST",
+        body: JSON.stringify(updatedMember),
+        headers: { "Content-Type": "application/json" },
+      });
+    } else {
+      await fetch("/api/team", {
+        method: "PUT",
+        body: JSON.stringify(updatedMember),
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    setIsDialogOpen(false);
+    setSelectedMember(null);
+    fetchMembers();
+  };
+
+  const handleDelete = async (uuid: string) => {
+    await fetch("/api/team", {
+      method: "DELETE",
+      body: JSON.stringify({ uuid: uuid }),
+      headers: { "Content-Type": "application/json" },
+    });
+    setIsDialogOpen(false);
+    setSelectedMember(null);
+    fetchMembers();
+  };
+
+  const fetchMembers = async () => {
+    const res = await fetch("/api/team");
+    const data = await res.json();
+    setMembers(data);
+  };
 
   return (
     <div className="flex flex-col gap-4 w-full pt-3 grow">
@@ -173,19 +220,19 @@ export default function EditTeam() {
           }
         />
         <Button
-          onClick={() => handleEdit("")}
+          onClick={() => handleEdit(true, null)}
           variant="default"
           className="font-semibold gap-1"
         >
           <Plus strokeWidth={3} />
           Add
         </Button>
-        <Button onClick={handleExport} variant="secondary">
+        <Button onClick={() => handleExport("leaderName")} variant="secondary">
           <DownloadIcon />
           Export
         </Button>
       </div>
-      <div className="border-2 border-color-border grow rounded-md overflow-scroll">
+      <div className="border-1 border-color-border grow rounded-md overflow-scroll">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -225,7 +272,7 @@ export default function EditTeam() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={columnsData.length}
                   className="h-24 text-center"
                 >
                   No results.
@@ -235,6 +282,13 @@ export default function EditTeam() {
           </TableBody>
         </Table>
       </div>
+      <EditMember
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        member={selectedMember}
+        onSave={handleSave}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }
