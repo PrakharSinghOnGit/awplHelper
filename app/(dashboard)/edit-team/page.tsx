@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,7 +23,14 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { TeamMember } from "@/types";
-import { DownloadIcon, Plus, Search, ArrowUpDown, Edit } from "lucide-react";
+import {
+  DownloadIcon,
+  Plus,
+  Search,
+  ArrowUpDown,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EditMember } from "@/components/EditMember";
 
@@ -32,6 +40,7 @@ export default function EditTeam() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [members, setMembers] = useState<TeamMember[]>([]);
+  const [confirmMultiDeleteOpen, setConfirmMultiDeleteOpen] = useState(false);
   const columnsData: ColumnDef<TeamMember>[] = [
     {
       id: "select",
@@ -109,7 +118,7 @@ export default function EditTeam() {
       },
     },
   ];
-
+  console.log(rowSelection);
   useEffect(() => {
     fetch("/api/team")
       .then((res) => res.json())
@@ -202,6 +211,22 @@ export default function EditTeam() {
     fetchMembers();
   };
 
+  const handleMultiDelete = async () => {
+    const uuids: string[] = [];
+    table.getRowModel().rows.forEach((row) => {
+      if (row.getIsSelected()) {
+        uuids.push(row.original.uuid);
+      }
+    });
+    await fetch("/api/team", {
+      method: "DELETE",
+      body: JSON.stringify({ uuid: uuids }),
+      headers: { "Content-Type": "application/json" },
+    });
+    setRowSelection({});
+    fetchMembers();
+  };
+
   const fetchMembers = async () => {
     const res = await fetch("/api/team");
     const data = await res.json();
@@ -227,6 +252,15 @@ export default function EditTeam() {
           <Plus strokeWidth={3} />
           Add
         </Button>
+        {Object.keys(rowSelection).length > 0 && (
+          <Button
+            onClick={() => setConfirmMultiDeleteOpen(true)}
+            variant="destructive"
+          >
+            <Trash2 strokeWidth={3} />
+            Delete
+          </Button>
+        )}
         <Button onClick={() => handleExport("leaderName")} variant="secondary">
           <DownloadIcon />
           Export
@@ -288,6 +322,16 @@ export default function EditTeam() {
         member={selectedMember}
         onSave={handleSave}
         onDelete={handleDelete}
+      />
+      <ConfirmDialog
+        open={confirmMultiDeleteOpen}
+        onOpenChange={setConfirmMultiDeleteOpen}
+        title="Delete Multiple Members"
+        description={`Are you sure you want to delete ${
+          Object.keys(rowSelection).length
+        } team members? This action cannot be undone.`}
+        onConfirm={handleMultiDelete}
+        confirmText="Delete"
       />
     </div>
   );

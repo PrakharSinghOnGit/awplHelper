@@ -4,6 +4,7 @@ import {
   addTeamMember,
   updateTeamMember,
   deleteTeamMember,
+  deleteMultiTeamMember,
 } from "@/lib/teamService";
 
 export async function GET() {
@@ -25,6 +26,11 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const { uuid } = await req.json();
-  const deletedMember = await deleteTeamMember(uuid);
+  let deletedMember;
+  if (Array.isArray(uuid)) {
+    deletedMember = await deleteMultiTeamMember(uuid);
+  } else {
+    deletedMember = await deleteTeamMember(uuid);
+  }
   return NextResponse.json({ success: true, member: deletedMember });
 }

@@ -59,12 +59,20 @@ export async function updateTeamMember(member: TeamMember) {
   return null;
 }
 
-export async function deleteTeamMember(memberId: string) {
-  const index = data.findIndex((m) => m.uuid === memberId);
+export async function deleteTeamMember(memberUuid: string) {
+  const index = data.findIndex((m) => m.uuid === memberUuid);
   if (index !== -1) {
     const deletedMember = data[index];
     data.splice(index, 1);
     return deletedMember;
   }
+  return null;
+}
+
+export async function deleteMultiTeamMember(memberUuids: string[]) {
+  memberUuids.forEach((uuid) => {
+    console.log(uuid);
+    deleteTeamMember(uuid);
+  });
   return null;
 }
