@@ -5,9 +5,6 @@ import { SidebarMenuButton } from "@/components/ui/sidebar";
 
 export function LogoutButton() {
   const handleLogout = () => {
-    // If using Next-Auth:
-    // signOut({ callbackUrl: '/' });
-
     // Temporary redirect for demo:
     window.location.href = "/";
   };

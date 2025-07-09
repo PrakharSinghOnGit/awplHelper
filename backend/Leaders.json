@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Shaan Singh",
+    "email": "shaansingh@example.com",
+    "uuid": "asdf",
+    "awplId": "aa4f9b",
+    "awplPass": "8990",
+    "weekLeft": 0,
+    "isPaid": false,
+    "slots": 0,
+    "team": ["aiuhfa", "sufgfa", "afgsf"],
+    "lastPaid": "2023-01-01",
+    "lastMine": "2023-01-01"
+  }
+]

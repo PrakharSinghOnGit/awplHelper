@@ -118,7 +118,6 @@ export default function EditTeam() {
       },
     },
   ];
-  console.log(rowSelection);
   useEffect(() => {
     fetch("/api/team")
       .then((res) => res.json())

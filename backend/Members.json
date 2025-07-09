@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Shaan Singh",
+    "uuid": "asdf",
+    "id": "aa4f9b",
+    "pass": "8990",
+    "newPass": ["1234", "4321"],
+    "levelSAO": 0,
+    "levelSGO": 0,
+    "tergetSAO": 0,
+    "tergetSGO": 0,
+    "parentCount": 0,
+    "lastMine": "2023-01-01",
+    "passStatus": "active",
+    "chequeData": [
+      {
+        "amount": 0,
+        "date": "2023-01-01"
+      }
+    ]
+  }
+]

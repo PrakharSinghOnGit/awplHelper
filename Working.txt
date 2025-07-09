@@ -1,0 +1,64 @@
+i think i have to tell you the project working for you to suggest better 
+so there is this company called awpl that has a lot of ppl working in it also my father 
+they are arranges in a sequntiall manner like a MLM company 1 person has 2 legs that sort of thing
+so big leaders like my father require the data of some downline people to help them or to boost the bussiness 
+so till now what was happening was they make a list of ppl that should be helped of are doing good get their id pass
+and open the company website to get their level data cheque data to know the working and help them 
+
+what i did in my school was make a puppeteer app to auto make the data fetching thing
+now more leaders similar to my father ask me to do that so i thought of making a small webapp (this one) to help those 
+leaders to get data off their team this is why some of the team overlaps   
+
+currently my backend is a series of axios request made to the website with id and pass that gets me the data i have made it into 
+a class and thats working good now i wanted to make a app that will let the leaders(my dad and other like him) to manage edit their team 
+directly rather than whatsapping me for any changes and what my job will be to just fetch the data of all the members every week and 
+upload their results cheque data target data and level data to the data base and this will allow them to login to this app (awpl-helper)
+and see the data themself this also allow me to monitise it cause earlier they used to give me 500 rs but there was no limit to 
+amount of team they had some had 60 so now i will make a billing system for 5rs for 1 team member for 1 week that will be 20rs for 4 week 
+
+
+so this is the mapping and the significanse of the awpl id and pass that id and pass is a unique is pass of already made awpl official website
+that will be unique to the member pass may not be cause here ppl dosnt care about secuting their pass cause nothing to loose 
+
+i hope you get it to summarize
+
+a leader is also a awpl member and his team is also 
+but a leader will set a list of team and enter their awpl id and pass 
+that will be stored in the db so i can fetch and update them 
+
+not a lot of historic data is needed cheque data will be for last 4 weeks thats it
+
+
+
+soo these are the possible things that can happen and their flow
+all the action that can happen is dont be leader soo
+
+1 - leader is created
+ - this is done automatically when a user signs up on my app
+ - we also make them enter their awplID and awplPass not for mining but for validating that all the team members he has are actually his team
+
+2 - leader is deleted 
+ - that never happens actally 
+
+3 - leader updates their data
+ - simple just update things on table
+
+3 - leader creates a member
+ - if that member already exist that is (awplID already exist) we add that member awplid to leaders team array
+ - if that member does not exist we create that member and add him to the team table
+
+4 - leader deletes a member
+ - if the member is not in any other team delete that member and link (remove awplID from teams array)
+ - if the member is in other team we just remove the link not the member 
+
+5 - leader updates a members awplID 
+ - if updated awplId is actually new we add new member
+ - if updated awwplID is already avaliable we just add the awplId to the team array
+
+6 - leader updates a members awplPass
+ - we can have a array of valid passwords and awplPass diffrent
+ - if a leader changes password of the member we add the new pass to the validPass array 
+ - and next time we mine data we check if the awplPass id wring we try validPass
+ - if any validPass is right we make that awplPass and empty validPass
+ - if none is right we give that member flag Red that means it will show error on all the leader its linked to to update the pass
+ 

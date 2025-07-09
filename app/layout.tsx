@@ -1,5 +1,5 @@
 "use client";
-import { ThemeProvider } from "@/components/themeProvider";
+import { ThemeProvider } from "@/hooks/themeProvider";
 import "./globals.css";
 
 export default function RootLayout({
