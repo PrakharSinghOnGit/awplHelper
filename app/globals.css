@@ -1,9 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Bytesized&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --bytesized : "Bytesized", sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);

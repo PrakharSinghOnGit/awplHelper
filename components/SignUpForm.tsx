@@ -31,7 +31,7 @@ export function SignUpForm({
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("SignUp Not Implemented");
-    setMessage("");
+    setMessage("SignUp Not Implemented");
 
     console.log("TODO: ", email, password, awplId, awplPass);
   };

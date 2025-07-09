@@ -1,22 +1,17 @@
 "use client";
 
-import { LogOut } from "lucide-react";
-import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export function LogoutButton() {
-  const handleLogout = () => {
-    // Temporary redirect for demo:
-    window.location.href = "/";
+  const router = useRouter();
+
+  const logout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/auth/login");
   };
 
-  return (
-    <SidebarMenuButton
-      variant="outline"
-      className="flex items-center gap-2"
-      onClick={handleLogout}
-    >
-      <LogOut className="h-5 w-5" />
-      Log out
-    </SidebarMenuButton>
-  );
+  return <Button onClick={logout}>Logout</Button>;
 }

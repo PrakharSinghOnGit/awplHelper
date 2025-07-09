@@ -41,7 +41,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              href="/dashboard"
+              href="/protected/dashboard"
               className="flex items-center gap-2"
             >
               <BarChart2 className="h-5 w-5" />
@@ -51,7 +51,7 @@ export function AppSidebar() {
 
           <SidebarMenuItem>
             <SidebarMenuButton
-              href="/edit-team"
+              href="/protected/edit-team"
               className="flex items-center gap-2"
             >
               <Users className="h-5 w-5" />
@@ -68,7 +68,7 @@ export function AppSidebar() {
             <SidebarMenuSub>
               <SidebarMenuSubItem>
                 <SidebarMenuSubButton
-                  href="/levelData"
+                  href="/protected/levelData"
                   className="flex items-center gap-2"
                 >
                   <TrendingUpIcon />
@@ -78,7 +78,7 @@ export function AppSidebar() {
 
               <SidebarMenuSubItem>
                 <SidebarMenuSubButton
-                  href="/targetData"
+                  href="/protected/targetData"
                   className="flex items-center gap-2"
                 >
                   <GoalIcon />
@@ -88,7 +88,7 @@ export function AppSidebar() {
 
               <SidebarMenuSubItem>
                 <SidebarMenuSubButton
-                  href="/chequeData"
+                  href="/protected/chequeData"
                   className="flex items-center gap-2"
                 >
                   <BanknoteIcon />
@@ -114,7 +114,6 @@ export function AppSidebar() {
             Billing
           </SidebarMenuButton>
           <SidebarSeparator />
-
           <LogoutButton />
         </SidebarFooter>
       </SidebarContent>
