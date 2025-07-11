@@ -50,27 +50,25 @@ export function LoginForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Welcome</CardTitle>
+          <CardDescription>Login to your Awpl Helper account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
+            <div className="grid gap-6">
+              <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="me@example.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className="grid gap-2">
+              <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                   <Link
@@ -93,6 +91,24 @@ export function LoginForm({
                 {isLoading ? "Logging in..." : "Login"}
               </Button>
             </div>
+
+            {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+              <span className="bg-card text-muted-foreground relative z-10 px-2">
+                Or continue with
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <Button
+                onClick={handleGoogleLogin}
+                variant="outline"
+                className="w-full"
+              >
+                <GoogleLogo />
+                Login with Google
+              </Button>
+            </div> */}
+
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link
@@ -105,6 +121,16 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
+      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
+        Look at the source code at{" "}
+        <Link href="https://github.com/PrakharSinghOnGit/awplHelper">
+          GitHub
+        </Link>{" "}
+        and give it a star {":)"}{" "}
+        <Link href="/help" className="underline">
+          help
+        </Link>
+      </div>
     </div>
   );
 }

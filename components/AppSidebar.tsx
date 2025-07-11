@@ -7,7 +7,6 @@ import {
   GoalIcon,
   BanknoteIcon,
   ServerIcon,
-  Pickaxe,
 } from "lucide-react";
 
 import {
@@ -24,16 +23,25 @@ import {
   SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 import { LogoutButton } from "./LogoutButton";
+import Image from "next/image";
 
 export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
-        <SidebarHeader className="text-xl font-bold flex flex-row justify-center items-center gap-2 p-4">
-          <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
-            <Pickaxe className="size-5" />
-          </div>
-          <p className="mt-2">Awpl Helper.</p>
+        <SidebarHeader
+          style={{ fontFamily: "Bytesized" }}
+          className="text-2xl font-bold flex flex-row justify-center items-center gap-2 pb-0 pt-3"
+        >
+          <Image
+            src="/smallPick.webp"
+            unoptimized
+            alt="Pick"
+            unselectable="on"
+            width={25}
+            height={25}
+          />
+          <p className="mt-2 pb-2">Awpl Helper.</p>
         </SidebarHeader>
 
         <SidebarSeparator />
@@ -44,7 +52,7 @@ export function AppSidebar() {
               href="/protected/dashboard"
               className="flex items-center gap-2"
             >
-              <BarChart2 className="h-5 w-5" />
+              <BarChart2 />
               Dashboard
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -54,14 +62,17 @@ export function AppSidebar() {
               href="/protected/edit-team"
               className="flex items-center gap-2"
             >
-              <Users className="h-5 w-5" />
+              <Users />
               Team
             </SidebarMenuButton>
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            <SidebarMenuButton className="flex items-center gap-2">
-              <ServerIcon className="w-2 h-2" />
+            <SidebarMenuButton
+              aria-disabled="true"
+              className="flex items-center gap-2"
+            >
+              <ServerIcon />
               Data
             </SidebarMenuButton>
 
