@@ -40,10 +40,10 @@ export function SignUpForm({
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/protected`,
-          data: {
-            "awpl-id": awplId,
-            "awpl-pass": awplPass,
-          },
+          // data: {
+          //   "awpl-id": awplId,
+          //   "awpl-pass": awplPass,
+          // },
         },
       });
       if (error) throw error;
@@ -95,7 +95,7 @@ export function SignUpForm({
                   id="awplId"
                   type="text"
                   placeholder="Your AWPL ID"
-                  required
+                  // required
                   value={awplId}
                   onChange={(e) => setAwplId(e.target.value)}
                 />
@@ -106,7 +106,7 @@ export function SignUpForm({
                   id="awplPass"
                   type="password"
                   placeholder="Your AWPL Password"
-                  required
+                  // required
                   value={awplPass}
                   onChange={(e) => setAwplPass(e.target.value)}
                 />

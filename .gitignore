@@ -23,6 +23,7 @@ bun.lock
 
 # misc
 .DS_Store
+secret.json
 *.pem
 
 # debug
