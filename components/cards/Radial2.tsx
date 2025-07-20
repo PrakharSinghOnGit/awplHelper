@@ -11,76 +11,79 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-
-export const description = "A radial chart";
-
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
-];
+import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { getNormalizedCompletedSp } from "@/lib/utils";
+import { CountingNumber } from "../animate-ui/text/counting-number";
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  Sp: {
+    label: "sp",
   },
-  chrome: {
-    label: "Chrome",
-    color: "var(--chart-1)",
-  },
-  safari: {
-    label: "Safari",
-    color: "var(--chart-2)",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "var(--chart-3)",
-  },
-  edge: {
-    label: "Edge",
+  sao: {
+    label: "SAO sp",
     color: "var(--chart-4)",
   },
-  other: {
-    label: "Other",
-    color: "var(--chart-5)",
+  sgo: {
+    label: "SGO sp",
+    color: "var(--chart-3)",
+  },
+  ttl: {
+    label: "Total",
+    color: "var(--card)",
   },
 } satisfies ChartConfig;
 
-export function ChartRadialSimple() {
+export function ChartRadialSimple({
+  saosp,
+  sgosp,
+}: {
+  saosp: number;
+  sgosp: number;
+}) {
+  const { ncsao, ncsgo } = getNormalizedCompletedSp(saosp, sgosp);
+  const chartData = [
+    { label: "ttl", Sp: 100, fill: "var(--color-ttl)" },
+    { label: "saoSP", Sp: ncsao, fill: "var(--color-sao)" },
+    { label: "sgoSP", Sp: ncsgo, fill: "var(--color-sgo)" },
+  ];
+
+  const percentage = (ncsao + ncsgo) / 2;
+
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col relative">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Radial Chart</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Next Level Progress</CardTitle>
+        <CardDescription>SAO, SGO sp done</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
           className="mx-auto aspect-square max-h-[250px]"
         >
-          <RadialBarChart data={chartData} innerRadius={30} outerRadius={110}>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel nameKey="browser" />}
-            />
-            <RadialBar dataKey="visitors" background />
+          <RadialBarChart
+            data={chartData}
+            endAngle={360}
+            innerRadius={50}
+            outerRadius={140}
+            startAngle={0}
+            barSize={20}
+          >
+            <RadialBar dataKey="Sp" background cornerRadius={10} />
           </RadialBarChart>
         </ChartContainer>
       </CardContent>
+      <div className="flex absolute left-1/2 top-1/2 -translate-1/2">
+        <CountingNumber number={percentage} className="text-4xl font-black" />
+        <p>%</p>
+      </div>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Sao: <p className="font-black text-chart-4">{saosp}</p>, Sgo:{" "}
+          <p className="font-black text-chart-3">{sgosp}</p>
         </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
+        <div className="text-muted-foreground leading-none flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" />
+          Showing sales progress till next level
         </div>
       </CardFooter>
     </Card>

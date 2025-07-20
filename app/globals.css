@@ -122,3 +122,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 15px currentColor;
+  }
+  .text-glow-md {
+    text-shadow: 0 0 20px currentColor;
+  }
+  .text-glow-lg {
+    text-shadow: 0 0 20px currentColor, 0 0 45px currentColor;
+  }
+
+  .animated-gradient {
+    background-size: 200% 200%;
+    animation: gradient-animation 4s ease infinite;
+  }
+
+  @keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+}

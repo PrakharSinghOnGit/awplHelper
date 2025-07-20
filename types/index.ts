@@ -1,4 +1,5 @@
 export type levels =
+  | "Fresher"
   | "Bronze"
   | "Silver"
   | "Gold"
