@@ -30,7 +30,7 @@ interface Profile {
 interface ProfileContextType {
   profile: Profile | null;
   loading: boolean;
-  forceRefresh: () => void; // Add this line
+  forceRefresh: () => void;
 }
 
 const ProfileContext = createContext<ProfileContextType>({
@@ -46,7 +46,9 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   const fetchProfile = async () => {
     setLoading(true);
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (user) {
       const { data, error } = await supabase
@@ -57,7 +59,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
 
       if (data) {
         setProfile(data);
-        localStorage.setItem('userProfile', JSON.stringify(data));
+        localStorage.setItem("userProfile", JSON.stringify(data));
       }
       if (error) {
         console.error("Error fetching profile in context", error);
@@ -67,7 +69,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    const localProfile = localStorage.getItem('userProfile');
+    const localProfile = localStorage.getItem("userProfile");
     if (localProfile) {
       setProfile(JSON.parse(localProfile));
       setLoading(false);
@@ -77,10 +79,9 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const forceRefresh = () => {
-    localStorage.removeItem('userProfile');
+    localStorage.removeItem("userProfile");
     fetchProfile();
   };
-
 
   return (
     <ProfileContext.Provider value={{ profile, loading, forceRefresh }}>

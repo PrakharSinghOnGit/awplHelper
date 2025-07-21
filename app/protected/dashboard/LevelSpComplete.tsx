@@ -12,8 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { getNormalizedCompletedSp } from "@/lib/utils";
-import { CountingNumber } from "../animate-ui/text/counting-number";
+import { cn, getNormalizedCompletedSp } from "@/lib/utils";
+import { CountingNumber } from "../../../components/animate-ui/text/counting-number";
 
 const chartConfig = {
   Sp: {
@@ -21,11 +21,11 @@ const chartConfig = {
   },
   sao: {
     label: "SAO sp",
-    color: "var(--chart-4)",
+    color: "var(--chart-2)",
   },
   sgo: {
     label: "SGO sp",
-    color: "var(--chart-3)",
+    color: "var(--chart-4)",
   },
   ttl: {
     label: "Total",
@@ -33,14 +33,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartRadialSimple({
+export function LevelSPComplete({
   saosp,
   sgosp,
+  className,
 }: {
   saosp: number;
   sgosp: number;
+  className?: string;
 }) {
-  const { ncsao, ncsgo } = getNormalizedCompletedSp(saosp, sgosp);
+  const { psao, psgo, ncsao, ncsgo } = getNormalizedCompletedSp(saosp, sgosp);
   const chartData = [
     { label: "ttl", Sp: 100, fill: "var(--color-ttl)" },
     { label: "saoSP", Sp: ncsao, fill: "var(--color-sao)" },
@@ -50,7 +52,7 @@ export function ChartRadialSimple({
   const percentage = (ncsao + ncsgo) / 2;
 
   return (
-    <Card className="flex flex-col relative">
+    <Card className={cn("flex flex-col relative", className)}>
       <CardHeader className="items-center pb-0">
         <CardTitle>Next Level Progress</CardTitle>
         <CardDescription>SAO, SGO sp done</CardDescription>
@@ -78,8 +80,10 @@ export function ChartRadialSimple({
       </div>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 leading-none font-medium">
-          Sao: <p className="font-black text-chart-4">{saosp}</p>, Sgo:{" "}
-          <p className="font-black text-chart-3">{sgosp}</p>
+          Pending sao:
+          <p className="font-black text-chart-2">{psao.toLocaleString()}</p>,
+          Pending sgo:
+          <p className="font-black text-chart-4">{psgo.toLocaleString()}</p>
         </div>
         <div className="text-muted-foreground leading-none flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />

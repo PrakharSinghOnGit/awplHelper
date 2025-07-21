@@ -1,14 +1,15 @@
 "use client";
 
 import { useProfile } from "@/context/ProfileContext";
-import { ChartRadialSimple } from "@/components/cards/Radial2";
+import { LevelSPComplete } from "@/app/protected/dashboard/LevelSpComplete";
 import Link from "next/link";
-import DashSkeleton from "@/components/cards/DashboardSkeleton";
+import DashSkeleton from "@/app/protected/dashboard/DashboardSkeleton";
 import LevelCard from "./LevelCard";
 import { getLevel } from "@/lib/utils";
+import { ChequeBarChart } from "./ChequeBarChart";
 
 export default function Dashboard() {
-  const { profile, loading } = useProfile();
+  const { profile, loading, forceRefresh } = useProfile();
 
   if (loading) {
     return <DashSkeleton />;
@@ -34,22 +35,33 @@ export default function Dashboard() {
 
   return (
     <div className="p-0 sm:p-3">
-      <h1 className="scroll-m-20 text-xl font-extrabold text-balance my-6 sm:mt-3">
+      <h1
+        onClick={forceRefresh}
+        className="scroll-m-20 text-xl font-extrabold text-balance my-6 sm:mt-3"
+      >
         Welcome, {profile.name || "Leader"}!
       </h1>
-      <div className="gap-6 grid md:grid-cols-2 lg:grid-cols-3">
-        <LevelCard level={getLevel(profile.level_SAO!, profile.level_SGO!)} />
-        <ChartRadialSimple
+      <div className="gap-6 columns-1 md:columns-1 lg:columns-2">
+        <LevelCard
+          level={getLevel(profile.level_SAO!, profile.level_SGO!)}
+          className="break-inside-avoid mb-6"
+        />
+        <LevelSPComplete
           saosp={profile.level_SAO!}
           sgosp={profile.level_SGO!}
+          className="break-inside-avoid mb-6"
+        />
+        <ChequeBarChart
+          data={profile.cheque_data!}
+          className="break-inside-avoid mb-6"
         />
       </div>
     </div>
   );
 }
 
-// next level progress circular
+// next level progress circular // done
 // cheque bar chart
 // total income
 // total sp done
-// current rank
+// current rank // done

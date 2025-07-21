@@ -120,11 +120,11 @@ const levelStyles: Record<
   },
 };
 
-const LevelCard = ({ level }: { level: levels }) => {
+const LevelCard = ({ level, className }: { level: levels, className?: string }) => {
   const styles = levelStyles[level] || levelStyles.Bronze;
 
   return (
-    <Card className={cn("max-h-fit transition-all duration-300", styles.card)}>
+    <Card className={cn("max-h-fit transition-all duration-300", styles.card, className)}>
       <CardHeader>
         <CardDescription>Current Rank</CardDescription>
         <CardTitle

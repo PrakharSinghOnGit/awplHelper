@@ -48,26 +48,22 @@ export function getLevel(sao: number, sgo: number): levels {
 export function getNormalizedCompletedSp(
   saosp: number,
   sgosp: number
-): { ncsao: number; ncsgo: number } {
+): { ncsao: number; ncsgo: number; psao: number; psgo: number } {
   const minIndex = Math.min(
     TARGET_SAOS.findIndex((targetSAO) => saosp < targetSAO),
     TARGET_SGOS.findIndex((targetSGO) => sgosp < targetSGO)
   );
-  const ncsao =
-    100 -
-    (Math.round(
-      minIndex === -1 ? 0 : Math.max(0, TARGET_SAOS[minIndex] - saosp)
-    ) /
-      TARGET_SAOS[minIndex]) *
-      100;
-  const ncsgo =
-    100 -
-    (Math.round(
-      minIndex === -1 ? 0 : Math.max(0, TARGET_SGOS[minIndex] - sgosp)
-    ) /
-      TARGET_SGOS[minIndex]) *
-      100;
+  const psao = Math.round(
+    minIndex === -1 ? 0 : Math.max(0, TARGET_SAOS[minIndex] - saosp)
+  );
+  const psgo = Math.round(
+    minIndex === -1 ? 0 : Math.max(0, TARGET_SGOS[minIndex] - sgosp)
+  );
+  const ncsao = 100 - (psao / TARGET_SAOS[minIndex]) * 100;
+  const ncsgo = 100 - (psgo / TARGET_SGOS[minIndex]) * 100;
   return {
+    psao: psao,
+    psgo: psgo,
     ncsao: ncsao,
     ncsgo: ncsgo,
   };
