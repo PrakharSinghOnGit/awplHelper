@@ -1,6 +1,6 @@
 "use client";
 
-import { useProfile } from "@/context/ProfileContext";
+import { useProfile } from "@/app/protected/context/ProfileContext";
 import { LevelSPComplete } from "@/app/protected/dashboard/LevelSpComplete";
 import Link from "next/link";
 import DashSkeleton from "@/app/protected/dashboard/DashboardSkeleton";

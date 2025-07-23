@@ -22,10 +22,10 @@ type EditMemberProps = {
   onOpenChange: (open: boolean) => void;
   member: TeamMember | null;
   onSave: (
-    member: Omit<TeamMember, "uuid"> & { uuid?: string },
+    member: Partial<TeamMember> & { id?: string },
     isNew: boolean
   ) => void;
-  onDelete: (uuid: string) => void;
+  onDelete: (id: string) => void;
 };
 
 export function EditMember({
@@ -37,13 +37,13 @@ export function EditMember({
 }: EditMemberProps) {
   const isNew = !member;
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const handleSave = (name: string, id: string, pass: string) => {
+  const handleSave = (name: string, awpl_id: string, awpl_pass: string) => {
     onSave(
       {
-        ...(member?.uuid ? { uuid: member.uuid } : {}),
-        id,
+        ...(member?.id ? { id: member.id } : {}),
+        awpl_id,
         name,
-        pass,
+        awpl_pass,
       },
       isNew
     );
@@ -89,7 +89,7 @@ export function EditMember({
                 <Input
                   type="text"
                   id="Id"
-                  defaultValue={member?.id ?? ""}
+                  defaultValue={member?.awpl_id ?? ""}
                   placeholder="Enter User Id..."
                   required
                 />
@@ -101,7 +101,7 @@ export function EditMember({
                 <Input
                   type="text"
                   id="pass"
-                  defaultValue={member?.pass ?? ""}
+                  defaultValue={member?.awpl_pass ?? ""}
                   placeholder="Enter Password..."
                   required
                 />
@@ -144,7 +144,7 @@ export function EditMember({
         description="Are you sure you want to delete this team member? This action cannot be undone."
         onConfirm={() => {
           onOpenChange(false);
-          onDelete(member?.uuid ?? "");
+          onDelete(member?.id ?? "");
         }}
         confirmText="Delete"
       />

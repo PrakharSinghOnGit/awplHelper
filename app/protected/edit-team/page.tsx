@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,15 +32,20 @@ import {
   Trash2,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EditMember } from "@/components/EditMember";
+import { EditMember } from "@/app/protected/edit-team/EditMember";
+import { useTeam } from "@/app/protected/context/TeamContext";
+import { useProfile } from "@/app/protected/context/ProfileContext";
 
 export default function EditTeam() {
+  const { members, loading, addMember, updateMember, deleteMembers } =
+    useTeam();
+  const { profile } = useProfile();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
-  const [members, setMembers] = useState<TeamMember[]>([]);
   const [confirmMultiDeleteOpen, setConfirmMultiDeleteOpen] = useState(false);
+
   const columnsData: ColumnDef<TeamMember>[] = [
     {
       id: "select",
@@ -66,39 +71,39 @@ export default function EditTeam() {
     },
     {
       accessorKey: "name",
-      header: ({ column }) => {
-        return (
-          <Button
-            className="has-[>svg]:px-0 m-0 p-0 w-full rounded-none justify-start"
-            variant="ghost"
-            onClick={() =>
-              column.toggleSorting(
-                !column.getIsSorted()
-                  ? false
-                  : column.getIsSorted() === "asc"
-                  ? true
-                  : false
-              )
-            }
-          >
-            Name
-            <ArrowUpDown strokeWidth={2} />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          className="has-[>svg]:px-0 m-0 p-0 w-full rounded-none justify-start"
+          variant="ghost"
+          onClick={() =>
+            column.toggleSorting(
+              !column.getIsSorted()
+                ? false
+                : column.getIsSorted() === "asc"
+                ? true
+                : false
+            )
+          }
+        >
+          Name
+          <ArrowUpDown strokeWidth={2} />
+        </Button>
+      ),
       cell: ({ row }) => (
         <div className="capitalize">{row.getValue("name")}</div>
       ),
     },
     {
-      accessorKey: "id",
+      accessorKey: "awpl_id",
       header: "User Id",
-      cell: ({ row }) => <div className="uppercase">{row.getValue("id")}</div>,
+      cell: ({ row }) => (
+        <div className="uppercase">{row.getValue("awpl_id")}</div>
+      ),
     },
     {
-      accessorKey: "pass",
+      accessorKey: "awpl_pass",
       header: "Pass",
-      cell: ({ row }) => row.getValue("pass"),
+      cell: ({ row }) => row.getValue("awpl_pass"),
     },
     {
       id: "actions",
@@ -118,11 +123,6 @@ export default function EditTeam() {
       },
     },
   ];
-  useEffect(() => {
-    fetch("/api/team")
-      .then((res) => res.json())
-      .then(setMembers);
-  }, []);
 
   const table = useReactTable({
     data: members,
@@ -149,16 +149,18 @@ export default function EditTeam() {
     setIsDialogOpen(true);
   };
 
-  const handleExport = (leaderName: string) => {
+  const handleExport = () => {
     if (!members.length) return;
 
     let csv = "sno, name, id, pass\n";
     members.forEach((member, index) => {
-      csv += `${index + 1}, ${member.name}, ${member.id}, ${member.pass}\n`;
+      csv += `${index + 1}, ${member.name}, ${member.awpl_id}, ${
+        member.awpl_pass
+      }\n`;
     });
     const d = new Date();
     const timestamp = `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
-    const filename = `${leaderName}_team_${timestamp}.csv`;
+    const filename = `${profile?.name || "leader"}_team_${timestamp}.csv`;
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
 
@@ -177,59 +179,30 @@ export default function EditTeam() {
     URL.revokeObjectURL(url);
   };
 
-  const handleSave = async (
-    updatedMember: Partial<TeamMember> & { id: string },
+  const handleSave = (
+    updatedMember: Partial<TeamMember> & { id?: string },
     isNew?: boolean
   ) => {
     if (isNew) {
-      await fetch("/api/team", {
-        method: "POST",
-        body: JSON.stringify(updatedMember),
-        headers: { "Content-Type": "application/json" },
-      });
+      addMember(updatedMember as Omit<TeamMember, "id">);
     } else {
-      await fetch("/api/team", {
-        method: "PUT",
-        body: JSON.stringify(updatedMember),
-        headers: { "Content-Type": "application/json" },
-      });
+      updateMember(updatedMember as TeamMember & { id: string });
     }
     setIsDialogOpen(false);
     setSelectedMember(null);
-    fetchMembers();
   };
 
-  const handleDelete = async (uuid: string) => {
-    await fetch("/api/team", {
-      method: "DELETE",
-      body: JSON.stringify({ uuid: uuid }),
-      headers: { "Content-Type": "application/json" },
-    });
+  const handleDelete = (id: string) => {
+    deleteMembers([id]);
     setIsDialogOpen(false);
     setSelectedMember(null);
-    fetchMembers();
   };
 
-  const handleMultiDelete = async () => {
-    const uuids: string[] = [];
-    table.getRowModel().rows.forEach((row) => {
-      if (row.getIsSelected()) {
-        uuids.push(row.original.uuid);
-      }
-    });
-    await fetch("/api/team", {
-      method: "DELETE",
-      body: JSON.stringify({ uuid: uuids }),
-      headers: { "Content-Type": "application/json" },
-    });
+  const handleMultiDelete = () => {
+    const ids = table.getSelectedRowModel().rows.map((row) => row.original.id);
+    deleteMembers(ids);
     setRowSelection({});
-    fetchMembers();
-  };
-
-  const fetchMembers = async () => {
-    const res = await fetch("/api/team");
-    const data = await res.json();
-    setMembers(data);
+    setConfirmMultiDeleteOpen(false);
   };
 
   return (
@@ -260,7 +233,7 @@ export default function EditTeam() {
             Delete
           </Button>
         )}
-        <Button onClick={() => handleExport("leaderName")} variant="secondary">
+        <Button onClick={handleExport} variant="secondary">
           <DownloadIcon />
           Export
         </Button>
@@ -286,7 +259,16 @@ export default function EditTeam() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columnsData.length}
+                  className="h-24 text-center"
+                >
+                  Loading team members...
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

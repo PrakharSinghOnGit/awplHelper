@@ -4,7 +4,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { ModeToggle } from "@/components/ui/themeButton";
 import { Separator } from "@radix-ui/react-separator";
 import { usePathname } from "next/navigation";
-import { ProfileProvider } from "@/context/ProfileContext";
+import { ProfileProvider } from "@/app/protected/context/ProfileContext";
+import { TeamProvider } from "@/app/protected/context/TeamContext";
 
 const PAGE_TITLES: Record<string, string> = {
   "/protected/dashboard": "Dashboard",
@@ -25,20 +26,22 @@ export default function RootLayout({
 
   return (
     <ProfileProvider>
-      <SidebarProvider>
-        <AppSidebar />
-        <main className="w-full p-3 flex flex-col">
-          <div className="flex flex-row mb-3 items-center">
-            <SidebarTrigger />
-            <h1 className="text-xl font-bold w-full text-center">
-              {pageTitle}
-            </h1>
-            <ModeToggle />
-          </div>
-          <Separator className="w-auto h-0.5 bg-sidebar-border" />
-          {children}
-        </main>
-      </SidebarProvider>
+      <TeamProvider>
+        <SidebarProvider>
+          <AppSidebar />
+          <main className="w-full p-3 flex flex-col">
+            <div className="flex flex-row mb-3 items-center">
+              <SidebarTrigger />
+              <h1 className="text-xl font-bold w-full text-center">
+                {pageTitle}
+              </h1>
+              <ModeToggle />
+            </div>
+            <Separator className="w-auto h-0.5 bg-sidebar-border" />
+            {children}
+          </main>
+        </SidebarProvider>
+      </TeamProvider>
     </ProfileProvider>
   );
 }

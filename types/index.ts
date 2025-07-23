@@ -20,8 +20,12 @@ export type levels =
   | "Brand Ambassador";
 
 export type TeamMember = {
-  uuid: string;
+  awpl_id: string;
+  awpl_pass: string;
+  created_at: Date;
   id: string;
+  last_updated: Date;
   name: string;
-  pass: string;
+  status_flag: "OK" | "PENDING" | "WRONG";
+  valid_passwords: string[] | null;
 };
