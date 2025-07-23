@@ -62,3 +62,7 @@ all the action that can happen is dont be leader soo
  - if any validPass is right we make that awplPass and empty validPass
  - if none is right we give that member flag Red that means it will show error on all the leader its linked to to update the pass
  
+
+TODO :
+issue
+Adding same member by 2 profiles(Leaders) updates 2nd one to first one

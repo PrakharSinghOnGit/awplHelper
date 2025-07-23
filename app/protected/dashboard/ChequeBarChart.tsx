@@ -124,7 +124,9 @@ export function ChequeBarChart({
       <CardHeader>
         <CardTitle>Check Data</CardTitle>
         <CardDescription>
-          from {data[0].date} to {data[data.length - 1].date}
+          {data.length === 0
+            ? "No data"
+            : `from ${data[0].date} to ${data[data.length - 1].date}`}
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -78,7 +78,8 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
     } catch (e) {
       // Rollback
       setMembers((prev) => prev.filter((m) => m.id !== tempId));
-      console.error("Failed to add member", e);
+      console.error("Failed to add member\n", e);
+      alert("Failed to add Team Member");
     }
   };
 
@@ -101,6 +102,7 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
     } catch (e) {
       setMembers(originalMembers);
       console.error("Failed to update member", e);
+      alert("Failed to update member");
     }
   };
 

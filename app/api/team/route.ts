@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabase.rpc("add_member_to_leader", {
     leader_id_param: user.id,
-    member_awpl_id_param: awpl_id,
+    member_awpl_id_param: awpl_id.toUpperCase(),
     member_name_param: name,
     member_pass_param: awpl_pass,
   });

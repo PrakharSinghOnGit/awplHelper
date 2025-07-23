@@ -58,7 +58,9 @@ export function EditMember({
               e.preventDefault();
               handleSave(
                 (document.getElementById("name") as HTMLInputElement).value,
-                (document.getElementById("Id") as HTMLInputElement).value,
+                (
+                  document.getElementById("Id") as HTMLInputElement
+                ).value.toUpperCase(),
                 (document.getElementById("pass") as HTMLInputElement).value
               );
               onOpenChange(false);
