@@ -9,7 +9,6 @@ import {
 } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-// Define the type for your profile data
 interface Profile {
   id: string;
   awpl_id?: string;

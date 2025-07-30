@@ -71,7 +71,6 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
         headers: { "Content-Type": "application/json" },
       });
       const addedMember = await response.json();
-      // Replace temporary member with the real one from the server
       setMembers((prev) =>
         prev.map((m) => (m.id === tempId ? addedMember : m))
       );
