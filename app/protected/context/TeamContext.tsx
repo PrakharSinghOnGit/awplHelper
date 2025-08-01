@@ -9,6 +9,7 @@ import {
   useCallback,
 } from "react";
 import { TeamMember } from "@/types";
+import { getLevel } from "@/lib/utils";
 
 interface TeamContextType {
   members: TeamMember[];
@@ -28,16 +29,52 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const setMembersAndCache = (updater: React.SetStateAction<TeamMember[]>) => {
+    setMembers((prevMembers) => {
+      const newMembers =
+        typeof updater === "function" ? updater(prevMembers) : updater;
+      localStorage.setItem("teamMembers", JSON.stringify(newMembers));
+      return newMembers;
+    });
+  };
+
   const fetchMembers = useCallback(async () => {
     setLoading(true);
     setError(null);
+
+    const cachedMembersJSON = localStorage.getItem("teamMembers");
+    const lastFetchTime = localStorage.getItem("lastFetchTime");
+    const oneHour = 60 * 60 * 1000;
+
+    if (
+      cachedMembersJSON &&
+      lastFetchTime &&
+      Date.now() - parseInt(lastFetchTime, 10) < oneHour
+    ) {
+      const cachedMembers = JSON.parse(cachedMembersJSON);
+      cachedMembers.forEach(
+        (mem: { levelSao: number; levelSgo: number; level: string }) => {
+          mem.level = getLevel(mem.levelSao, mem.levelSgo);
+        }
+      );
+      setMembers(cachedMembers);
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/team");
       if (!response.ok) {
         throw new Error("Failed to fetch team members");
       }
       const data = await response.json();
-      setMembers(data);
+      data.forEach(
+        (mem: { levelSao: number; levelSgo: number; level: string }) => {
+          mem.level = getLevel(mem.levelSao, mem.levelSgo);
+        }
+      );
+      setMembersAndCache(data);
+      localStorage.setItem("lastFetchTime", Date.now().toString());
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An unknown error occurred"
@@ -62,7 +99,7 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
       valid_passwords: null,
     };
 
-    setMembers((prev) => [...prev, optimisticMember]);
+    setMembersAndCache((prev) => [...prev, optimisticMember]);
 
     try {
       const response = await fetch("/api/team", {
@@ -71,12 +108,12 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
         headers: { "Content-Type": "application/json" },
       });
       const addedMember = await response.json();
-      setMembers((prev) =>
+      setMembersAndCache((prev) =>
         prev.map((m) => (m.id === tempId ? addedMember : m))
       );
     } catch (e) {
       // Rollback
-      setMembers((prev) => prev.filter((m) => m.id !== tempId));
+      setMembersAndCache((prev) => prev.filter((m) => m.id !== tempId));
       console.error("Failed to add member\n", e);
       alert("Failed to add Team Member");
     }
@@ -86,7 +123,7 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
     updatedMember: Partial<TeamMember> & { id: string }
   ) => {
     const originalMembers = members;
-    setMembers((prev) =>
+    setMembersAndCache((prev) =>
       prev.map((m) =>
         m.id === updatedMember.id ? { ...m, ...updatedMember } : m
       )
@@ -99,7 +136,7 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (e) {
-      setMembers(originalMembers);
+      setMembersAndCache(originalMembers);
       console.error("Failed to update member", e);
       alert("Failed to update member");
     }
@@ -107,7 +144,7 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteMembers = async (ids: string[]) => {
     const originalMembers = members;
-    setMembers((prev) => prev.filter((m) => !ids.includes(m.id)));
+    setMembersAndCache((prev) => prev.filter((m) => !ids.includes(m.id)));
 
     try {
       await fetch("/api/team", {
@@ -116,7 +153,7 @@ export const TeamProvider = ({ children }: { children: ReactNode }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (e) {
-      setMembers(originalMembers);
+      setMembersAndCache(originalMembers);
       console.error("Failed to delete members", e);
     }
   };

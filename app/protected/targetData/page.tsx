@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import {
   SortingState,
   ColumnDef,
@@ -11,7 +10,7 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-import { ArrowUpDown, DownloadIcon, Info, Search } from "lucide-react";
+import { ArrowUpDown, Info } from "lucide-react";
 import { TeamMember } from "@/types";
 import { Button } from "@/components/ui/button";
 import { useTeam } from "../context/TeamContext";
@@ -23,7 +22,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Details from "./Details";
+import Details from "../../../components/Details";
+import { getLevel } from "@/lib/utils";
+import { DataSearchAndExport } from "@/components/DataSearchAndExport";
 
 export default function TargetData() {
   const { members, loading } = useTeam();
@@ -69,9 +70,10 @@ export default function TargetData() {
       ),
     },
     {
-      accessorKey: "level",
-      header: "level",
-      cell: ({ row }) => row.getValue("level"),
+      accessorKey: "levelSao",
+      header: "Rank",
+      cell: ({ row }) =>
+        getLevel(row.getValue("levelSao"), row.getValue("levelSgo")),
     },
     {
       accessorKey: "targetSao",
@@ -86,7 +88,7 @@ export default function TargetData() {
     {
       id: "actions",
       enableHiding: false,
-      header: "Sgo",
+      header: "Info",
       cell: ({ row }) => {
         const member = row.original;
         return (
@@ -110,52 +112,9 @@ export default function TargetData() {
     },
   });
 
-  const handleExport = () => {
-    if (!members.length) return;
-
-    let csv = "sno, name, id, pass\n";
-    members.forEach((member, index) => {
-      csv += `${index + 1}, ${member.name}, ${member.awpl_id}, ${
-        member.awpl_pass
-      }\n`;
-    });
-    const d = new Date();
-    const timestamp = `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
-    const filename = `Level Data ${timestamp}.csv`;
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = filename;
-
-    if (navigator.userAgent.toLowerCase().includes("android")) {
-      window.open(url, "_blank");
-    } else {
-      link.click();
-    }
-
-    URL.revokeObjectURL(url);
-  };
-
   return (
-    <div className="flex flex-col gap-4 w-full pt-3 grow">
-      <div className="flex flex-row gap-2">
-        <Input
-          icon={<Search size={15} />}
-          placeholder="Search..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-        />
-        <Button onClick={handleExport} variant="secondary">
-          <DownloadIcon />
-          Download
-        </Button>
-      </div>
+    <div className="flex flex-col gap-3 w-full pt-3 grow">
+      <DataSearchAndExport mems={members} table={table} />
       <div className="border-1 border-color-border grow rounded-md overflow-scroll">
         <Table>
           <TableHeader>
