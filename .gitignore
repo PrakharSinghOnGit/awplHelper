@@ -9,7 +9,6 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-bun.lock
 
 # testing
 /coverage
@@ -23,7 +22,6 @@ bun.lock
 
 # misc
 .DS_Store
-secret.json
 *.pem
 
 # debug
@@ -33,7 +31,8 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env*.local
+.env
 
 # vercel
 .vercel
@@ -41,3 +40,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/lib/generated/prisma

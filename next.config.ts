@@ -1,10 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactStrictMode: false,
-  devIndicators: false,
-  productionBrowserSourceMaps: false,
-  /* config options here */
+  images: {
+    domains: ["tailark.com", "avatars.githubusercontent.com"],
+  },
 };
 
 export default nextConfig;
