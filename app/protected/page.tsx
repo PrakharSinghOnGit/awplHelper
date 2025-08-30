@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import ProtectedContent from "@/components/dashboard/ProtectedContent";
+import ProtectedContent from "@/components/protected/ProtectedContent";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();

@@ -1,13 +1,13 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import Dashboard from "@/components/dashboard/Dashboard";
-import EditTeam from "@/components/dashboard/EditTeam";
-import LevelData from "@/components/dashboard/LevelData";
-import TargetData from "@/components/dashboard/TargetData";
-import ChequeData from "@/components/dashboard/ChequeData";
-import Payment from "@/components/dashboard/Payment";
-import Help from "@/components/dashboard/Help";
+import Dashboard from "@/components/protected/dashboard/Dashboard";
+import EditTeam from "@/components/protected/EditTeam";
+import LevelData from "@/components/protected/LevelData";
+import TargetData from "@/components/protected/TargetData";
+import ChequeData from "@/components/protected/ChequeData";
+import Payment from "@/components/protected/Payment";
+import Help from "@/components/protected/Help";
 
 type NavigationContextType = {
   currentPage: pageProp;
