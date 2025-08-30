@@ -66,3 +66,7 @@ all the action that can happen is dont be leader soo
 TODO :
 issue
 Adding same member by 2 profiles(Leaders) updates 2nd one to first one
+
+
+
+no prisma react query
