@@ -193,3 +193,17 @@ export const useUpdateMember = () => {
     }
   );
 };
+
+export const useDeleteMember = () => {
+  return useCustomMutation(
+    (supabase) => async (id: string) => {
+      const { error } = await supabase.from("members").delete().eq("id", id);
+
+      if (error) throw error;
+      return { id };
+    },
+    {
+      invalidateQueries: ["members"],
+    }
+  );
+};

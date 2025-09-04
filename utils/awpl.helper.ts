@@ -29,6 +29,7 @@ const TargetSGOs = [
   766600, 1534600, 3070600, 6142600, 12286600, 24574600, 49150600,
 ];
 
+export { Levels };
 export type LevelProp = (typeof Levels)[number];
 
 export function calcLevel(sao: number, sgo: number) {

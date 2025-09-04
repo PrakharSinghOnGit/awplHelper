@@ -1,6 +1,6 @@
 import { useProfile } from "@/hooks/useDatabase";
 import DashboardSkeleton from "@/components/protected/dashboard/DashboardSkeleton";
-import { calcLevel } from "@/utils/awpl.helper";
+// import { calcLevel } from "@/utils/awpl.helper";
 import UserLevel from "./userLevel";
 
 export default function Dashboard() {
@@ -13,9 +13,25 @@ export default function Dashboard() {
     <div>
       <h2 className="font-bold text-2xl p-5">Welcome, {profile[0].name}</h2>
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <UserLevel
-          rank={calcLevel(profile[0].level_SAO, profile[0].level_SGO)}
-        />
+        <UserLevel level={"Fresher"} />
+        <UserLevel level={"Bronze"} />
+        <UserLevel level={"Silver"} />
+        <UserLevel level={"Gold"} />
+        <UserLevel level={"Platinum"} />
+        <UserLevel level={"Emerald"} />
+        <UserLevel level={"Topaz"} />
+        <UserLevel level={"Ruby Star"} />
+        <UserLevel level={"Sapphire"} />
+        <UserLevel level={"Star Sapphire"} />
+        <UserLevel level={"Diamond"} />
+        <UserLevel level={"Blue Diamond"} />
+        <UserLevel level={"Black Diamond"} />
+        <UserLevel level={"Royal Diamond"} />
+        <UserLevel level={"Crown Diamond"} />
+        <UserLevel level={"Ambassador"} />
+        <UserLevel level={"Royal Ambassador"} />
+        <UserLevel level={"Crown Ambassador"} />
+        <UserLevel level={"Brand Ambassador"} />
       </div>
     </div>
   );

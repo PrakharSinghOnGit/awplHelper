@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { NavigationProvider } from "@/components/providers/NavigationContext";
 import { SupabaseProvider } from "@/components/providers/SupabaseProvider";
-import { Title } from "@/components/ui/title";
 
 export default function ProtectedLayout({
   children,
@@ -34,7 +33,9 @@ export default function ProtectedLayout({
                 </Avatar>
               </div>
             </div>
-            <main className="rounded-xl grow border w-full">{children}</main>
+            <main className="rounded-xl grow border w-full p-3 lg:p-6">
+              {children}
+            </main>
           </div>
         </SidebarProvider>
       </NavigationProvider>
