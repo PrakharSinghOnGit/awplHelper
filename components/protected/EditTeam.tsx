@@ -247,6 +247,56 @@ export function EditTeam() {
       },
     },
     {
+      accessorKey: "levelSao",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Level SAO
+            {column.getIsSorted() === "asc" ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === "desc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center font-mono font-semibold">
+          {row.getValue("levelSao") || 0}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "levelSgo",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Level SGO
+            {column.getIsSorted() === "asc" ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === "desc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-center font-mono font-bold">
+          {row.getValue("levelSgo") || 0}
+        </div>
+      ),
+    },
+    {
       accessorKey: "status_flag",
       header: "Status",
       cell: ({ row }) => <StatusBadge status={row.getValue("status_flag")} />,

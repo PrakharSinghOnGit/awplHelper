@@ -1,7 +1,7 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const DashboardSkeleton = () => {
+export const DashboardSkeleton = () => {
   return (
     <div className="flex flex-col space-y-3">
       <Skeleton className="h-[125px] w-[250px] rounded-xl" />
@@ -12,5 +12,3 @@ const DashboardSkeleton = () => {
     </div>
   );
 };
-
-export default DashboardSkeleton;

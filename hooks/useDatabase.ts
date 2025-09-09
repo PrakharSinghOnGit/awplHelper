@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useSupabase } from "@/components/providers/SupabaseProvider";
+import { useSupabase } from "@/providers/SupabaseProvider";
 import type { Database } from "@/utils/database.types";
 
 // Type helpers

@@ -11,49 +11,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { cn } from "@/lib/utils";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
-const chartConfig = {
-  a0: {
-    color: "var(--color-blue-300)",
-  },
-  a1: {
-    color: "var(--color-blue-300)",
-  },
-  a2: {
-    color: "var(--color-blue-400)",
-  },
-  a3: {
-    color: "var(--color-blue-500)",
-  },
-  a4: {
-    color: "var(--color-blue-600)",
-  },
-  a5: {
-    color: "var(--color-blue-600)",
-  },
-  a6: {
-    color: "var(--color-blue-700)",
-  },
-  a7: {
-    color: "var(--color-blue-800)",
-  },
-} satisfies ChartConfig;
-export function ChequeBarChart({
+const chartConfig = {} satisfies ChartConfig;
+
+export function ChequeInfo({
   data,
-  className,
 }: {
   data: { date: string; amount: number }[];
-  className?: string;
 }) {
-  const chartData: { date: string; amount: number; fill: string }[] = [];
-  data.forEach((d, i) =>
-    chartData.push({
-      date: d.date,
-      amount: d.amount,
-      fill: `var(--color-a${i})`,
-    })
+  const chartData: { date: string; amount: number; fill: string }[] = data.map(
+    (d) => {
+      return {
+        date: d.date,
+        amount: d.amount,
+        fill: `hsl(var(--chart-1))`,
+      };
+    }
   );
 
   function calculateLinearRegressionSlope(): number {
@@ -120,7 +99,7 @@ export function ChequeBarChart({
   }
 
   return (
-    <Card className={cn(className)}>
+    <Card className="col-span-1 md:col-span-2 lg:col-span-3">
       <CardHeader>
         <CardTitle>Check Data</CardTitle>
         <CardDescription>
@@ -129,8 +108,11 @@ export function ChequeBarChart({
             : `from ${data[0].date} to ${data[data.length - 1].date}`}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
+      <CardContent className="h-[400px] overflow-hidden px-5">
+        <ChartContainer
+          style={{ height: "100%", width: "100%" }}
+          config={chartConfig}
+        >
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -138,15 +120,37 @@ export function ChequeBarChart({
               top: 20,
             }}
           >
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  className="w-[150px]"
+                  nameKey="views"
+                  labelFormatter={(value) => {
+                    // Split the date and rearrange to create valid date object
+                    const [day, month, year] = value.split("-");
+                    const date = new Date(`20${year}-${month}-${day}`);
+                    return date.toLocaleDateString("en-IN", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    });
+                  }}
+                />
+              }
+            />
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="date"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, -3).replaceAll("-", "/")}
+              tickFormatter={(value) => {
+                // Keep only day and month for X-axis
+                const [day, month] = value.split("-");
+                return `${day}/${month}`;
+              }}
             />
-            <Bar dataKey="amount" radius={8}>
+            <Bar dataKey="amount" radius={[8, 8, 2, 2]}>
               <LabelList
                 position="top"
                 offset={12}

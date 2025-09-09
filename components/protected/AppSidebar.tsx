@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import { SidebarLogoutButton } from "@/components/auth/LogOutButton";
-import { useNavigation } from "@/components/providers/NavigationContext";
+import { useNavigation } from "@/providers/NavigationContext";
 
 const Links = [
   {
@@ -60,7 +60,7 @@ const FooterLinks = [
 
 export function AppSidebar() {
   const { currentPage, setCurrentPage } = useNavigation();
-  const { isMobile: isSidebarMobile, state } = useSidebar();
+  const { isMobile: isSidebarMobile, state, setOpenMobile } = useSidebar();
   return (
     <Sidebar collapsible={isSidebarMobile ? "offcanvas" : "icon"}>
       <SidebarContent>
@@ -77,7 +77,10 @@ export function AppSidebar() {
           {Links.map((link) => (
             <SidebarMenuItem key={link.name} className="flex mx-3">
               <SidebarMenuButton
-                onClick={() => setCurrentPage(link.name)}
+                onClick={() => {
+                  setOpenMobile(false);
+                  setCurrentPage(link.name);
+                }}
                 variant={"outline"}
                 tooltip={link.name}
                 className={`hover:scale-105 transition-all text-nowrap p-2.5 size-10 w-full bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 ${
@@ -97,7 +100,10 @@ export function AppSidebar() {
           {FooterLinks.map((link) => (
             <SidebarMenuItem key={link.name} className="flex mx-3">
               <SidebarMenuButton
-                onClick={() => setCurrentPage(link.name)}
+                onClick={() => {
+                  setOpenMobile(false);
+                  setCurrentPage(link.name);
+                }}
                 variant={"outline"}
                 tooltip={link.name}
                 className={`hover:scale-105 transition-all text-nowrap p-2.5 size-10 w-full bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 ${

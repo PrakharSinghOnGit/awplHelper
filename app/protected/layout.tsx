@@ -3,8 +3,8 @@ import { ModeToggle } from "@/components/ThemeChange";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { NavigationProvider } from "@/components/providers/NavigationContext";
-import { SupabaseProvider } from "@/components/providers/SupabaseProvider";
+import { NavigationProvider } from "@/providers/NavigationContext";
+import { SupabaseProvider } from "@/providers/SupabaseProvider";
 
 export default function ProtectedLayout({
   children,

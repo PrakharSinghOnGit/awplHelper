@@ -39,3 +39,12 @@ export function calcLevel(sao: number, sgo: number) {
     saoIdx === -1 ? sgoIdx : sgoIdx === -1 ? saoIdx : Math.min(saoIdx, sgoIdx);
   return Levels[minIdx === -1 ? Levels.length - 1 : minIdx];
 }
+
+export function getRequiredSp(type: "SAO" | "SGO", sp: number) {
+  if (type === "SAO") {
+    const saoIdx = TargetSAOs.findIndex((target) => sp < target);
+    return TargetSAOs[saoIdx];
+  }
+  const sgoIdx = TargetSGOs.findIndex((target) => sp < target);
+  return TargetSGOs[sgoIdx];
+}

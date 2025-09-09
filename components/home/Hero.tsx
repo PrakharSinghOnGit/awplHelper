@@ -6,6 +6,7 @@ import { ArrowRight, Github, Menu, Pickaxe, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { cn } from "@/lib/utils";
+import { ModeToggle } from "../ThemeChange";
 
 const transitionVariants = {
   item: {
@@ -329,6 +330,7 @@ const HeroHeader = () => {
                 </ul>
               </div>
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+                <ModeToggle />
                 <Button
                   asChild
                   variant="outline"
