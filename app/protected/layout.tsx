@@ -16,11 +16,10 @@ export default function ProtectedLayout({
       <NavigationProvider>
         <SidebarProvider>
           <AppSidebar />
-          <div className="flex flex-col gap-3 w-full justify-center m-3 lg:ml-0 md:ml-0">
+          <div className="flex flex-col gap-3 w-full justify-center m-3 lg:ml-0 md:ml-0 h-[calc(100vh-24px)]">
             <div className="flex">
               <div className="flex items-center gap-3">
                 <SidebarTrigger />
-                {/* <Title /> */}
               </div>
               <div className="flex gap-3 self-end ml-auto">
                 <Badge variant={"outline"} color="blue">
@@ -33,7 +32,7 @@ export default function ProtectedLayout({
                 </Avatar>
               </div>
             </div>
-            <main className="rounded-xl grow border w-full p-3 lg:p-6">
+            <main className="rounded-xl grow border w-full p-3 lg:p-6 overflow-scroll">
               {children}
             </main>
           </div>

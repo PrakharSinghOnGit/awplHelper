@@ -69,7 +69,6 @@ export function AuthButtons({
     }
   }
 
-  // User is not authenticated - show login/signup buttons
   if (variant === "hero") {
     return (
       <div
