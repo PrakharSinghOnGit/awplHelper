@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { AuthPersistenceProvider } from "@/components/providers/AuthPersistenceProvider";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -33,6 +34,7 @@ export default function RootLayout({
           enableSystem={false}
           storageKey="awpl-theme"
         >
+          <AuthPersistenceProvider />
           {children}
         </ThemeProvider>
       </body>

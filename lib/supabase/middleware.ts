@@ -12,6 +12,10 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+      },
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -23,9 +27,17 @@ export async function updateSession(request: NextRequest) {
           supabaseResponse = NextResponse.next({
             request,
           });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // Set longer-lasting cookies for auth persistence
+            const extendedOptions = {
+              ...options,
+              maxAge: options?.maxAge || 60 * 60 * 24 * 30, // 30 days
+              httpOnly: options?.httpOnly !== false,
+              secure: process.env.NODE_ENV === "production",
+              sameSite: "lax" as const,
+            };
+            supabaseResponse.cookies.set(name, value, extendedOptions);
+          });
         },
       },
     }

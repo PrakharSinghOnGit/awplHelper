@@ -35,6 +35,20 @@ export function ChequeInfo({
     }
   );
 
+  // Calculate chart dimensions for scrollability
+  const minBarWidth = 60; // Minimum width per bar in pixels
+  const maxBarsVisible = {
+    mobile: 4, // Show max 3 bars on mobile
+    tablet: 6, // Show max 5 bars on tablet
+    desktop: 10, // Show max 7 bars on desktop
+  };
+
+  // Calculate the required width based on data length
+  const chartMinWidth = Math.max(data.length * minBarWidth, 300);
+
+  // Determine if scrolling is needed based on screen size
+  const shouldScroll = data.length > maxBarsVisible.mobile;
+
   function calculateLinearRegressionSlope(): number {
     const arr = data.map((el) => el.amount);
     const n = arr.length;
@@ -108,59 +122,83 @@ export function ChequeInfo({
             : `from ${data[0].date} to ${data[data.length - 1].date}`}
         </CardDescription>
       </CardHeader>
-      <CardContent className="h-[400px] overflow-hidden px-5">
-        <ChartContainer
-          style={{ height: "100%", width: "100%" }}
-          config={chartConfig}
+      <CardContent className="h-[400px] px-5">
+        <div
+          className={`
+            h-full w-full
+            ${
+              shouldScroll
+                ? "overflow-x-auto overflow-y-hidden"
+                : "overflow-hidden"
+            }
+            scrollbar-thin
+            ${data.length > maxBarsVisible.mobile ? "sm:overflow-x-auto" : ""}
+            ${data.length > maxBarsVisible.tablet ? "md:overflow-x-auto" : ""}
+            ${data.length > maxBarsVisible.desktop ? "lg:overflow-x-auto" : ""}
+          `}
         >
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              top: 20,
+          <div
+            className="h-full"
+            style={{
+              minWidth: shouldScroll ? `${chartMinWidth}px` : "100%",
+              width: shouldScroll ? `${chartMinWidth}px` : "100%",
             }}
           >
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  className="w-[150px]"
-                  nameKey="views"
-                  labelFormatter={(value) => {
-                    // Split the date and rearrange to create valid date object
-                    const [day, month, year] = value.split("-");
-                    const date = new Date(`20${year}-${month}-${day}`);
-                    return date.toLocaleDateString("en-IN", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    });
+            <ChartContainer
+              style={{ height: "100%", width: "100%" }}
+              config={chartConfig}
+            >
+              <BarChart
+                accessibilityLayer
+                data={chartData}
+                margin={{
+                  top: 20,
+                }}
+                width={shouldScroll ? chartMinWidth : undefined}
+              >
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      className="w-[150px]"
+                      nameKey="views"
+                      labelFormatter={(value) => {
+                        // Split the date and rearrange to create valid date object
+                        const [day, month, year] = value.split("-");
+                        const date = new Date(`20${year}-${month}-${day}`);
+                        return date.toLocaleDateString("en-IN", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        });
+                      }}
+                    />
+                  }
+                />
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  tickFormatter={(value) => {
+                    // Keep only day and month for X-axis
+                    const [day, month] = value.split("-");
+                    return `${day}/${month}`;
                   }}
                 />
-              }
-            />
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => {
-                // Keep only day and month for X-axis
-                const [day, month] = value.split("-");
-                return `${day}/${month}`;
-              }}
-            />
-            <Bar dataKey="amount" radius={[8, 8, 2, 2]}>
-              <LabelList
-                position="top"
-                offset={12}
-                formatter={(value: number) => value.toLocaleString()}
-                className="fill-foreground"
-                fontSize={10}
-              />
-            </Bar>
-          </BarChart>
-        </ChartContainer>
+                <Bar dataKey="amount" radius={[8, 8, 2, 2]}>
+                  <LabelList
+                    position="top"
+                    offset={12}
+                    formatter={(value: number) => value.toLocaleString()}
+                    className="fill-foreground"
+                    fontSize={10}
+                  />
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </div>
+        </div>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         {getTrendStringWithRegression()}

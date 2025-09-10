@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { MailIcon, PhoneIcon, MapPinIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,40 @@ const contactInfo = [
   },
 ];
 
+const generateMailto = (formData: FormData) => {
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const phone = formData.get("phone") as string;
+  const message = formData.get("message") as string;
+
+  const recipientEmail = "awplhelper@gmail.com";
+  const subject = "Contact Form Submission from " + (name || "Website Visitor");
+  const body = `
+Name: ${name || "Not provided"}
+Email: ${email || "Not provided"}
+Phone: ${phone || "Not provided"}
+
+Message:
+${message || "No message provided"}
+
+---
+This message was sent from the AWPL Helper contact form.
+  `.trim();
+
+  const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(
+    subject
+  )}&body=${encodeURIComponent(body)}`;
+
+  // Open the user's email client
+  window.location.href = mailtoLink;
+};
+
 export function Contact() {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    generateMailto(formData);
+  };
   return (
     <section
       id="contact"
@@ -75,25 +107,25 @@ export function Contact() {
             transition={{ duration: 0.6 }}
             className="bg-muted/10 flex h-full w-full rounded-xl items-center border p-5 md:col-span-1"
           >
-            <form action="" className="w-full space-y-4">
+            <form onSubmit={handleSubmit} className="w-full space-y-4">
               <div className="flex flex-col gap-2">
-                <Label>Name</Label>
-                <Input type="text" />
+                <Label htmlFor="name">Name</Label>
+                <Input name="name" id="name" type="text" required />
               </div>
               <div className="flex flex-col gap-2">
-                <Label>Email</Label>
-                <Input type="email" />
+                <Label htmlFor="email">Email</Label>
+                <Input name="email" id="email" type="email" required />
               </div>
               <div className="flex flex-col gap-2">
-                <Label>Phone</Label>
-                <Input type="phone" />
+                <Label htmlFor="phone">Phone</Label>
+                <Input name="phone" id="phone" type="tel" />
               </div>
               <div className="flex flex-col gap-2">
-                <Label>Message</Label>
-                <Textarea />
+                <Label htmlFor="message">Message</Label>
+                <Textarea name="message" id="message" required />
               </div>
-              <Button className="w-full" type="button">
-                Submit
+              <Button className="w-full" type="submit">
+                Send Email
               </Button>
             </form>
           </motion.div>

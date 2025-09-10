@@ -85,9 +85,9 @@ export function LevelInfo({
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-4xl font-bold"
+                          className="fill-foreground text-3xl font-bold"
                         >
-                          {percentage.toFixed(0)}%
+                          {percentage.toFixed(1)}%
                         </tspan>
                       </text>
                     );

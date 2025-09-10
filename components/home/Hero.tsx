@@ -2,11 +2,12 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Github, Menu, Pickaxe, X } from "lucide-react";
+import { ArrowRight, Github, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "../ThemeChange";
+import { AuthButtons } from "./AuthButtons";
 
 const transitionVariants = {
   item: {
@@ -169,23 +170,7 @@ export function Hero() {
                   }}
                   className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row"
                 >
-                  <div
-                    key={1}
-                    className="bg-foreground/10 rounded-[14px] border p-0.5"
-                  >
-                    <Button
-                      asChild
-                      size="lg"
-                      className="rounded-xl px-5 text-base"
-                    >
-                      <Link href="/protected">
-                        <span className="flex gap-2 items-center text-nowrap">
-                          Get Started
-                          <Pickaxe className="size-4" />
-                        </span>
-                      </Link>
-                    </Button>
-                  </div>
+                  <AuthButtons variant="hero" />
                   <Button
                     key={2}
                     asChild
@@ -331,34 +316,7 @@ const HeroHeader = () => {
               </div>
               <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
                 <ModeToggle />
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="/auth/login">
-                    <span>Login</span>
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
-                >
-                  <Link href="/auth/signup">
-                    <span>Sign Up</span>
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="sm"
-                  className={cn(isScrolled ? "lg:inline-flex" : "hidden")}
-                >
-                  <Link href="/auth/signup">
-                    <span>Get Started</span>
-                  </Link>
-                </Button>
+                <AuthButtons variant="header" isScrolled={isScrolled} />
               </div>
             </div>
           </div>
