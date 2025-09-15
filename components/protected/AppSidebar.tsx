@@ -23,6 +23,7 @@ import {
 import Image from "next/image";
 import { SidebarLogoutButton } from "@/components/auth/LogOutButton";
 import { useNavigation } from "@/providers/NavigationContext";
+import Link from "next/link";
 
 const Links = [
   {
@@ -64,14 +65,18 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible={isSidebarMobile ? "offcanvas" : "icon"}>
       <SidebarContent>
-        <SidebarHeader className="text-2xl font-bold flex flex-row items-center gap-2 m-4 !p-0 overflow-hidden">
-          <Image src={"/pickaxe.png"} alt="LOGO" width={32} height={32} />
-          <p
-            className={`text-nowrap logoFace ${state == "collapsed" ? "" : ""}`}
-          >
-            Awpl Helper.
-          </p>
-        </SidebarHeader>
+        <Link href={"/"}>
+          <SidebarHeader className="text-2xl font-bold flex flex-row items-center gap-2 m-4 !p-0 overflow-hidden">
+            <Image src={"/pickaxe.png"} alt="LOGO" width={32} height={32} />
+            <p
+              className={`text-nowrap logoFace ${
+                state == "collapsed" ? "" : ""
+              }`}
+            >
+              Awpl Helper.
+            </p>
+          </SidebarHeader>
+        </Link>
 
         <SidebarMenu className="gap-3">
           {Links.map((link) => (
