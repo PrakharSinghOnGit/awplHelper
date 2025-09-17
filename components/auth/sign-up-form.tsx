@@ -26,6 +26,7 @@ export function SignUpForm({
   const [awplPass, setAwplPass] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState("");
   const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -35,15 +36,16 @@ export function SignUpForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
-          // data: {
-          //   "awpl-id": awplId,
-          //   "awpl-pass": awplPass,
-          // },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            awplId: awplId,
+            awplPass: awplPass,
+            name: name,
+          },
         },
       });
       if (error) throw error;
@@ -69,6 +71,17 @@ export function SignUpForm({
           <form onSubmit={handleSignUp}>
             <div className="grid gap-4">
               <div className="grid gap-3">
+                <div className="grid gap-3">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Your Name"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -84,6 +97,7 @@ export function SignUpForm({
                 <Input
                   id="password"
                   type="password"
+                  placeholder="Create Password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -95,7 +109,7 @@ export function SignUpForm({
                   id="awplId"
                   type="text"
                   placeholder="Your AWPL ID"
-                  // required
+                  required
                   value={awplId}
                   onChange={(e) => setAwplId(e.target.value)}
                 />
@@ -104,13 +118,14 @@ export function SignUpForm({
                 <Label htmlFor="awplPass">AWPL Password</Label>
                 <Input
                   id="awplPass"
-                  type="password"
+                  type="text"
                   placeholder="Your AWPL Password"
-                  // required
+                  required
                   value={awplPass}
                   onChange={(e) => setAwplPass(e.target.value)}
                 />
               </div>
+
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Creating an account..." : "Sign up"}

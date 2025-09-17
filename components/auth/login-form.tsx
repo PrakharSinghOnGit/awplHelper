@@ -33,13 +33,29 @@ export function LoginForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/protected");
+
+      if (!data?.session) {
+        throw new Error("No session created");
+      }
+
+      // Wait a moment for the session to be fully established
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Get any redirect URL or default to /protected
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirectTo") || "/protected";
+
+      // Force a revalidation of the session
+      router.refresh();
+
+      // Then redirect
+      router.push(redirectTo);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
