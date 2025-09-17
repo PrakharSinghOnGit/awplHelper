@@ -12,6 +12,20 @@ type TargetProp = {
 }[];
 
 export function TargetInfo({ data }: { data: TargetProp }) {
+  if (data.length === 0) {
+    return (
+      <Card>
+        <CardHeader className="text-center pb-0">
+          <CardTitle>Target Progress</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6 flex flex-col gap-4">
+          <p className="text-center text-sm text-muted-foreground">
+            No target data available.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
   return (
     <Card>
       <CardHeader className="text-center pb-0">

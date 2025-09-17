@@ -77,133 +77,18 @@ export const useCustomMutation = <TVariables, TData>(
   });
 };
 
-export const useMembers = (options?: { enabled?: boolean }) => {
-  const supabase = useSupabase();
-
-  return useQuery({
-    queryKey: ["members"],
-    queryFn: async () => {
-      console.log("🔍 Fetching members from database...");
-      const { data, error } = await supabase.from("members").select();
-      if (error) throw error;
-      console.log("✅ Members fetched:", data?.length, "records");
-      return data as Tables["members"]["Row"][];
-    },
-    enabled: options?.enabled ?? true,
-    staleTime: 60 * 1000,
-  });
-};
-
 export const useProfile = (options?: { enabled?: boolean }) => {
   const supabase = useSupabase();
 
   return useQuery({
-    queryKey: ["profiles"],
+    queryKey: ["leaders"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("profiles").select();
+      const { data, error } = await supabase.from("leaders").select();
       if (error) throw error;
-      return data as Tables["profiles"]["Row"][];
+      if (!data || data.length === 0) return null;
+      return data[0] as Tables["leaders"]["Row"];
     },
     enabled: options?.enabled ?? true,
-    staleTime: 60 * 1000,
+    staleTime: 100 * 1000,
   });
-};
-
-export const useLeaderMembers = (options?: { enabled?: boolean }) => {
-  const supabase = useSupabase();
-
-  return useQuery({
-    queryKey: ["leader_members"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("leader_members").select();
-      if (error) throw error;
-      return data as Tables["leader_members"]["Row"][];
-    },
-    enabled: options?.enabled ?? true,
-    staleTime: 60 * 1000,
-  });
-};
-
-// Example of a more complex query
-export const useMembersByLeader = (
-  leaderId: string,
-  options?: { enabled?: boolean }
-) => {
-  return useCustomQuery(
-    ["members", "by-leader", leaderId],
-    async (supabase) => {
-      const { data, error } = await supabase
-        .from("leader_members")
-        .select(
-          `
-          member_id,
-          members (*)
-        `
-        )
-        .eq("leader_id", leaderId);
-
-      if (error) throw error;
-      return data;
-    },
-    options
-  );
-};
-
-// Example mutation
-export const useCreateMember = () => {
-  return useCustomMutation(
-    (supabase) => async (memberData: Tables["members"]["Insert"]) => {
-      const { data, error } = await supabase
-        .from("members")
-        .insert(memberData)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    {
-      invalidateQueries: ["members"],
-    }
-  );
-};
-
-export const useUpdateMember = () => {
-  return useCustomMutation(
-    (supabase) =>
-      async ({
-        id,
-        updates,
-      }: {
-        id: string;
-        updates: Tables["members"]["Update"];
-      }) => {
-        const { data, error } = await supabase
-          .from("members")
-          .update(updates)
-          .eq("id", id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      },
-    {
-      invalidateQueries: ["members"],
-    }
-  );
-};
-
-export const useDeleteMember = () => {
-  return useCustomMutation(
-    (supabase) => async (id: string) => {
-      const { error } = await supabase.from("members").delete().eq("id", id);
-
-      if (error) throw error;
-      return { id };
-    },
-    {
-      invalidateQueries: ["members"],
-    }
-  );
 };

@@ -2,9 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["tailark.com", "avatars.githubusercontent.com"],
+    domains: ["avatars.githubusercontent.com"],
   },
   reactStrictMode: false,
+  devIndicators: false,
 };
 
 export default nextConfig;

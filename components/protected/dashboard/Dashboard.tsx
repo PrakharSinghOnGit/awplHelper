@@ -4,14 +4,7 @@ import { UserInfo } from "@/components/protected/dashboard/UserInfo";
 import { ChequeInfo } from "@/components/protected/dashboard/ChequeInfo";
 import { LevelInfo } from "@/components/protected/dashboard/LevelInfo";
 import { TargetInfo } from "@/components/protected/dashboard/TargetInfo";
-type CheckProp = { date: string; amount: number }[];
-type TargetProp = {
-  name: string;
-  reqSAO: number;
-  reqSGO: number;
-  penSAO: number;
-  penSGO: number;
-}[];
+import { chequeProp, targetProp } from "../Team/type";
 
 export default function Dashboard() {
   const { data, isLoading, error } = useProfile();
@@ -19,22 +12,21 @@ export default function Dashboard() {
   if (isLoading) return <DashboardSkeleton />;
   if (!data) return <div>You don&apos;t have a profile yet.</div>;
   if (error) return <div>Error loading profile: {error.message}</div>;
-  const user = data[0];
-
+  console.log("Profile Data:", data);
   return (
     <div className="grid gap-3 lg:gap-6 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-dense break-inside-avoid">
       <UserInfo
-        name={user.name}
-        sao={user.level_SAO ? user.level_SAO : 0}
-        sgo={user.level_SGO ? user.level_SGO : 0}
-        mem={user.members ? user.members : 0}
-        week={user.week_left ? user.week_left : 0}
-        isPaid={user.is_paid ? user.is_paid : false}
+        name={data.name}
+        sao={data.levelsao ? data.levelsao : 0}
+        sgo={data.levelsgo ? data.levelsgo : 0}
+        mem={data.memcount ? data.memcount : 0}
+        week={data.weekleft ? data.weekleft : 0}
+        isPaid={data.ispro ? data.ispro : false}
       />
-      <LevelInfo type="SAO" sp={user.level_SAO} />
-      <LevelInfo type="SGO" sp={user.level_SGO} />
-      <TargetInfo data={user.target_data as TargetProp} />
-      <ChequeInfo data={user.cheque_data as CheckProp} />
+      <LevelInfo type="SAO" sp={data.levelsao} />
+      <LevelInfo type="SGO" sp={data.levelsgo} />
+      <TargetInfo data={data.targetdata as targetProp} />
+      <ChequeInfo data={data.chequeData as chequeProp} />
     </div>
   );
 }

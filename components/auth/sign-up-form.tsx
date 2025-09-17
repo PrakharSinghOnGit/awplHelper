@@ -32,29 +32,40 @@ export function SignUpForm({
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
+    const { data, error } = await supabase.rpc("check_awplid_available", {
+      input_awplid: awplId,
+    });
 
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            awplId: awplId,
-            awplPass: awplPass,
-            name: name,
+    if (error) {
+      console.error("Error checking AWPL ID:", error);
+    } else if (!data) {
+      setError("AWPL ID already registered");
+    } else {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              awplid: awplId,
+              awplpass: awplPass,
+              name: name,
+            },
           },
-        },
-      });
-      if (error) throw error;
-      router.push("/auth/sign-up-success");
-    } catch (error: unknown) {
-      console.error("Sign-up failed:", error);
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+        });
+        console.log("Sign-up data:", data);
+        if (error) throw error;
+        router.push("/auth/sign-up-success");
+      } catch (error: unknown) {
+        console.error("Sign-up failed:", error);
+        setError(error instanceof Error ? error.message : "An error occurred");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 

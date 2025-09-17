@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Save, Trash2 } from "lucide-react";
-import { TeamMember } from "./EditTeam";
+import { TeamMember } from "./type";
 
 type EditMemberProps = {
   open: boolean;
@@ -37,26 +37,16 @@ export function EditMember({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: member?.name || "",
-    awpl_id: member?.awpl_id || "",
-    awpl_pass: member?.awpl_pass || "",
-    levelSao: member?.levelSao || 0,
-    levelSgo: member?.levelSgo || 0,
-    targetSao: member?.targetSao || 0,
-    targetSgo: member?.targetSgo || 0,
-    status_flag: member?.status_flag || "active",
+    awpl_id: member?.awplId || "",
+    awpl_pass: member?.awplPass || "",
   });
 
   // Update form data when member changes
   useEffect(() => {
     setFormData({
       name: member?.name || "",
-      awpl_id: member?.awpl_id || "",
-      awpl_pass: member?.awpl_pass || "",
-      levelSao: member?.levelSao || 0,
-      levelSgo: member?.levelSgo || 0,
-      targetSao: member?.targetSao || 0,
-      targetSgo: member?.targetSgo || 0,
-      status_flag: member?.status_flag || "active",
+      awpl_id: member?.awplId || "",
+      awpl_pass: member?.awplPass || "",
     });
   }, [member]);
 
@@ -65,9 +55,9 @@ export function EditMember({
     onSave(
       {
         ...(member?.id ? { id: member.id } : {}),
-        name: formData.name.trim() || null,
-        awpl_id: formData.awpl_id.trim().toUpperCase(),
-        awpl_pass: formData.awpl_pass.trim() || null,
+        name: formData.name.trim() || undefined,
+        awplId: formData.awpl_id.trim().toUpperCase(),
+        awplPass: formData.awpl_pass.trim() || undefined,
       },
       isNew
     );

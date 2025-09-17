@@ -45,41 +45,20 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
-import {
-  useMembers,
-  useCreateMember,
-  useUpdateMember,
-  useDeleteMember,
-} from "@/hooks/useDatabase";
 import { calcLevel, Levels } from "@/utils/awpl.helper";
 import { EditMember } from "./EditMemberDialog";
-
-// Team member type based on your database structure
-export type TeamMember = {
-  id: string;
-  name: string | null;
-  awpl_id: string;
-  awpl_pass: string | null;
-  levelSao: number | null;
-  levelSgo: number | null;
-  targetSao: number | null;
-  targetSgo: number | null;
-  status_flag: string | null;
-  created_at: string | null;
-  last_updated: string | null;
-  chequeData: unknown | null;
-  valid_passwords: string[] | null;
-};
+import { useProfile } from "@/hooks/useDatabase";
+import EditTeamSkeleton from "./EditTeamSkeleton";
+import { TeamMember } from "./type";
 
 const StatusBadge = ({ status }: { status: string | null }) => {
   const getStatusColor = (status: string | null) => {
     switch (status?.toLowerCase()) {
-      case "active":
+      case "ok":
         return "bg-green-100 text-green-800 border-green-200";
-      case "inactive":
+      case "pending":
         return "bg-gray-100 text-gray-800 border-gray-200";
-      case "error":
-      case "red":
+      case "wrong":
         return "bg-red-100 text-red-800 border-red-200";
       default:
         return "bg-blue-100 text-blue-800 border-blue-200";
@@ -103,42 +82,8 @@ export function EditTeam() {
   const [rowSelection, setRowSelection] = useState({});
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
-
-  const { data: members = [], isLoading, error } = useMembers();
-  const createMember = useCreateMember();
-  const updateMember = useUpdateMember();
-  const deleteMember = useDeleteMember();
-
-  React.useEffect(() => {
-    const handleEditMember = (event: CustomEvent) => {
-      setSelectedMember(event.detail);
-      setEditDialogOpen(true);
-    };
-
-    const handleDeleteMember = (event: CustomEvent) => {
-      const memberId = event.detail.id;
-      if (confirm("Are you sure you want to delete this member?")) {
-        deleteMember.mutate(memberId);
-      }
-    };
-
-    document.addEventListener("editMember", handleEditMember as EventListener);
-    document.addEventListener(
-      "deleteMember",
-      handleDeleteMember as EventListener
-    );
-
-    return () => {
-      document.removeEventListener(
-        "editMember",
-        handleEditMember as EventListener
-      );
-      document.removeEventListener(
-        "deleteMember",
-        handleDeleteMember as EventListener
-      );
-    };
-  }, [deleteMember]);
+  const { data, isLoading, error } = useProfile();
+  const members = data?.team as TeamMember[];
 
   const columns: ColumnDef<TeamMember>[] = [
     {
@@ -187,20 +132,20 @@ export function EditTeam() {
       ),
     },
     {
-      accessorKey: "awpl_id",
+      accessorKey: "awplId",
       header: "AWPL ID",
       cell: ({ row }) => (
         <div className="font-mono text-sm font-semibold">
-          {row.getValue("awpl_id") || "N/A"}
+          {row.getValue("awplId") || "N/A"}
         </div>
       ),
     },
     {
-      accessorKey: "awpl_pass",
+      accessorKey: "awplPass",
       header: "AWPL Pass",
       cell: ({ row }) => (
         <div className="font-mono text-sm font-semibold">
-          {row.getValue("awpl_pass") || "N/A"}
+          {row.getValue("awplPass") || "N/A"}
         </div>
       ),
     },
@@ -297,9 +242,9 @@ export function EditTeam() {
       ),
     },
     {
-      accessorKey: "status_flag",
+      accessorKey: "status",
       header: "Status",
-      cell: ({ row }) => <StatusBadge status={row.getValue("status_flag")} />,
+      cell: ({ row }) => <StatusBadge status={row.getValue("status")} />,
     },
     {
       id: "actions",
@@ -319,7 +264,7 @@ export function EditTeam() {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() =>
-                  navigator.clipboard.writeText(member.awpl_id || "")
+                  navigator.clipboard.writeText(member.awplId || "")
                 }
               >
                 Copy AWPL ID
@@ -372,79 +317,16 @@ export function EditTeam() {
     },
   });
 
-  const handleSaveMember = (
-    memberData: Partial<TeamMember> & { id?: string },
-    isNew: boolean
-  ) => {
-    if (isNew) {
-      // Create new member - convert to Insert type
-      const insertData = {
-        awpl_id: memberData.awpl_id || "",
-        name: memberData.name,
-        awpl_pass: memberData.awpl_pass,
-      };
-      createMember.mutate(insertData, {
-        onSuccess: () => {
-          setEditDialogOpen(false);
-          setSelectedMember(null);
-        },
-        onError: (error) => {
-          console.error("Failed to create member:", error);
-        },
-      });
-    } else {
-      // Update existing member
-      if (memberData.id) {
-        // Convert to Update type - only include fields that can be updated
-        const updateData = {
-          awpl_id: memberData.awpl_id,
-          name: memberData.name,
-          awpl_pass: memberData.awpl_pass,
-          levelSao: memberData.levelSao,
-          levelSgo: memberData.levelSgo,
-          targetSao: memberData.targetSao,
-          targetSgo: memberData.targetSgo,
-          status_flag: memberData.status_flag,
-        };
-        updateMember.mutate(
-          {
-            id: memberData.id,
-            updates: updateData,
-          },
-          {
-            onSuccess: () => {
-              setEditDialogOpen(false);
-              setSelectedMember(null);
-            },
-            onError: (error) => {
-              console.error("Failed to update member:", error);
-            },
-          }
-        );
-      }
-    }
+  const handleSaveMember = () => {
+    console.log();
   };
 
-  const handleDeleteMember = (id: string) => {
-    deleteMember.mutate(id, {
-      onSuccess: () => {
-        console.log("Member deleted successfully");
-      },
-      onError: (error) => {
-        console.error("Failed to delete member:", error);
-      },
-    });
+  const handleDeleteMember = () => {
+    console.log();
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading team members...</p>
-        </div>
-      </div>
-    );
+    return <EditTeamSkeleton />;
   }
 
   if (error) {
@@ -623,5 +505,4 @@ export function EditTeam() {
   );
 }
 
-// Default export for compatibility
 export default EditTeam;

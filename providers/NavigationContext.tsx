@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 import Dashboard from "@/components/protected/dashboard/Dashboard";
-import EditTeam from "@/components/protected/EditTeam";
+import EditTeam from "@/components/protected/Team/EditTeam";
 import LevelData from "@/components/protected/LevelData";
 import TargetData from "@/components/protected/TargetData";
 import ChequeData from "@/components/protected/ChequeData";

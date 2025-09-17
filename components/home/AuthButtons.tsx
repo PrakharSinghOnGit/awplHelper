@@ -36,6 +36,7 @@ export function AuthButtons({
   }
 
   if (user) {
+    console.log("loggin Found", user);
     // User is authenticated - show Dashboard button
     if (variant === "hero") {
       return (

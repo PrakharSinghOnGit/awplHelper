@@ -25,6 +25,20 @@ export function ChequeInfo({
 }: {
   data: { date: string; amount: number }[];
 }) {
+  if (data.length === 0) {
+    return (
+      <Card className="col-span-1 md:col-span-2 lg:col-span-3">
+        <CardHeader>
+          <CardTitle>Check Data</CardTitle>
+          <CardDescription>No data available</CardDescription>
+        </CardHeader>
+        <CardContent className="h-[400px] flex items-center justify-center text-muted-foreground">
+          No cheque data to display.
+        </CardContent>
+      </Card>
+    );
+  }
+
   const chartData: { date: string; amount: number; fill: string }[] = data.map(
     (d) => {
       return {

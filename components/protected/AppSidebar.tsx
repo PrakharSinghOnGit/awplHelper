@@ -88,7 +88,7 @@ export function AppSidebar() {
                 }}
                 variant={"outline"}
                 tooltip={link.name}
-                className={`hover:scale-105 transition-all text-nowrap p-2.5 size-10 w-full bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 ${
+                className={`hover:scale-105 transition-all text-nowrap p-2.5 size-10 w-full bg-gray-50 hover:bg-blue-100 dark:bg-white/5 dark:hover:bg-white/10 ${
                   currentPage.name === link.name
                     ? "border border-blue-300 bg-blue-50"
                     : ""
