@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Pickaxe, LayoutDashboard } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/providers/AuthProvider";
 import { cn } from "@/lib/utils";
 
 interface AuthButtonsProps {
@@ -36,7 +36,7 @@ export function AuthButtons({
   }
 
   if (user) {
-    console.log("loggin Found", user);
+    console.log("login Found", user);
     // User is authenticated - show Dashboard button
     if (variant === "hero") {
       return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/providers/AuthProvider";
+import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm({
   className,
@@ -25,10 +26,19 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { user, loading } = useAuth();
+  const supabase = createClient();
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    console.log("Checking user in login form", { user, loading });
+    if (user && !loading) {
+      router.push("/protected");
+    }
+  }, [user, loading, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
 
@@ -44,20 +54,21 @@ export function LoginForm({
         throw new Error("No session created");
       }
 
-      // Wait a moment for the session to be fully established
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       // Get any redirect URL or default to /protected
       const params = new URLSearchParams(window.location.search);
       const redirectTo = params.get("redirectTo") || "/protected";
 
-      // Force a revalidation of the session
+      // Force a revalidation of the session and router
       router.refresh();
+
+      // Small delay to ensure auth state is updated
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Then redirect
       router.push(redirectTo);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }

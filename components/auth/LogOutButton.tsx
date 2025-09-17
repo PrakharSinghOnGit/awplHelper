@@ -11,8 +11,8 @@ export function SidebarLogoutButton() {
 
   const logout = async () => {
     await signOut();
-    router.refresh(); // Force a refresh of the entire app state
-    router.push("/auth/login");
+    router.refresh();
+    router.push("/");
   };
 
   return (

@@ -7,9 +7,8 @@ export function createClient() {
     {
       auth: {
         flowType: "pkce",
-        storageKey: "awpl-auth",
-        storage:
-          typeof window !== "undefined" ? window.localStorage : undefined,
+        detectSessionInUrl: true,
+        persistSession: true,
       },
     }
   );

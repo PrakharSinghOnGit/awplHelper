@@ -50,28 +50,44 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Do not run code between createServerClient and
-  // supabase.auth.getClaims(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-
-  // IMPORTANT: If you remove getClaims() and you use server-side rendering
-  // with the Supabase client, your users may be randomly logged out.
+  // Check authentication for protected routes
   if (request.nextUrl.pathname.startsWith("/protected")) {
     try {
-      const { data } = await supabase.auth.getClaims();
-      console.log("hit protected");
-      const user = data?.claims;
+      // // Debug: Log all cookies being passed
+      // const allCookies = request.cookies.getAll();
+      // console.log("Middleware cookies:", allCookies);
 
-      if (!user) {
-        // no user, redirect to login page
-        console.log("to loggin");
+      // Get session using Supabase client
+      const {
+        data: { session },
+        // error,
+      } = await supabase.auth.getSession();
+      // console.log("Session check result:", {
+      //   hasSession: !!session,
+      //   error: error?.message,
+      //   sessionExpiresAt: session?.expires_at,
+      // });
+
+      if (!session) {
+        // No valid session found
+        console.log("No valid session, redirecting to login");
+        const redirectTo = request.nextUrl.pathname;
         const url = request.nextUrl.clone();
         url.pathname = "/auth/login";
-        return NextResponse.redirect(url);
+        url.searchParams.set("redirectTo", redirectTo);
+
+        // Create response with proper cookie handling
+        const response = NextResponse.redirect(url);
+
+        // Copy over any existing cookies to maintain state
+        supabaseResponse.cookies.getAll().forEach((cookie) => {
+          response.cookies.set(cookie.name, cookie.value);
+        });
+
+        return response;
       }
     } catch (err) {
-      // no user, potentially respond by redirecting the user to the login page
-      console.log("to loggin", err);
+      console.error("Auth check error:", err);
       const url = request.nextUrl.clone();
       url.pathname = "/auth/login";
       return NextResponse.redirect(url);
