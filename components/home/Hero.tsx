@@ -151,21 +151,23 @@ export function Hero() {
                   }}
                   className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row"
                 >
-                  <AuthButtons variant="hero" />
-                  <Button
-                    key={2}
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className=" rounded-xl px-5"
-                  >
-                    <Link href="https://github.com/PrakharSinghOnGit/awplHelper">
-                      <span className="flex gap-2 items-center text-nowrap">
-                        <Github />
-                        GitHub
-                      </span>
-                    </Link>
-                  </Button>
+                  <AuthButtons className="w-40" variant="hero" />
+                  <div className="w-40 bg-foreground/10 rounded-[14px] border p-0.5">
+                    <Button
+                      key={2}
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="w-full rounded-xl px-5  text-base"
+                    >
+                      <Link href="https://github.com/PrakharSinghOnGit/awplHelper">
+                        <span className="flex gap-2 items-center text-nowrap">
+                          <Github className="size-4" />
+                          GitHub
+                        </span>
+                      </Link>
+                    </Button>
+                  </div>
                 </AnimatedGroup>
               </div>
             </div>

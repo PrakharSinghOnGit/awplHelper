@@ -50,10 +50,10 @@ export function LevelInfo({
         <CardTitle>Next Level Progress</CardTitle>
         <CardDescription>{type} SP done</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 justify-center items-center">
+      <CardContent className="flex-1 justify-center items-center h-full">
         <ChartContainer
           config={{} satisfies ChartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="mx-auto aspect-square max-h-[250px] "
         >
           <RadialBarChart
             data={chartData}

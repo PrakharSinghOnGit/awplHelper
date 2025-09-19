@@ -44,7 +44,11 @@ export function AuthButtons({
             className
           )}
         >
-          <Button asChild size="lg" className="rounded-xl px-5 text-base">
+          <Button
+            asChild
+            size="lg"
+            className="w-full rounded-xl px-5 text-base"
+          >
             <Link href="/protected">
               <span className="flex gap-2 items-center text-nowrap">
                 Dashboard
