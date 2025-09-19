@@ -12,7 +12,6 @@ export default function Dashboard() {
   if (isLoading) return <DashboardSkeleton />;
   if (!data) return <div>You don&apos;t have a profile yet.</div>;
   if (error) return <div>Error loading profile: {error.message}</div>;
-  console.log("Profile Data:", data);
   return (
     <div className="grid gap-3 lg:gap-6 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-dense break-inside-avoid">
       <UserInfo

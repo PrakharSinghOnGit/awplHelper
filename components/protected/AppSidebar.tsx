@@ -64,7 +64,7 @@ export function AppSidebar() {
   const { isMobile: isSidebarMobile, state, setOpenMobile } = useSidebar();
   return (
     <Sidebar collapsible={isSidebarMobile ? "offcanvas" : "icon"}>
-      <SidebarContent>
+      <SidebarContent className="pt-[var(--standalone)]">
         <Link href={"/"}>
           <SidebarHeader className="text-2xl font-bold flex flex-row items-center gap-2 m-4 !p-0 overflow-hidden">
             <Image src={"/pickaxe.png"} alt="LOGO" width={32} height={32} />
@@ -123,7 +123,7 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
           <SidebarSeparator />
-          <SidebarMenuItem className="flex mx-3 mb-3">
+          <SidebarMenuItem className="flex mx-3 mb-5">
             <SidebarLogoutButton />
           </SidebarMenuItem>
         </SidebarFooter>

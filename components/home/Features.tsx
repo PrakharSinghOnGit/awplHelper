@@ -347,7 +347,7 @@ export function Features() {
                         <div className="ring-background size-7 ring-4">
                           <Image
                             className="size-full rounded-full"
-                            src="https://avatars.githubusercontent.com/u/102558960?v=4"
+                            src="/pp.jpg"
                             alt="Likeur"
                             width={28}
                             height={28}
@@ -358,7 +358,7 @@ export function Features() {
                         <div className="ring-background size-8 ring-4">
                           <Image
                             className="size-full rounded-full"
-                            src="https://avatars.githubusercontent.com/u/47919550?v=4"
+                            src="/pp.jpg"
                             alt="M. Irung"
                             width={32}
                             height={32}
@@ -375,7 +375,7 @@ export function Features() {
                         <div className="ring-background size-7 ring-4">
                           <Image
                             className="size-full rounded-full"
-                            src="https://avatars.githubusercontent.com/u/31113941?v=4"
+                            src="/pp.jpg"
                             alt="B. Ng"
                             width={28}
                             height={28}

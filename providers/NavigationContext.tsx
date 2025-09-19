@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import Dashboard from "@/components/protected/dashboard/Dashboard";
 import EditTeam from "@/components/protected/Team/EditTeam";
 import LevelData from "@/components/protected/LevelData";
@@ -40,9 +46,20 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     component: <Dashboard />,
   });
 
+  useEffect(() => {
+    const lastPage = localStorage.getItem("lastPage");
+    if (lastPage) {
+      const foundPage = pages.find((p) => p.name === lastPage);
+      if (foundPage) {
+        setCPage(foundPage);
+      }
+    }
+  }, []);
+
   const setCurrentPage = (page: string) => {
     const foundPage = pages.find((p) => p.name === page);
     if (foundPage) {
+      localStorage.setItem("lastPage", foundPage.name);
       setCPage(foundPage);
     }
   };

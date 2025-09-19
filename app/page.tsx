@@ -7,13 +7,14 @@ import { Contact } from "@/components/home/Contact";
 
 export default function Home() {
   return (
-    <>
+    <div className="pt-[var(--standalone)]">
+      <div className="h-[var(--standalone)] top-0 z-50 w-full fixed backdrop-blur-lg" />
       <Hero />
       <Features />
       <Pricing />
       <Faq />
       <Contact />
       <Footer />
-    </>
+    </div>
   );
 }

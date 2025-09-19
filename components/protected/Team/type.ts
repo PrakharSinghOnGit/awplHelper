@@ -7,13 +7,11 @@ export type targetProp = {
   penSGO: number;
 }[];
 export type TeamMember = {
-  id: string;
   awplId: string;
   awplPass: string;
   levelSao: number;
   levelSgo: number;
   name: string;
-  validPass: string[];
   lastMine: string; // ISO date string
   status: "ok" | "wrong" | "pending";
   chequeData: chequeProp[];

@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
   ColumnDef,
@@ -48,6 +47,7 @@ import {
 import { calcLevel, Levels } from "@/utils/awpl.helper";
 import { EditMember } from "./EditMemberDialog";
 import { useProfile } from "@/hooks/useDatabase";
+
 import EditTeamSkeleton from "./EditTeamSkeleton";
 import { TeamMember } from "./type";
 
@@ -83,7 +83,13 @@ export function EditTeam() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const { data, isLoading, error } = useProfile();
-  const members = data?.team as TeamMember[];
+  const [members, setMembers] = useState<TeamMember[]>([]);
+
+  useEffect(() => {
+    if (data?.team) {
+      setMembers(data.team as TeamMember[]);
+    }
+  }, [data?.team]);
 
   const columns: ColumnDef<TeamMember>[] = [
     {
@@ -192,56 +198,6 @@ export function EditTeam() {
       },
     },
     {
-      accessorKey: "levelSao",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Level SAO
-            {column.getIsSorted() === "asc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
-      cell: ({ row }) => (
-        <div className="text-center font-mono font-semibold">
-          {row.getValue("levelSao") || 0}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "levelSgo",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Level SGO
-            {column.getIsSorted() === "asc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
-      cell: ({ row }) => (
-        <div className="text-center font-mono font-bold">
-          {row.getValue("levelSgo") || 0}
-        </div>
-      ),
-    },
-    {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => <StatusBadge status={row.getValue("status")} />,
@@ -299,12 +255,11 @@ export function EditTeam() {
   ];
 
   const table = useReactTable({
-    data: members,
+    data: members || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -317,12 +272,42 @@ export function EditTeam() {
     },
   });
 
-  const handleSaveMember = () => {
-    console.log();
+  const handleSaveMember = (
+    awplId: string,
+    awplPass: string,
+    name: string,
+    isNew: boolean
+  ) => {
+    if (isNew) {
+      if (members.find((m) => m.awplId === awplId)) {
+        alert("A member with this AWPL ID already exists.");
+        return;
+      }
+      const newMember: TeamMember = {
+        awplId: awplId.trim().toUpperCase(),
+        awplPass: awplPass.trim(),
+        name: name.trim(),
+        levelSao: 0,
+        levelSgo: 0,
+        status: "pending",
+        chequeData: [],
+        targetData: [],
+        lastMine: "",
+      };
+      const updatedMembers = [...members, newMember];
+      setMembers(updatedMembers);
+    } else {
+      const updatedMembers = members.map((m) =>
+        m.awplId === awplId
+          ? { ...m, awplPass: awplPass.trim(), name: name.trim() }
+          : m
+      );
+      setMembers(updatedMembers);
+    }
   };
 
-  const handleDeleteMember = () => {
-    console.log();
+  const handleDeleteMember = (awplId: string) => {
+    console.log("Deleting member with AWPL ID:", awplId);
   };
 
   if (isLoading) {
@@ -345,12 +330,12 @@ export function EditTeam() {
   }
 
   return (
-    <div className="w-full space-y-4">
+    <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Team Management</h2>
-          <p className="text-muted-foreground">
+      <div className="flex items-center justify-between p-4 shrink-0">
+        <div className="hidden sm:block">
+          <h2 className="text-xl font-bold tracking-tight">Team Management</h2>
+          <p className="text-muted-foreground text-sm">
             Manage your team members and track their progress
           </p>
         </div>
@@ -359,7 +344,7 @@ export function EditTeam() {
             setSelectedMember(null);
             setEditDialogOpen(true);
           }}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 whitespace-nowrap"
         >
           <Plus className="h-4 w-4" />
           Add Member
@@ -367,21 +352,21 @@ export function EditTeam() {
       </div>
 
       {/* Search and Filters */}
-      <div className="flex items-center space-x-2">
-        <div className="flex items-center space-x-2 flex-1">
-          <Search className="h-4 w-4 text-muted-foreground" />
+      <div className="flex flex-col sm:flex-row gap-2 p-4 shrink-0">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <Search className="h-4 w-4 text-muted-foreground shrink-0" />
           <Input
             placeholder="Filter by name..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="min-w-0"
           />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="shrink-0">
               <Filter className="mr-2 h-4 w-4" />
               Columns <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
@@ -415,92 +400,76 @@ export function EditTeam() {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+      <div className="flex-1 overflow-auto px-4">
+        <div className="rounded-md border w-full min-w-[640px]">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No team members found. Click &quot;Add Member&quot; to get
-                  started.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination */}
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No team members found. Click &quot;Add Member&quot; to get
+                    started.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
 
-      {/* Edit Member Dialog */}
-      <EditMember
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        member={selectedMember}
-        onSave={handleSaveMember}
-        onDelete={handleDeleteMember}
-      />
+        {/* Selection Info */}
+        <div className="flex items-center justify-end p-4 shrink-0">
+          <div className="text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+        </div>
+
+        {/* Edit Member Dialog */}
+        <EditMember
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          member={selectedMember}
+          onSave={handleSaveMember}
+          onDelete={handleDeleteMember}
+        />
+      </div>
     </div>
   );
 }

@@ -6,9 +6,8 @@ export default async function ProtectedPage() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getClaims();
-  console.log(data);
   if (error || !data?.claims) {
-    console.log("No LOfin FOund here");
+    console.log("No Login Found here");
     redirect("/auth/login");
   }
 

@@ -20,7 +20,9 @@ type EditMemberProps = {
   onOpenChange: (open: boolean) => void;
   member: TeamMember | null;
   onSave: (
-    member: Partial<TeamMember> & { id?: string },
+    awplId: string,
+    awplPass: string,
+    name: string,
     isNew: boolean
   ) => void;
   onDelete: (id: string) => void;
@@ -53,20 +55,18 @@ export function EditMember({
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(
-      {
-        ...(member?.id ? { id: member.id } : {}),
-        name: formData.name.trim() || undefined,
-        awplId: formData.awpl_id.trim().toUpperCase(),
-        awplPass: formData.awpl_pass.trim() || undefined,
-      },
+      formData.awpl_id.trim().toUpperCase(),
+      formData.awpl_pass.trim(),
+      formData.name.trim(),
       isNew
     );
+    setFormData({ name: "", awpl_id: "", awpl_pass: "" });
     onOpenChange(false);
   };
 
   const handleDelete = () => {
-    if (member?.id) {
-      onDelete(member.id);
+    if (member?.awplId) {
+      onDelete(member.awplId);
       setConfirmDeleteOpen(false);
       onOpenChange(false);
     }
@@ -129,7 +129,7 @@ export function EditMember({
                 </Label>
                 <Input
                   id="awpl_pass"
-                  type="password"
+                  type="text"
                   value={formData.awpl_pass}
                   onChange={(e) =>
                     setFormData((prev) => ({

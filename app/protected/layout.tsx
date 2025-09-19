@@ -14,7 +14,7 @@ export default function ProtectedLayout({
     <NavigationProvider>
       <SidebarProvider>
         <AppSidebar />
-        <div className="flex flex-col gap-3 w-full justify-center m-3 lg:ml-0 md:ml-0 h-[calc(100vh-24px)]">
+        <div className="pt-[var(--standalone)] flex flex-col gap-3 w-[calc(100vw-24px)] justify-center m-3 lg:ml-0 md:ml-0 h-[calc(100vh-24px)]">
           <div className="flex">
             <div className="flex items-center gap-3">
               <SidebarTrigger />
@@ -25,7 +25,7 @@ export default function ProtectedLayout({
               </Badge>
               <ModeToggle />
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src="/pp.jpg" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </div>
