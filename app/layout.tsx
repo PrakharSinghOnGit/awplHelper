@@ -34,7 +34,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className="overflow-x-hidden" lang="en" suppressHydrationWarning>
+    <html
+      className="overflow-x-hidden"
+      lang="en"
+      suppressContentEditableWarning={true}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" type="image/png" sizes="196x196" href="/pickaxe.png" />
@@ -49,9 +54,8 @@ export default function RootLayout({
       <body className={`${geistSans.className} antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="system"
           enableSystem={false}
-          storageKey="awpl-theme"
         >
           <SupabaseProvider>
             <AuthProvider>{children}</AuthProvider>

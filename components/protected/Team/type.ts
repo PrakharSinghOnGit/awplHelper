@@ -1,10 +1,10 @@
 export type chequeProp = { date: string; amount: number }[];
 export type targetProp = {
-  name: string;
-  reqSAO: number;
-  reqSGO: number;
-  penSAO: number;
-  penSGO: number;
+  target: string;
+  remSao: number;
+  remSgo: number;
+  reqSao: number;
+  reqSgo: number;
 }[];
 export type TeamMember = {
   awplId: string;
@@ -12,6 +12,7 @@ export type TeamMember = {
   levelSao: number;
   levelSgo: number;
   name: string;
+  validPass: string[];
   lastMine: string; // ISO date string
   status: "ok" | "wrong" | "pending";
   chequeData: chequeProp[];

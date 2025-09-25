@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { NavigationProvider } from "@/providers/NavigationContext";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function ProtectedLayout({
   children,
@@ -32,6 +33,7 @@ export default function ProtectedLayout({
           </div>
           <main className="rounded-xl grow border w-full p-3 lg:p-6 overflow-scroll">
             {children}
+            <Toaster position="bottom-center" richColors />
           </main>
         </div>
       </SidebarProvider>

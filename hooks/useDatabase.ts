@@ -92,3 +92,22 @@ export const useProfile = (options?: { enabled?: boolean }) => {
     staleTime: 100 * 1000,
   });
 };
+
+export const useUpdateLeader = () => {
+  return useCustomMutation<Tables["leaders"]["Row"], Tables["leaders"]["Row"]>(
+    (supabase) => async (leader) => {
+      const { data, error } = await supabase
+        .from("leaders")
+        .update(leader)
+        .eq("id", leader.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    {
+      invalidateQueries: ["leaders"],
+    }
+  );
+};

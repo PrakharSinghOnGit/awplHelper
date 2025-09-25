@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  overscroll-behavior: none;
+}
+
 @layer base {
   :root {
     --standalone: env(safe-area-inset-top, 0px);

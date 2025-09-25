@@ -81,19 +81,75 @@ const TableHead = React.forwardRef<
 ));
 TableHead.displayName = "TableHead";
 
-const TableCell = React.forwardRef<
-  HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={cn(
-      "p-3 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-0.5",
-      className
-    )}
-    {...props}
-  />
-));
+interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
+  isEditable?: boolean;
+  onEdit?: (value: string) => void;
+}
+
+const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
+  ({ className, children, isEditable, onEdit, ...props }, ref) => {
+    const [editing, setEditing] = React.useState(false);
+    const [value, setValue] = React.useState(children?.toString() || "");
+    const inputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleDoubleClick = () => {
+      if (isEditable) {
+        setEditing(true);
+      }
+    };
+
+    const handleBlur = () => {
+      setEditing(false);
+      if (onEdit && value !== children?.toString()) {
+        onEdit(value);
+      }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        inputRef.current?.blur();
+      }
+      if (e.key === "Escape") {
+        setValue(children?.toString() || "");
+        setEditing(false);
+      }
+    };
+
+    React.useEffect(() => {
+      if (editing) {
+        inputRef.current?.focus();
+      }
+    }, [editing]);
+
+    return (
+      <td
+        ref={ref}
+        className={cn(
+          "p-3 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-0.5",
+          isEditable && "cursor-text hover:bg-muted/60",
+          className
+        )}
+        onDoubleClick={handleDoubleClick}
+        {...props}
+      >
+        {editing ? (
+          <input
+            ref={inputRef}
+            type="text"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="w-full bg-transparent outline-none focus:ring-1 focus:ring-ring px-1 -mx-1"
+          />
+        ) : (
+          children
+        )}
+      </td>
+    );
+  }
+);
 TableCell.displayName = "TableCell";
 
 const TableCaption = React.forwardRef<
