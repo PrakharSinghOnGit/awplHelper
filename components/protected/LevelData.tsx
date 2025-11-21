@@ -22,7 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowUpDown, Search, ArrowUp, ArrowDown, Save } from "lucide-react";
 import { calcLevel, Levels } from "@/utils/awpl.helper";
 import { useProfile } from "@/hooks/useDatabase";
@@ -38,7 +37,7 @@ export function EditTeam() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
   const { data, isLoading, error } = useProfile();
-  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [members] = useState<TeamMember[]>([]);
   const team = data?.team || "";
 
   const exportData = () => {
@@ -325,8 +324,8 @@ export function EditTeam() {
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No team members found. Click &quot;Add Member&quot; to get
-                    started.
+                    No team members found. Add Members to see them here.
+                    <p>if already added wait for backend to fetch data</p>
                   </TableCell>
                 </TableRow>
               )}

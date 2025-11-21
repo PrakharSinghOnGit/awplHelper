@@ -1,10 +1,10 @@
 export type chequeProp = { date: string; amount: number }[];
 export type targetProp = {
-  target: string;
-  remSao: number;
-  remSgo: number;
-  reqSao: number;
-  reqSgo: number;
+  name: string;
+  penSAO: number;
+  penSGO: number;
+  reqSAO: number;
+  reqSGO: number;
 }[];
 export type TeamMember = {
   awplId: string;

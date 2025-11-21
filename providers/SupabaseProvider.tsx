@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createContext, useContext, useState, useEffect } from "react";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import type { Database } from "@/utils/database.ty";
+import type { Database } from "@/utils/database.types";
 
 type TypedSupabaseClient = SupabaseClient<Database>;
 
