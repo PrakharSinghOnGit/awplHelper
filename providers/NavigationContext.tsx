@@ -22,7 +22,7 @@ type NavigationContextType = {
 };
 
 const NavigationContext = createContext<NavigationContextType | undefined>(
-  undefined
+  undefined,
 );
 
 type pageProp = {
