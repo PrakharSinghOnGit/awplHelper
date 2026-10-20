@@ -130,14 +130,18 @@ export function useAwplData(leader: LeaderRow | null | undefined) {
         }
       }
 
-      // Save to relational database
-      await persistAwplDataToDatabase(
-        supabase,
-        leader.id,
-        leader.awplid,
-        leader.awplpass,
-        fresh
-      );
+      // Save to relational database (server route /api/awpl/query also persists with service role)
+      try {
+        await persistAwplDataToDatabase(
+          supabase,
+          leader.id,
+          leader.awplid,
+          leader.awplpass,
+          fresh
+        );
+      } catch (dbErr) {
+        console.warn("Client persist skipped (handled by server route):", dbErr);
+      }
 
       // Invalidate all relational Supabase queries so UI re-reads immediately
       queryClient.setQueryData(queryKey, fresh);

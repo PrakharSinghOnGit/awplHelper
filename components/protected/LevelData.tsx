@@ -5,11 +5,7 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-  Award,
-  CheckCircle2,
-  Sparkles,
-} from "lucide-react";
+import { Award, CheckCircle2, Sparkles } from "lucide-react";
 import { useProfile, useDistributor } from "@/hooks/useDatabase";
 import { calcLevel } from "@/utils/awpl.helper";
 
@@ -26,39 +22,134 @@ const ALL_LEVELS: LevelStep[] = [
   { step: 2, name: "Silver", reqSao: 600, reqSgo: 300, image: "/Silver.png" },
   { step: 3, name: "Gold", reqSao: 1200, reqSgo: 600, image: "/Gold.png" },
   { step: 4, name: "Platinum", reqSao: 2400, reqSgo: 1200, image: "/Gold.png" },
-  { step: 5, name: "Emerald", reqSao: 4800, reqSgo: 2400, image: "/Master.png" },
+  {
+    step: 5,
+    name: "Emerald",
+    reqSao: 4800,
+    reqSgo: 2400,
+    image: "/Master.png",
+  },
   { step: 6, name: "Topaz", reqSao: 12000, reqSgo: 6000, image: "/Master.png" },
-  { step: 7, name: "Ruby Star", reqSao: 24000, reqSgo: 12000, image: "/Royal0.png" },
-  { step: 8, name: "Sapphire Star", reqSao: 48000, reqSgo: 24000, image: "/Royal0.png" },
-  { step: 9, name: "Star Sapphire", reqSao: 96000, reqSgo: 48000, image: "/Royal0.png" },
-  { step: 10, name: "Diamond", reqSao: 192000, reqSgo: 96000, image: "/Diamond.png" },
-  { step: 11, name: "Blue Diamond", reqSao: 384000, reqSgo: 192000, image: "/Diamond.png" },
-  { step: 12, name: "Black Diamond", reqSao: 768000, reqSgo: 384000, image: "/Diamond.png" },
-  { step: 13, name: "Royal Diamond", reqSao: 1536000, reqSgo: 768000, image: "/Diamond.png" },
-  { step: 14, name: "Crown Diamond", reqSao: 3072000, reqSgo: 1536000, image: "/Diamond.png" },
-  { step: 15, name: "Ambassador", reqSao: 6144000, reqSgo: 3072000, image: "/Royal.png" },
-  { step: 16, name: "Royal Ambassador", reqSao: 12288000, reqSgo: 6144000, image: "/Royal.png" },
-  { step: 17, name: "Crown Ambassador", reqSao: 24576000, reqSgo: 12288000, image: "/Royal.png" },
-  { step: 18, name: "Brand Ambassador", reqSao: 49152000, reqSgo: 24576000, image: "/Royal.png" },
-  { step: 19, name: "Chief Brand Ambassador", reqSao: 196605200, reqSgo: 49152000, image: "/Royal.png" },
-  { step: 20, name: "Global Brand Ambassador", reqSao: 393213200, reqSgo: 196605200, image: "/Royal.png" },
+  {
+    step: 7,
+    name: "Ruby Star",
+    reqSao: 24000,
+    reqSgo: 12000,
+    image: "/Royal0.png",
+  },
+  {
+    step: 8,
+    name: "Sapphire Star",
+    reqSao: 48000,
+    reqSgo: 24000,
+    image: "/Royal0.png",
+  },
+  {
+    step: 9,
+    name: "Star Sapphire",
+    reqSao: 96000,
+    reqSgo: 48000,
+    image: "/Royal0.png",
+  },
+  {
+    step: 10,
+    name: "Diamond",
+    reqSao: 192000,
+    reqSgo: 96000,
+    image: "/Diamond.png",
+  },
+  {
+    step: 11,
+    name: "Blue Diamond",
+    reqSao: 384000,
+    reqSgo: 192000,
+    image: "/Diamond.png",
+  },
+  {
+    step: 12,
+    name: "Black Diamond",
+    reqSao: 768000,
+    reqSgo: 384000,
+    image: "/Diamond.png",
+  },
+  {
+    step: 13,
+    name: "Royal Diamond",
+    reqSao: 1536000,
+    reqSgo: 768000,
+    image: "/Diamond.png",
+  },
+  {
+    step: 14,
+    name: "Crown Diamond",
+    reqSao: 3072000,
+    reqSgo: 1536000,
+    image: "/Diamond.png",
+  },
+  {
+    step: 15,
+    name: "Ambassador",
+    reqSao: 6144000,
+    reqSgo: 3072000,
+    image: "/Royal.png",
+  },
+  {
+    step: 16,
+    name: "Royal Ambassador",
+    reqSao: 12288000,
+    reqSgo: 6144000,
+    image: "/Royal.png",
+  },
+  {
+    step: 17,
+    name: "Crown Ambassador",
+    reqSao: 24576000,
+    reqSgo: 12288000,
+    image: "/Royal.png",
+  },
+  {
+    step: 18,
+    name: "Brand Ambassador",
+    reqSao: 49152000,
+    reqSgo: 24576000,
+    image: "/Royal.png",
+  },
+  {
+    step: 19,
+    name: "Chief Brand Ambassador",
+    reqSao: 196605200,
+    reqSgo: 49152000,
+    image: "/Royal.png",
+  },
+  {
+    step: 20,
+    name: "Global Brand Ambassador",
+    reqSao: 393213200,
+    reqSgo: 196605200,
+    image: "/Royal.png",
+  },
 ];
 
 interface LevelDataProps {
   distributorId?: string;
 }
 
-export default function LevelData({ distributorId: propDistributorId }: LevelDataProps = {}) {
+export default function LevelData({
+  distributorId: propDistributorId,
+}: LevelDataProps = {}) {
   const { data: leader } = useProfile();
   const effectiveId = propDistributorId || leader?.awplid;
   const { data: distributor } = useDistributor(effectiveId);
 
   const sao = distributor?.sao_sp ?? leader?.levelsao ?? 0;
   const sgo = distributor?.sgo_sp ?? leader?.levelsgo ?? 0;
-  const currentRank = distributor?.current_level_name || leader?.rank || calcLevel(sao, sgo);
+  const currentRank =
+    distributor?.current_level_name || leader?.rank || calcLevel(sao, sgo);
 
   const currentStep = useMemo(() => {
-    const found = ALL_LEVELS.find((l) => l.name.toLowerCase() === currentRank.toLowerCase());
+    const found = ALL_LEVELS.find(
+      (l) => l.name.toLowerCase() === currentRank.toLowerCase(),
+    );
     return found ? found.step : 0;
   }, [currentRank]);
 
@@ -71,7 +162,8 @@ export default function LevelData({ distributorId: propDistributorId }: LevelDat
             Rank & Level Roadmap
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Complete Asclepius 20-level hierarchy and sales points qualification benchmarks
+            Complete Asclepius 20-level hierarchy and sales points qualification
+            benchmarks
           </p>
         </div>
 
@@ -140,8 +232,8 @@ export default function LevelData({ distributorId: propDistributorId }: LevelDat
                   isCompleted
                     ? "bg-emerald-500/[0.03] border-emerald-500/30"
                     : isCurrent
-                    ? "bg-card border-primary/40 shadow-md ring-1 ring-primary/20"
-                    : "bg-card/40 border-border/50 opacity-80"
+                      ? "bg-card border-primary/40 shadow-md ring-1 ring-primary/20"
+                      : "bg-card/40 border-border/50 opacity-80"
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -189,7 +281,10 @@ export default function LevelData({ distributorId: propDistributorId }: LevelDat
                       Next Target
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="text-xs text-muted-foreground">
+                    <Badge
+                      variant="outline"
+                      className="text-xs text-muted-foreground"
+                    >
                       Locked
                     </Badge>
                   )}
@@ -202,20 +297,32 @@ export default function LevelData({ distributorId: propDistributorId }: LevelDat
                       <div className="flex justify-between text-muted-foreground">
                         <span>SAO Progress</span>
                         <span className="font-mono font-semibold text-foreground">
-                          {sao.toLocaleString("en-IN")} / {level.reqSao.toLocaleString("en-IN")} SP ({saoPct.toFixed(0)}%)
+                          {sao.toLocaleString("en-IN")} /{" "}
+                          {level.reqSao.toLocaleString("en-IN")} SP (
+                          {saoPct.toFixed(0)}%)
                         </span>
                       </div>
-                      <Progress value={saoPct} childClassName="bg-emerald-500" className="h-1.5" />
+                      <Progress
+                        value={saoPct}
+                        childClassName="bg-emerald-500"
+                        className="h-1.5"
+                      />
                     </div>
 
                     <div className="space-y-1">
                       <div className="flex justify-between text-muted-foreground">
                         <span>SGO Progress</span>
                         <span className="font-mono font-semibold text-foreground">
-                          {sgo.toLocaleString("en-IN")} / {level.reqSgo.toLocaleString("en-IN")} SP ({sgoPct.toFixed(0)}%)
+                          {sgo.toLocaleString("en-IN")} /{" "}
+                          {level.reqSgo.toLocaleString("en-IN")} SP (
+                          {sgoPct.toFixed(0)}%)
                         </span>
                       </div>
-                      <Progress value={sgoPct} childClassName="bg-indigo-500" className="h-1.5" />
+                      <Progress
+                        value={sgoPct}
+                        childClassName="bg-indigo-500"
+                        className="h-1.5"
+                      />
                     </div>
                   </div>
                 )}
