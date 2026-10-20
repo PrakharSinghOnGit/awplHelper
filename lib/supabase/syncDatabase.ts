@@ -127,7 +127,61 @@ export async function persistAwplDataToDatabase(
       }
     }
 
-    // 4. Update the Leader record summary
+    // 4. Incrementally upsert bonanza_targets (deduplicated by distributor_id and target name)
+    if (Array.isArray(data.bonanzaTargets) && data.bonanzaTargets.length > 0) {
+      const bonanzaRows = data.bonanzaTargets
+        .map((b) => {
+          let targetName = String(b["Target"] || b["target"] || "").trim();
+          let reqSao = 0;
+          let reqSgo = 0;
+          let remSao = 0;
+          let remSgo = 0;
+          let status = "pending";
+
+          for (const [key, val] of Object.entries(b)) {
+            const lower = key.toLowerCase();
+            if (lower.startsWith("req sao")) {
+              reqSao = parseCleanNumber(val);
+              if (!targetName) {
+                targetName = key.replace(/req\s*sao\s*(self)?/i, "").trim() || "Bonanza";
+              }
+            } else if (lower.startsWith("req sgo")) {
+              reqSgo = parseCleanNumber(val);
+            } else if (lower.includes("pending") && lower.includes("sao")) {
+              remSao = parseCleanNumber(val);
+            } else if (lower.includes("pending") && lower.includes("sgo")) {
+              remSgo = parseCleanNumber(val);
+            } else if (lower.startsWith("status")) {
+              status = String(val).trim();
+            }
+          }
+
+          if (!targetName) targetName = "Winter Bonanza";
+
+          return {
+            distributor_id: cleanId,
+            name: targetName,
+            req_sao: reqSao,
+            req_sgo: reqSgo,
+            achieved_sao: Math.max(0, reqSao - remSao),
+            achieved_sgo: Math.max(0, reqSgo - remSgo),
+            status,
+            updated_at: new Date().toISOString(),
+          };
+        })
+        .filter((r): r is NonNullable<typeof r> => r !== null);
+
+      if (bonanzaRows.length > 0) {
+        const { error: bonanzaErr } = await supabase
+          .from("bonanza_targets")
+          .upsert(bonanzaRows, { onConflict: "distributor_id,name" });
+        if (bonanzaErr) {
+          console.warn("Error upserting bonanza_targets:", bonanzaErr.message);
+        }
+      }
+    }
+
+    // 5. Update the Leader record summary
     const { error: leaderErr } = await supabase
       .from("leaders")
       .update({
