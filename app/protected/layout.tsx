@@ -23,7 +23,11 @@ export default function ProtectedLayout({
                 <SidebarTrigger />
               </div>
               <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-                <Badge variant={"outline"} color="blue" className="hidden sm:inline-flex text-xs font-medium">
+                <Badge
+                  variant={"outline"}
+                  color="blue"
+                  className="hidden sm:inline-flex text-xs font-medium"
+                >
                   {new Date().toDateString()}
                 </Badge>
                 <ModeToggle />
