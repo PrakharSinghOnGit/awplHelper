@@ -111,3 +111,83 @@ export const useUpdateLeader = () => {
     }
   );
 };
+
+export const usePayouts = (distributorId?: string | null) => {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: ["payouts", distributorId],
+    queryFn: async () => {
+      if (!distributorId) return [];
+      const cleanId = distributorId.trim().toUpperCase();
+      const { data, error } = await supabase
+        .from("payouts")
+        .select("*")
+        .eq("distributor_id", cleanId)
+        .order("cheque_date", { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!distributorId,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useWeeklySp = (distributorId?: string | null) => {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: ["weekly_sp", distributorId],
+    queryFn: async () => {
+      if (!distributorId) return [];
+      const cleanId = distributorId.trim().toUpperCase();
+      const { data, error } = await supabase
+        .from("weekly_sp")
+        .select("*")
+        .eq("distributor_id", cleanId)
+        .order("closing_date", { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!distributorId,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useTeamMembers = () => {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: ["team_members"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_memberships")
+        .select(`
+          leader_id,
+          distributor_id,
+          custom_alias,
+          notes,
+          added_at,
+          distributors:distributor_id (
+            awplid,
+            name,
+            pass,
+            valid_passwords,
+            current_level,
+            current_level_name,
+            sao_sp,
+            sgo_sp,
+            total_income,
+            status,
+            last_mined_at
+          )
+        `);
+
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 60 * 1000,
+  });
+};

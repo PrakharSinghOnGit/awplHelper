@@ -1,340 +1,223 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo } from "react";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  ColumnDef,
-  SortingState,
-  ColumnFiltersState,
-  VisibilityState,
-  flexRender,
-} from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { ArrowUpDown, Search, ArrowUp, ArrowDown, Save } from "lucide-react";
-import { calcLevel, Levels } from "@/utils/awpl.helper";
+  Award,
+  CheckCircle2,
+  Sparkles,
+} from "lucide-react";
 import { useProfile } from "@/hooks/useDatabase";
+import { calcLevel } from "@/utils/awpl.helper";
 
-import EditTeamSkeleton from "./Team/EditTeamSkeleton";
-import { TeamMember } from "./Team/type";
-import { Separator } from "@/components/ui/separator";
+interface LevelStep {
+  step: number;
+  name: string;
+  reqSao: number;
+  reqSgo: number;
+  image: string;
+}
 
-export function EditTeam() {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
-  const { data, isLoading, error } = useProfile();
-  const [members] = useState<TeamMember[]>([]);
-  const team = data?.team || "";
+const ALL_LEVELS: LevelStep[] = [
+  { step: 1, name: "Bronze", reqSao: 200, reqSgo: 100, image: "/Bronze.png" },
+  { step: 2, name: "Silver", reqSao: 600, reqSgo: 300, image: "/Silver.png" },
+  { step: 3, name: "Gold", reqSao: 1200, reqSgo: 600, image: "/Gold.png" },
+  { step: 4, name: "Platinum", reqSao: 2400, reqSgo: 1200, image: "/Gold.png" },
+  { step: 5, name: "Emerald", reqSao: 4800, reqSgo: 2400, image: "/Master.png" },
+  { step: 6, name: "Topaz", reqSao: 12000, reqSgo: 6000, image: "/Master.png" },
+  { step: 7, name: "Ruby Star", reqSao: 24000, reqSgo: 12000, image: "/Royal0.png" },
+  { step: 8, name: "Sapphire Star", reqSao: 48000, reqSgo: 24000, image: "/Royal0.png" },
+  { step: 9, name: "Star Sapphire", reqSao: 96000, reqSgo: 48000, image: "/Royal0.png" },
+  { step: 10, name: "Diamond", reqSao: 192000, reqSgo: 96000, image: "/Diamond.png" },
+  { step: 11, name: "Blue Diamond", reqSao: 384000, reqSgo: 192000, image: "/Diamond.png" },
+  { step: 12, name: "Black Diamond", reqSao: 768000, reqSgo: 384000, image: "/Diamond.png" },
+  { step: 13, name: "Royal Diamond", reqSao: 1536000, reqSgo: 768000, image: "/Diamond.png" },
+  { step: 14, name: "Crown Diamond", reqSao: 3072000, reqSgo: 1536000, image: "/Diamond.png" },
+  { step: 15, name: "Ambassador", reqSao: 6144000, reqSgo: 3072000, image: "/Royal.png" },
+  { step: 16, name: "Royal Ambassador", reqSao: 12288000, reqSgo: 6144000, image: "/Royal.png" },
+  { step: 17, name: "Crown Ambassador", reqSao: 24576000, reqSgo: 12288000, image: "/Royal.png" },
+  { step: 18, name: "Brand Ambassador", reqSao: 49152000, reqSgo: 24576000, image: "/Royal.png" },
+  { step: 19, name: "Chief Brand Ambassador", reqSao: 196605200, reqSgo: 49152000, image: "/Royal.png" },
+  { step: 20, name: "Global Brand Ambassador", reqSao: 393213200, reqSgo: 196605200, image: "/Royal.png" },
+];
 
-  const exportData = () => {
-    const header = ["Name", "AWPL ID", "AWPL Pass", "Level"];
-    const rows = members.map((member) => {
-      const level = calcLevel(member.levelSao || 0, member.levelSgo || 0);
-      return [member.name, member.awplId, member.awplPass, level];
-    });
+export default function LevelData() {
+  const { data: leader } = useProfile();
 
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [header, ...rows].map((e) => e.join(",")).join("\n");
+  const sao = leader?.levelsao || 0;
+  const sgo = leader?.levelsgo || 0;
+  const currentRank = leader?.rank || calcLevel(sao, sgo);
 
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `team_${team || "data"}.csv`);
-    document.body.appendChild(link); // Required for FF
-
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const columns: ColumnDef<TeamMember>[] = [
-    // sno
-    {
-      id: "index",
-      header: "#",
-      cell: ({ row }) => row.index + 1,
-      enableSorting: false,
-    },
-    // name
-    {
-      accessorKey: "name",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Name
-            {column.getIsSorted() === "asc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const member = members[row.index];
-        const isEmpty = !member?.name?.trim();
-
-        return (
-          <span
-            defaultValue={member?.name || ""}
-            className={`border-none bg-transparent p-0 font-medium focus-visible:ring-0 focus-visible:ring-offset-0 ${
-              isEmpty ? "placeholder-red-400 dark:placeholder-red-500" : ""
-            }`}
-          />
-        );
-      },
-    },
-    {
-      accessorKey: "awplId",
-      header: "AWPL ID",
-      cell: ({ row }) => {
-        const member = members[row.index];
-        const isEmpty = !member?.awplId?.trim();
-
-        return (
-          <span
-            defaultValue={member?.awplId || ""}
-            className={`border-none bg-transparent p-0 font-mono text-sm font-semibold focus-visible:ring-0 focus-visible:ring-offset-0 ${
-              isEmpty ? "placeholder-red-400 dark:placeholder-red-500" : ""
-            }`}
-          />
-        );
-      },
-    },
-    {
-      accessorKey: "awplPass",
-      header: "AWPL Pass",
-      cell: ({ row }) => {
-        const member = members[row.index];
-        const isEmpty = !member?.awplPass?.trim();
-
-        return (
-          <span
-            defaultValue={member?.awplPass || ""}
-            className={`border-none bg-transparent p-0 font-mono text-sm font-semibold focus-visible:ring-0 focus-visible:ring-offset-0 ${
-              isEmpty ? "placeholder-red-400 dark:placeholder-red-500" : ""
-            }`}
-          />
-        );
-      },
-    },
-    {
-      accessorKey: "level",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Level
-            {column.getIsSorted() === "asc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const levelSao = row.original.levelSao || 0;
-        const levelSgo = row.original.levelSgo || 0;
-        const level = calcLevel(levelSao, levelSgo);
-
-        return <p>{level}</p>;
-      },
-      sortingFn: (rowA, rowB) => {
-        const levelA = calcLevel(
-          rowA.original.levelSao || 0,
-          rowA.original.levelSgo || 0
-        );
-        const levelB = calcLevel(
-          rowB.original.levelSao || 0,
-          rowB.original.levelSgo || 0
-        );
-
-        const indexA = Levels.indexOf(levelA);
-        const indexB = Levels.indexOf(levelB);
-
-        return indexA - indexB;
-      },
-    },
-  ];
-
-  const table = useReactTable({
-    data: members || [],
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, value) => {
-      const member = row.original as TeamMember;
-      const searchableFields = [
-        member.name?.toLowerCase() || "",
-        member.awplId?.toLowerCase() || "",
-        member.awplPass?.toLowerCase() || "",
-      ];
-      return searchableFields.some((field) =>
-        field.includes(value.toLowerCase())
-      );
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      globalFilter,
-      rowSelection,
-    },
-  });
-
-  if (isLoading) {
-    return <EditTeamSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <p className="text-destructive mb-2">Failed to load team members</p>
-          <p className="text-sm text-muted-foreground">
-            {error instanceof Error
-              ? error.message
-              : "An unknown error occurred"}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const currentStep = useMemo(() => {
+    const found = ALL_LEVELS.find((l) => l.name.toLowerCase() === currentRank.toLowerCase());
+    return found ? found.step : 0;
+  }, [currentRank]);
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
-      {/* CONTROL BAR */}
-      <div className="flex flex-col lg:flex-row justify-between">
-        <div className="hidden sm:hidden md:block">
-          <h2 className="text-xl font-bold tracking-tight">Level Data</h2>
-          <p className="text-muted-foreground text-sm">
-            Manage your team members and their AWPL details
+    <div className="space-y-6 sm:space-y-8 w-full pb-12">
+      {/* 1. Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight inter">
+            Rank & Level Roadmap
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Complete Asclepius 20-level hierarchy and sales points qualification benchmarks
           </p>
         </div>
-        <div className="md:pt-3 lg:pt-0 w-full flex items-center gap-2 lg:max-w-fit">
-          <div className="flex h-10 items-center justify-center space-x-1 overflow-hidden whitespace-nowrap rounded-lg bg-neutral-200/60 dark:bg-neutral-600/80 pl-2.5 text-neutral-600 dark:text-neutral-200 grow">
-            <Search size={20} className="shrink-0" />
-            <Input
-              placeholder="Search by name, ID, or password"
-              value={globalFilter ?? ""}
-              onChange={(event) => setGlobalFilter(String(event.target.value))}
-              className="min-w-0"
-            />
+
+        <Badge
+          variant="outline"
+          className="bg-primary/5 text-primary border-primary/20 text-sm font-semibold py-1.5 px-3.5 gap-2 self-start sm:self-auto"
+        >
+          <Award className="size-4" />
+          Current: {currentRank} (Step {currentStep} of 20)
+        </Badge>
+      </div>
+
+      {/* 2. Current Progress Highlight Card */}
+      <Card className="border bg-card/75 backdrop-blur-md rounded-3xl p-6 sm:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+          <div className="space-y-1">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Distributor Level
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground logoFace">
+              {currentRank}
+            </h2>
+            <p className="text-xs text-muted-foreground font-mono">
+              AWPL ID: {leader?.awplid || "N/A"}
+            </p>
           </div>
 
-          {/* SAVE BTN */}
+          <div className="p-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] space-y-1">
+            <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              Total SAO Points
+            </span>
+            <p className="text-2xl font-extrabold font-mono text-foreground">
+              {sao.toLocaleString("en-IN")} SP
+            </p>
+          </div>
 
-          <Separator orientation="vertical" className="h-6" />
-          <button
-            onClick={exportData}
-            className={
-              "flex h-10 space-x-1 text-sm cursor-pointer items-center justify-center rounded-lg px-6 py-2 text-white transition-all duration-300 grow bg-green-700 dark:bg-green-600/80 hover:bg-green-800 dark:hover:bg-green-800"
-            }
-          >
-            <Save size={20} className="shrink-0" />
-            Export
-          </button>
+          <div className="p-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/[0.04] space-y-1">
+            <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+              Total SGO Points
+            </span>
+            <p className="text-2xl font-extrabold font-mono text-foreground">
+              {sgo.toLocaleString("en-IN")} SP
+            </p>
+          </div>
         </div>
-      </div>
+      </Card>
 
-      <div className="flex mt-3 items-center justify-between text-muted-foreground">
-        <span>Click on fields to edit</span>
-        <span className="text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} /{" "}
-          {table.getFilteredRowModel().rows.length} selected
-        </span>
-      </div>
+      {/* 3. Steps Grid */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-foreground inter">
+          Official 20 Steps Progression
+        </h3>
 
-      <Separator className="my-3" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {ALL_LEVELS.map((level) => {
+            const isCompleted = level.step <= currentStep;
+            const isCurrent = level.step === currentStep + 1;
 
-      {/* Table */}
-      <div className="flex-1 overflow-auto">
-        <div className="rounded-md border w-full min-w-[640px]">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => {
-                  return (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
+            const saoPct = Math.min((sao / level.reqSao) * 100, 100);
+            const sgoPct = Math.min((sgo / level.reqSgo) * 100, 100);
+
+            return (
+              <div
+                key={level.step}
+                className={`p-5 rounded-2xl border transition-all ${
+                  isCompleted
+                    ? "bg-emerald-500/[0.03] border-emerald-500/30"
+                    : isCurrent
+                    ? "bg-card border-primary/40 shadow-md ring-1 ring-primary/20"
+                    : "bg-card/40 border-border/50 opacity-80"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3.5">
+                    <div className="size-12 rounded-xl bg-muted/60 border p-1 flex items-center justify-center shrink-0">
+                      <Image
+                        src={level.image}
+                        alt={level.name}
+                        width={36}
+                        height={36}
+                        className="object-contain"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-muted-foreground">
+                          Step {level.step}
+                        </span>
+                        <h4 className="font-bold text-base sm:text-lg text-foreground">
+                          {level.name}
+                        </h4>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        Required: {level.reqSao.toLocaleString("en-IN")} SAO /{" "}
+                        {level.reqSgo.toLocaleString("en-IN")} SGO
+                      </span>
+                    </div>
+                  </div>
+
+                  {isCompleted ? (
+                    <Badge
+                      variant="outline"
+                      className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 text-xs font-bold py-1 px-2.5 gap-1"
                     >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="relative">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No team members found. Add Members to see them here.
-                    <p>if already added wait for backend to fetch data</p>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                      <CheckCircle2 className="size-3.5" />
+                      Completed
+                    </Badge>
+                  ) : isCurrent ? (
+                    <Badge
+                      variant="outline"
+                      className="bg-primary/10 text-primary border-primary/30 text-xs font-bold py-1 px-2.5 gap-1"
+                    >
+                      <Sparkles className="size-3.5" />
+                      Next Target
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-xs text-muted-foreground">
+                      Locked
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Progress bars for the next target */}
+                {isCurrent && (
+                  <div className="mt-4 pt-3 border-t border-border/50 space-y-2 text-xs">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-muted-foreground">
+                        <span>SAO Progress</span>
+                        <span className="font-mono font-semibold text-foreground">
+                          {sao.toLocaleString("en-IN")} / {level.reqSao.toLocaleString("en-IN")} SP ({saoPct.toFixed(0)}%)
+                        </span>
+                      </div>
+                      <Progress value={saoPct} childClassName="bg-emerald-500" className="h-1.5" />
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-muted-foreground">
+                        <span>SGO Progress</span>
+                        <span className="font-mono font-semibold text-foreground">
+                          {sgo.toLocaleString("en-IN")} / {level.reqSgo.toLocaleString("en-IN")} SP ({sgoPct.toFixed(0)}%)
+                        </span>
+                      </div>
+                      <Progress value={sgoPct} childClassName="bg-indigo-500" className="h-1.5" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
-
-export default EditTeam;

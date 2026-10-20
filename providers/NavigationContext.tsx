@@ -8,10 +8,10 @@ import {
   ReactNode,
 } from "react";
 import Dashboard from "@/components/protected/dashboard/Dashboard";
-import EditTeam from "@/components/protected/Team/EditTeam";
+import TeamWorkspace from "@/components/protected/Team/TeamWorkspace";
+import ChequeData from "@/components/protected/ChequeData";
 import LevelData from "@/components/protected/LevelData";
 import TargetData from "@/components/protected/TargetData";
-import ChequeData from "@/components/protected/ChequeData";
 import Payment from "@/components/protected/Payment";
 import Help from "@/components/protected/Help";
 
@@ -32,10 +32,12 @@ type pageProp = {
 
 const pages: pageProp[] = [
   { name: "Dashboard", component: <Dashboard /> },
-  { name: "Team", component: <EditTeam /> },
+  { name: "Payouts", component: <ChequeData /> },
+  { name: "Team Workspace", component: <TeamWorkspace /> },
+  { name: "Team", component: <TeamWorkspace /> },
+  { name: "Cheque Data", component: <ChequeData /> },
   { name: "Level Data", component: <LevelData /> },
   { name: "Target Data", component: <TargetData /> },
-  { name: "Cheque Data", component: <ChequeData /> },
   { name: "Billing", component: <Payment /> },
   { name: "Help", component: <Help /> },
 ];

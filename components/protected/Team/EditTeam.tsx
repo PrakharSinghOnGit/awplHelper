@@ -35,7 +35,9 @@ import {
   Command,
 } from "lucide-react";
 import { calcLevel, Levels } from "@/utils/awpl.helper";
-import { useProfile, useUpdateLeader } from "@/hooks/useDatabase";
+import { useProfile, useUpdateLeader, useTeamMembers } from "@/hooks/useDatabase";
+import { useSupabase } from "@/providers/SupabaseProvider";
+import { migrateLegacyTeam } from "@/lib/supabase/migrateLegacyTeam";
 import { ConfirmDialog } from "./ConfirmDialog";
 import EditTeamSkeleton from "./EditTeamSkeleton";
 import { TeamMember } from "./type";
@@ -71,7 +73,9 @@ export function EditTeam() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
+  const supabase = useSupabase();
   const { data, isLoading, error } = useProfile();
+  const { data: teamMemberships, refetch: refetchTeam } = useTeamMembers();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [originalMembers, setOriginalMembers] = useState<TeamMember[]>([]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -80,27 +84,36 @@ export function EditTeam() {
 
   const { mutate: updateLeader } = useUpdateLeader();
 
+  // Populate from relational team_memberships or legacy team
   useEffect(() => {
-    if (data?.team) {
-      // Check if there are unsaved changes in localStorage
-      const savedChanges = localStorage.getItem("unsaved-team-changes");
-      if (savedChanges) {
-        try {
-          const parsedChanges = JSON.parse(savedChanges);
-          setMembers(parsedChanges);
-          setOriginalMembers(data.team as TeamMember[]);
-          setHasUnsavedChanges(true);
-        } catch (error) {
-          console.error("Error parsing saved changes:", error);
-          setMembers(data.team as TeamMember[]);
-          setOriginalMembers(data.team as TeamMember[]);
-        }
-      } else {
-        setMembers(data.team as TeamMember[]);
-        setOriginalMembers(data.team as TeamMember[]);
-      }
+    if (teamMemberships && teamMemberships.length > 0) {
+      const mapped: TeamMember[] = teamMemberships.map((tm) => {
+        const d = tm.distributors;
+        return {
+          name: d?.name || "",
+          awplId: tm.distributor_id,
+          awplPass: d?.pass || "",
+          levelSao: Number(d?.sao_sp || 0),
+          levelSgo: Number(d?.sgo_sp || 0),
+          validPass: d?.valid_passwords || [],
+          lastMine: d?.last_mined_at || new Date().toISOString(),
+          status: (d?.status as "ok" | "wrong" | "pending") || "ok",
+          chequeData: [],
+          targetData: [],
+        };
+      });
+
+      setMembers(mapped);
+      setOriginalMembers(mapped);
+    } else if (data?.team && Array.isArray(data.team) && data.team.length > 0) {
+      // Legacy fallback and auto-migration
+      setMembers(data.team as TeamMember[]);
+      setOriginalMembers(data.team as TeamMember[]);
+      migrateLegacyTeam(supabase, data.team).then((count) => {
+        if (count > 0) refetchTeam();
+      });
     }
-  }, [data?.team]);
+  }, [teamMemberships, data?.team, supabase, refetchTeam]);
 
   // Add beforeunload listener to prevent closing with unsaved changes
   useEffect(() => {
@@ -420,36 +433,57 @@ export function EditTeam() {
     // Update members with cleaned data
     setMembers(validatedMembers);
 
-    // Implement actual save logic here - pass the full leader object with updated team
-    if (data?.id) {
-      updateLeader(
-        {
-          ...data,
-          team: validatedMembers,
-        },
-        {
-          onSuccess: () => {
-            console.log("Saving validated members:", validatedMembers);
+    // Save to relational tables (distributors & team_memberships)
+    const saveRelationalMembers = async () => {
+      for (const m of validatedMembers) {
+        try {
+          const { data: res, error: rpcErr } = await supabase.rpc("add_team_member", {
+            p_awpl_id: m.awplId,
+            p_awpl_pass: m.awplPass,
+            p_name: m.name,
+          });
 
-            // Clear unsaved changes after successful save
-            setOriginalMembers(validatedMembers);
-            setHasUnsavedChanges(false);
-            localStorage.removeItem("unsaved-team-changes");
-
-            // Show success message
-            toast.success(
-              `Successfully saved ${validatedMembers.length} team member(s)!`
-            );
-          },
-          onError: (error) => {
-            console.error("Error saving team:", error);
-            toast.error("Failed to save team. Please try again.");
-          },
+          if (rpcErr) {
+            console.warn("RPC add_team_member error for", m.awplId, rpcErr.message);
+          } else if (res && !(res as { success?: boolean }).success) {
+            toast.error((res as { error?: string }).error || "Failed to add member");
+            return false;
+          }
+        } catch (err) {
+          console.error("Save error:", err);
         }
-      );
-    } else {
-      toast.error("Unable to save: Profile not found");
-    }
+      }
+      refetchTeam();
+      return true;
+    };
+
+    saveRelationalMembers().then((ok) => {
+      if (!ok) return;
+
+      // Also persist to leaders.team for legacy fallback
+      if (data?.id) {
+        updateLeader(
+          {
+            ...data,
+            team: validatedMembers,
+          },
+          {
+            onSuccess: () => {
+              setOriginalMembers(validatedMembers);
+              setHasUnsavedChanges(false);
+              localStorage.removeItem("unsaved-team-changes");
+              toast.success(
+                `Successfully saved ${validatedMembers.length} team member(s)!`
+              );
+            },
+            onError: (error) => {
+              console.error("Error updating leader table:", error);
+              toast.error("Failed to update leader. Please try again.");
+            },
+          }
+        );
+      }
+    });
   };
 
   const handleDeleteMember = () => {
@@ -461,13 +495,27 @@ export function EditTeam() {
     setDeleteConfirmOpen(true);
   };
 
-  const confirmDeleteMembers = () => {
+  const confirmDeleteMembers = async () => {
+    for (const index of membersToDelete) {
+      const member = members[index];
+      if (member && member.awplId) {
+        try {
+          await supabase.rpc("remove_team_member", {
+            p_awpl_id: member.awplId,
+          });
+        } catch (err) {
+          console.warn("Error unlinking member:", member.awplId, err);
+        }
+      }
+    }
+
     setMembers((prev) =>
       prev.filter((_, index) => !membersToDelete.includes(index))
     );
 
     // Clear selection after deletion
     setRowSelection({});
+    refetchTeam();
 
     // Show success message
     toast.success(`Successfully removed ${membersToDelete.length} member(s)!`);

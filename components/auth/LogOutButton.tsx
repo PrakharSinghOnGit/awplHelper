@@ -18,12 +18,12 @@ export function SidebarLogoutButton() {
   return (
     <SidebarMenuButton
       variant="outline"
-      className={`hover:scale-105 transition-all text-nowrap p-2.5 size-10 w-full bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10`}
+      className="hover:scale-105 transition-all text-nowrap p-2.5 size-10 w-full rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-foreground"
       onClick={logout}
       tooltip={"Log Out"}
     >
-      <LogOut className="h-5 w-5" />
-      <div className="pl-[2px]">Log Out</div>
+      <LogOut size={20} className="shrink-0" />
+      <span className="pl-1 text-sm font-semibold group-data-[collapsible=icon]:hidden">Log Out</span>
     </SidebarMenuButton>
   );
 }

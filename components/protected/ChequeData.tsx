@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,7 +8,6 @@ import {
   getFilteredRowModel,
   ColumnDef,
   SortingState,
-  ColumnFiltersState,
   VisibilityState,
   flexRender,
 } from "@tanstack/react-table";
@@ -22,319 +21,427 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowUpDown, Search, ArrowUp, ArrowDown, Save } from "lucide-react";
-import { calcLevel, Levels } from "@/utils/awpl.helper";
-import { useProfile } from "@/hooks/useDatabase";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import {
+  Search,
+  Download,
+  IndianRupee,
+  Receipt,
+  ShieldCheck,
+  CheckCircle2,
+  ArrowUpDown,
+} from "lucide-react";
+import { useProfile, usePayouts } from "@/hooks/useDatabase";
+import { formatINR, formatCompactINR, parseCleanNumber } from "@/lib/api/awplBackend";
 
-import EditTeamSkeleton from "./Team/EditTeamSkeleton";
-import { TeamMember } from "./Team/type";
-import { Separator } from "@/components/ui/separator";
+interface NormalizedCheque {
+  id: string;
+  chequeNo: string;
+  date: string;
+  grossAmount: number;
+  tdsAmount: number;
+  adminCharges: number;
+  netAmount: number;
+  status: string;
+  transactionNo: string;
+}
 
-export function EditTeam() {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+export default function ChequeData() {
+  const { data: leader, isLoading: isProfileLoading } = useProfile();
+  const { data: dbPayouts, isLoading: isPayoutsLoading } = usePayouts(leader?.awplid);
+
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "date", desc: true },
+  ]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
-  const { data, isLoading, error } = useProfile();
-  const [members] = useState<TeamMember[]>([]);
-  const team = data?.team || "";
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
-  const exportData = () => {
-    const header = ["Name", "AWPL ID", "AWPL Pass", "Level"];
-    const rows = members.map((member) => {
-      const level = calcLevel(member.levelSao || 0, member.levelSgo || 0);
-      return [member.name, member.awplId, member.awplPass, level];
-    });
+  // Normalize cheques from Supabase relational payouts or legacy JSON
+  const cheques: NormalizedCheque[] = useMemo(() => {
+    if (dbPayouts && dbPayouts.length > 0) {
+      return dbPayouts.map((p, idx) => ({
+        id: String(p.id || idx),
+        chequeNo: p.cheque_no,
+        date: p.cheque_date,
+        grossAmount: p.gross_amount || 0,
+        tdsAmount: p.tds_amount || 0,
+        adminCharges: p.admin_charges || 0,
+        netAmount: p.net_amount || 0,
+        status: p.status || "Paid",
+        transactionNo: p.transaction_no || "—",
+      }));
+    }
+
+    const legacy = (leader?.chequeData as unknown as Array<Record<string, unknown>>) || [];
+    if (Array.isArray(legacy) && legacy.length > 0) {
+      return legacy.map((p, idx) => {
+        if ("Cheque Date" in p) {
+          const gross = parseCleanNumber(p["Total Amount"] as string);
+          const net = parseCleanNumber((p["Net Amount"] || p["Total Amount"]) as string);
+          const tds = parseCleanNumber(p["TDS Amount"] as string);
+          const admin = parseCleanNumber(p["Admin Charges"] as string);
+          return {
+            id: String(p["Id"] || idx),
+            chequeNo: String(p["Cheque No."] || `CHQ-${idx + 1}`),
+            date: String(p["Cheque Date"]),
+            grossAmount: gross,
+            tdsAmount: tds,
+            adminCharges: admin,
+            netAmount: net,
+            status: String(p["Payment Status"] || "Paid"),
+            transactionNo: String(p["Transaction No"] || "—"),
+          };
+        } else if ("date" in p) {
+          const amt = parseCleanNumber(p.amount as string | number);
+          return {
+            id: String(idx),
+            chequeNo: `CHQ-${idx + 100}`,
+            date: String(p.date),
+            grossAmount: amt,
+            tdsAmount: Math.round(amt * 0.05),
+            adminCharges: Math.round(amt * 0.05),
+            netAmount: amt,
+            status: "Paid",
+            transactionNo: "—",
+          };
+        }
+        return {
+          id: String(idx),
+          chequeNo: "—",
+          date: "—",
+          grossAmount: 0,
+          tdsAmount: 0,
+          adminCharges: 0,
+          netAmount: 0,
+          status: "Paid",
+          transactionNo: "—",
+        };
+      });
+    }
+
+    return [];
+  }, [dbPayouts, leader?.chequeData]);
+
+  // Aggregate Metrics
+  const metrics = useMemo(() => {
+    const totalNet = cheques.reduce((acc, c) => acc + c.netAmount, 0);
+    const totalTds = cheques.reduce((acc, c) => acc + c.tdsAmount, 0);
+    const avg = cheques.length > 0 ? totalNet / cheques.length : 0;
+    return {
+      totalNet,
+      totalTds,
+      avg,
+      count: cheques.length,
+    };
+  }, [cheques]);
+
+  const exportCSV = () => {
+    if (cheques.length === 0) return;
+    const headers = [
+      "Cheque No",
+      "Date",
+      "Gross Amount (INR)",
+      "TDS Amount (INR)",
+      "Admin Charges (INR)",
+      "Net Amount (INR)",
+      "Payment Status",
+      "Transaction No",
+    ];
+
+    const rows = cheques.map((c) => [
+      `"${c.chequeNo}"`,
+      `"${c.date}"`,
+      c.grossAmount,
+      c.tdsAmount,
+      c.adminCharges,
+      c.netAmount,
+      `"${c.status}"`,
+      `"${c.transactionNo}"`,
+    ]);
 
     const csvContent =
       "data:text/csv;charset=utf-8," +
-      [header, ...rows].map((e) => e.join(",")).join("\n");
+      [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `team_${team || "data"}.csv`);
-    document.body.appendChild(link); // Required for FF
-
+    link.setAttribute("download", `awpl_cheques_${leader?.awplid || "export"}.csv`);
+    document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const columns: ColumnDef<TeamMember>[] = [
-    // sno
+  const columns: ColumnDef<NormalizedCheque>[] = [
     {
       id: "index",
       header: "#",
-      cell: ({ row }) => row.index + 1,
+      cell: ({ row }) => <span className="font-mono text-muted-foreground">{row.index + 1}</span>,
       enableSorting: false,
     },
-    // name
     {
-      accessorKey: "name",
-      header: ({ column }) => {
-        return (
+      accessorKey: "date",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="gap-1 font-bold -ml-3 text-xs sm:text-sm"
+        >
+          Cheque Date
+          <ArrowUpDown className="size-3.5" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <span className="font-semibold text-foreground">{row.original.date}</span>
+      ),
+    },
+    {
+      accessorKey: "chequeNo",
+      header: "Cheque #",
+      cell: ({ row }) => (
+        <span className="font-mono font-medium text-xs sm:text-sm text-muted-foreground">
+          {row.original.chequeNo}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "grossAmount",
+      header: () => <div className="text-right">Gross Total</div>,
+      cell: ({ row }) => (
+        <div className="text-right font-mono text-muted-foreground">
+          {formatINR(row.original.grossAmount)}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "tdsAmount",
+      header: () => <div className="text-right">TDS (5%)</div>,
+      cell: ({ row }) => (
+        <div className="text-right font-mono text-xs text-muted-foreground">
+          {formatINR(row.original.tdsAmount)}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "netAmount",
+      header: ({ column }) => (
+        <div className="text-right">
           <Button
             variant="ghost"
+            size="sm"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="gap-1 font-bold -mr-3 text-xs sm:text-sm"
           >
-            Name
-            {column.getIsSorted() === "asc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
+            Net Payout
+            <ArrowUpDown className="size-3.5" />
           </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const member = members[row.index];
-        const isEmpty = !member?.name?.trim();
-
-        return (
-          <span
-            defaultValue={member?.name || ""}
-            className={`border-none bg-transparent p-0 font-medium focus-visible:ring-0 focus-visible:ring-offset-0 ${
-              isEmpty ? "placeholder-red-400 dark:placeholder-red-500" : ""
-            }`}
-          />
-        );
-      },
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right font-mono font-extrabold text-base sm:text-lg text-emerald-600 dark:text-emerald-400">
+          {formatINR(row.original.netAmount)}
+        </div>
+      ),
     },
     {
-      accessorKey: "awplId",
-      header: "AWPL ID",
-      cell: ({ row }) => {
-        const member = members[row.index];
-        const isEmpty = !member?.awplId?.trim();
-
-        return (
-          <span
-            defaultValue={member?.awplId || ""}
-            className={`border-none bg-transparent p-0 font-mono text-sm font-semibold focus-visible:ring-0 focus-visible:ring-offset-0 ${
-              isEmpty ? "placeholder-red-400 dark:placeholder-red-500" : ""
-            }`}
-          />
-        );
-      },
-    },
-    {
-      accessorKey: "awplPass",
-      header: "AWPL Pass",
-      cell: ({ row }) => {
-        const member = members[row.index];
-        const isEmpty = !member?.awplPass?.trim();
-
-        return (
-          <span
-            defaultValue={member?.awplPass || ""}
-            className={`border-none bg-transparent p-0 font-mono text-sm font-semibold focus-visible:ring-0 focus-visible:ring-offset-0 ${
-              isEmpty ? "placeholder-red-400 dark:placeholder-red-500" : ""
-            }`}
-          />
-        );
-      },
-    },
-    {
-      accessorKey: "level",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      accessorKey: "status",
+      header: () => <div className="text-center">Status</div>,
+      cell: ({ row }) => (
+        <div className="text-center">
+          <Badge
+            variant="outline"
+            className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 text-xs font-bold py-1 px-2.5 gap-1 inline-flex"
           >
-            Level
-            {column.getIsSorted() === "asc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const levelSao = row.original.levelSao || 0;
-        const levelSgo = row.original.levelSgo || 0;
-        const level = calcLevel(levelSao, levelSgo);
-
-        return <p>{level}</p>;
-      },
-      sortingFn: (rowA, rowB) => {
-        const levelA = calcLevel(
-          rowA.original.levelSao || 0,
-          rowA.original.levelSgo || 0
-        );
-        const levelB = calcLevel(
-          rowB.original.levelSao || 0,
-          rowB.original.levelSgo || 0
-        );
-
-        const indexA = Levels.indexOf(levelA);
-        const indexB = Levels.indexOf(levelB);
-
-        return indexA - indexB;
-      },
+            <CheckCircle2 className="size-3.5" />
+            {row.original.status}
+          </Badge>
+        </div>
+      ),
     },
   ];
 
   const table = useReactTable({
-    data: members || [],
+    data: cheques,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, value) => {
-      const member = row.original as TeamMember;
-      const searchableFields = [
-        member.name?.toLowerCase() || "",
-        member.awplId?.toLowerCase() || "",
-        member.awplPass?.toLowerCase() || "",
-      ];
-      return searchableFields.some((field) =>
-        field.includes(value.toLowerCase())
-      );
+    state: {
+      sorting,
+      globalFilter,
+      columnVisibility,
     },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      globalFilter,
-      rowSelection,
-    },
   });
 
-  if (isLoading) {
-    return <EditTeamSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <p className="text-destructive mb-2">Failed to load team members</p>
-          <p className="text-sm text-muted-foreground">
-            {error instanceof Error
-              ? error.message
-              : "An unknown error occurred"}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const isLoading = isProfileLoading || isPayoutsLoading;
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
-      {/* CONTROL BAR */}
-      <div className="flex flex-col lg:flex-row justify-between">
-        <div className="hidden sm:hidden md:block">
-          <h2 className="text-xl font-bold tracking-tight">Cheque Data</h2>
-          <p className="text-muted-foreground text-sm">
-            Manage your team members and their AWPL details
+    <div className="space-y-6 sm:space-y-8 w-full pb-12">
+      {/* 1. Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight inter">
+            Payout Disbursements
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Complete record of weekly commissions and bank transfers issued by AWPL
           </p>
         </div>
-        <div className="md:pt-3 lg:pt-0 w-full flex items-center gap-2 lg:max-w-fit">
-          <div className="flex h-10 items-center justify-center space-x-1 overflow-hidden whitespace-nowrap rounded-lg bg-neutral-200/60 dark:bg-neutral-600/80 pl-2.5 text-neutral-600 dark:text-neutral-200 grow">
-            <Search size={20} className="shrink-0" />
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={exportCSV}
+          disabled={cheques.length === 0}
+          className="gap-2 font-semibold text-sm h-10 px-4 self-start sm:self-auto"
+        >
+          <Download className="size-4" />
+          Export CSV
+        </Button>
+      </div>
+
+      {/* 2. Top Metric KPI Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card className="border bg-card/75 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Lifetime Income
+            </span>
+            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <IndianRupee className="size-5" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <h3 className="text-3xl font-extrabold inter text-foreground">
+              {formatCompactINR(metrics.totalNet)}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5 font-mono">
+              Exact: {formatINR(metrics.totalNet)}
+            </p>
+          </div>
+        </Card>
+
+        <Card className="border bg-card/75 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Total Cheques
+            </span>
+            <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              <Receipt className="size-5" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <h3 className="text-3xl font-extrabold inter text-foreground">
+              {metrics.count}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Weekly Disbursements
+            </p>
+          </div>
+        </Card>
+
+        <Card className="border bg-card/75 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Avg Cheque Size
+            </span>
+            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+              <IndianRupee className="size-5" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <h3 className="text-3xl font-extrabold inter text-foreground">
+              {formatINR(metrics.avg)}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Per Closing Cycle
+            </p>
+          </div>
+        </Card>
+
+        <Card className="border bg-card/75 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Total TDS Deducted
+            </span>
+            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <ShieldCheck className="size-5" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <h3 className="text-3xl font-extrabold inter text-foreground">
+              {formatINR(metrics.totalTds)}
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              5% Section 194H
+            </p>
+          </div>
+        </Card>
+      </div>
+
+      {/* 3. Search and Table Card */}
+      <div className="rounded-3xl border bg-card/75 backdrop-blur-md p-4 sm:p-6 space-y-4 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="relative w-full sm:w-80">
+            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search by name, ID, or password"
-              value={globalFilter ?? ""}
-              onChange={(event) => setGlobalFilter(String(event.target.value))}
-              className="min-w-0"
+              placeholder="Search cheques, date, amount..."
+              value={globalFilter}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              className="pl-9 h-11 text-sm rounded-xl"
             />
           </div>
 
-          {/* SAVE BTN */}
-
-          <Separator orientation="vertical" className="h-6" />
-          <button
-            onClick={exportData}
-            className={
-              "flex h-10 space-x-1 text-sm cursor-pointer items-center justify-center rounded-lg px-6 py-2 text-white transition-all duration-300 grow bg-green-700 dark:bg-green-600/80 hover:bg-green-800 dark:hover:bg-green-800"
-            }
-          >
-            <Save size={20} className="shrink-0" />
-            Export
-          </button>
+          <span className="text-xs sm:text-sm text-muted-foreground font-medium">
+            Showing <strong className="text-foreground">{table.getRowModel().rows.length}</strong> of{" "}
+            {cheques.length} disbursements
+          </span>
         </div>
-      </div>
 
-      <div className="flex mt-3 items-center justify-between text-muted-foreground">
-        <span>Click on fields to edit</span>
-        <span className="text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} /{" "}
-          {table.getFilteredRowModel().rows.length} selected
-        </span>
-      </div>
-
-      <Separator className="my-3" />
-
-      {/* Table */}
-      <div className="flex-1 overflow-auto">
-        <div className="rounded-md border w-full min-w-[640px]">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
+        {isLoading ? (
+          <div className="p-12 text-center text-sm text-muted-foreground">
+            Loading payout records...
+          </div>
+        ) : cheques.length === 0 ? (
+          <div className="p-16 text-center text-sm text-muted-foreground rounded-2xl border-2 border-dashed border-border/60">
+            No payout cheques on record yet. Sync your distributor data from the Dashboard.
+          </div>
+        ) : (
+          <div className="rounded-2xl border overflow-x-auto scrollbar-thin">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-border/50 bg-muted/30">
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id} className="py-3 px-4 font-bold text-xs uppercase tracking-wider">
                         {header.isPlaceholder
                           ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                          : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => {
-                  return (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="relative">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No team members found. Add Members to see them here.
-                    <p>if already added wait for backend to fetch data</p>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody className="text-sm divide-y divide-border/40">
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} className="hover:bg-muted/40 transition-colors">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="py-3.5 px-4">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-export default EditTeam;
