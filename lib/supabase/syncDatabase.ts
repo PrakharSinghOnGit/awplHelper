@@ -65,18 +65,32 @@ export async function persistAwplDataToDatabase(
     // 2. Incrementally insert payouts (Cheques)
     if (Array.isArray(data.payouts) && data.payouts.length > 0) {
       const payoutRows = data.payouts
-        .filter((p) => p && p["Cheque No."])
-        .map((p) => ({
-          distributor_id: cleanId,
-          cheque_no: String(p["Cheque No."]).trim(),
-          cheque_date: parseDateToSql(p["Cheque Date"]),
-          gross_amount: parseCleanNumber(p["Total Amount"]),
-          net_amount: parseCleanNumber(p["Net Amount"] || p["Total Amount"]),
-          tds_amount: parseCleanNumber(p["TDS Amount"]),
-          admin_charges: parseCleanNumber(p["Admin Charges"]),
-          status: p["Payment Status"] || "Paid",
-          transaction_no: p["Transaction No"] || null,
-        }));
+        .map((p) => {
+          if (!p) return null;
+          const rawDate = String(p["Pay Date"] || p["Cheque Date"] || p["Date"] || "").trim();
+          const chqDate = parseDateToSql(rawDate);
+          if (!chqDate) return null;
+
+          const chqNo = String(
+            p["Cheque No."] ||
+            p["Cheque No"] ||
+            p["cheque_no"] ||
+            `PAY_${chqDate}`
+          ).trim();
+
+          return {
+            distributor_id: cleanId,
+            cheque_no: chqNo,
+            cheque_date: chqDate,
+            gross_amount: parseCleanNumber(p["Total Amount"]),
+            net_amount: parseCleanNumber(p["Net Amount"] || p["Total Amount"]),
+            tds_amount: parseCleanNumber(p["TDS"] || p["TDS Amount"]),
+            admin_charges: parseCleanNumber(p["AWPL Foundation"] || p["Admin Charges"]),
+            status: p["Payment Status"] || "Paid",
+            transaction_no: p["Transaction No"] || null,
+          };
+        })
+        .filter((r): r is NonNullable<typeof r> => r !== null);
 
       if (payoutRows.length > 0) {
         // Upsert ignoring duplicates based on (distributor_id, cheque_no)
