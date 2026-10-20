@@ -71,23 +71,67 @@ export async function persistAwplDataToDatabase(
           const chqDate = parseDateToSql(rawDate);
           if (!chqDate) return null;
 
-          const chqNo = String(
+          const step = parseInt(String(p["Step"] || "0"), 10) || 0;
+          const sno = String(p["SNo."] || p["SNo"] || "").trim();
+
+          const baseChqNo = String(
             p["Cheque No."] ||
             p["Cheque No"] ||
             p["cheque_no"] ||
-            `PAY_${chqDate}`
+            ""
           ).trim();
+
+          const chqNo = baseChqNo
+            ? baseChqNo
+            : step > 0
+              ? `PAY_${chqDate}_STEP_${step}${sno ? `_${sno}` : ""}`
+              : `PAY_${chqDate}`;
+
+          const otherIncomes: Record<string, number> = {};
+          const salesPerf = parseCleanNumber(p["Sales Performance Comission"]);
+          if (salesPerf > 0) otherIncomes["sales_performance"] = salesPerf;
+
+          const rewardIncome = parseCleanNumber(p["Reward Income"]);
+          if (rewardIncome > 0) otherIncomes["reward_income"] = rewardIncome;
+
+          const bonanza = parseCleanNumber(p["Diwali/Anniversary Bonanza"]);
+          if (bonanza > 0) otherIncomes["bonanza"] = bonanza;
+
+          const premPerf = parseCleanNumber(p["Premium sales Performance commission"]);
+          if (premPerf > 0) otherIncomes["premium_performance"] = premPerf;
+
+          const directLeg = parseCleanNumber(p["Direct Leg Comission"]);
+          if (directLeg > 0) otherIncomes["direct_leg"] = directLeg;
+
+          const preferred = parseCleanNumber(p["Preferred Comission"]);
+          if (preferred > 0) otherIncomes["preferred_commission"] = preferred;
+
+          const diamondRoyalty = parseCleanNumber(p["Diamond Royalty Bonus"]);
+          if (diamondRoyalty > 0) otherIncomes["diamond_royalty"] = diamondRoyalty;
+
+          const blueRoyalty = parseCleanNumber(p["Blue Diamond Royalty Bonus"]);
+          if (blueRoyalty > 0) otherIncomes["blue_diamond_royalty"] = blueRoyalty;
+
+          const foundation = parseCleanNumber(p["AWPL Foundation"]);
+          if (foundation > 0) otherIncomes["foundation"] = foundation;
+
+          const advance = parseCleanNumber(p["Advance Amount"]);
+          if (advance > 0) otherIncomes["advance"] = advance;
 
           return {
             distributor_id: cleanId,
             cheque_no: chqNo,
             cheque_date: chqDate,
+            sao_sp: parseCleanNumber(p["SAO SP"] || p["sao_sp"]),
+            sgo_sp: parseCleanNumber(p["SGO SP"] || p["sgo_sp"]),
+            step: step,
             gross_amount: parseCleanNumber(p["Total Amount"]),
             net_amount: parseCleanNumber(p["Net Amount"] || p["Total Amount"]),
             tds_amount: parseCleanNumber(p["TDS"] || p["TDS Amount"]),
-            admin_charges: parseCleanNumber(p["AWPL Foundation"] || p["Admin Charges"]),
+            admin_charges: parseCleanNumber(p["AWPL Foundation"] || p["Admin Charges"] || p["Advance Amount"]),
             status: p["Payment Status"] || "Paid",
             transaction_no: p["Transaction No"] || null,
+            other_incomes: otherIncomes,
           };
         })
         .filter((r): r is NonNullable<typeof r> => r !== null);

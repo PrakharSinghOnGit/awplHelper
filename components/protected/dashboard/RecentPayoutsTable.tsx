@@ -49,6 +49,7 @@ export function RecentPayoutsTable({ payouts = [] }: RecentPayoutsTableProps) {
           tds: parseCleanNumber(p["TDS Amount"]),
           status: p["Payment Status"] || "Paid",
           txn: p["Transaction No"] || "—",
+          step: Number(p["Step"] || p["step"] || 0),
         };
       } else if ("date" in p) {
         return {
@@ -60,6 +61,7 @@ export function RecentPayoutsTable({ payouts = [] }: RecentPayoutsTableProps) {
           tds: 0,
           status: "Paid",
           txn: "—",
+          step: 0,
         };
       }
       return {
@@ -71,6 +73,7 @@ export function RecentPayoutsTable({ payouts = [] }: RecentPayoutsTableProps) {
         tds: 0,
         status: "Paid",
         txn: "—",
+        step: 0,
       };
     });
   }, [payouts]);
@@ -130,8 +133,13 @@ export function RecentPayoutsTable({ payouts = [] }: RecentPayoutsTableProps) {
                     className="hover:bg-muted/50 transition-colors border-border/40"
                   >
                     <TableCell className="py-4 px-5 font-semibold text-foreground">
-                      <div className="flex flex-col">
+                      <div className="flex flex-col gap-0.5">
                         <span className="text-sm sm:text-base">{item.date}</span>
+                        {item.step > 0 && (
+                          <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] font-bold px-1.5 py-0 w-fit">
+                            Step {item.step} Milestone
+                          </Badge>
+                        )}
                         {item.txn !== "—" && (
                           <span className="text-xs font-mono text-muted-foreground truncate max-w-[130px]">
                             {item.txn}

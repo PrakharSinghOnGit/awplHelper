@@ -148,7 +148,11 @@ export type Database = {
           gross_amount: number;
           id: number;
           net_amount: number;
+          other_incomes: Json | null;
+          sao_sp: number | null;
+          sgo_sp: number | null;
           status: string;
+          step: number | null;
           tds_amount: number;
           transaction_no: string | null;
         };
@@ -161,7 +165,11 @@ export type Database = {
           gross_amount?: number;
           id?: never;
           net_amount?: number;
+          other_incomes?: Json | null;
+          sao_sp?: number | null;
+          sgo_sp?: number | null;
           status?: string;
+          step?: number | null;
           tds_amount?: number;
           transaction_no?: string | null;
         };
@@ -174,7 +182,11 @@ export type Database = {
           gross_amount?: number;
           id?: never;
           net_amount?: number;
+          other_incomes?: Json | null;
+          sao_sp?: number | null;
+          sgo_sp?: number | null;
           status?: string;
+          step?: number | null;
           tds_amount?: number;
           transaction_no?: string | null;
         };

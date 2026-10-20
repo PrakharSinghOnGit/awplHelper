@@ -48,6 +48,9 @@ export default function Dashboard() {
         "Admin Charges": p.admin_charges,
         "Payment Status": p.status,
         "Transaction No": p.transaction_no || "—",
+        "Step": p.step || 0,
+        "SAO SP": p.sao_sp || 0,
+        "SGO SP": p.sgo_sp || 0,
       }));
     }
     return (

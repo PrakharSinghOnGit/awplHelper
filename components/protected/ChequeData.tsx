@@ -24,6 +24,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import {
   Search,
   Download,
   IndianRupee,
@@ -31,18 +37,50 @@ import {
   ShieldCheck,
   CheckCircle2,
   ArrowUpDown,
+  Sparkles,
+  Info,
+  Award,
 } from "lucide-react";
 import { useProfile, usePayouts } from "@/hooks/useDatabase";
 import { formatINR, formatCompactINR, parseCleanNumber } from "@/lib/api/awplBackend";
+
+const STEP_NAME_MAP: Record<number, string> = {
+  1: "Bronze",
+  2: "Silver",
+  3: "Gold",
+  4: "Platinum",
+  5: "Emerald",
+  6: "Topaz",
+  7: "Ruby Star",
+  8: "Sapphire Star",
+  9: "Star Sapphire",
+  10: "Diamond",
+  11: "Blue Diamond",
+  12: "Black Diamond",
+  13: "Royal Diamond",
+  14: "Crown Diamond",
+  15: "Ambassador",
+  16: "Royal Ambassador",
+  17: "Crown Ambassador",
+  18: "Brand Ambassador",
+  19: "Chief Brand Ambassador",
+  20: "Global Brand Ambassador",
+};
 
 interface NormalizedCheque {
   id: string;
   chequeNo: string;
   date: string;
+  saoSp: number;
+  sgoSp: number;
+  matchedSp: number;
+  step: number;
   grossAmount: number;
   tdsAmount: number;
   adminCharges: number;
   netAmount: number;
+  salesGrowth: number;
+  otherIncomes: Record<string, number>;
   status: string;
   transactionNo: string;
 }
@@ -66,17 +104,38 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
   // Normalize cheques from Supabase relational payouts or legacy JSON
   const cheques: NormalizedCheque[] = useMemo(() => {
     if (dbPayouts && dbPayouts.length > 0) {
-      return dbPayouts.map((p, idx) => ({
-        id: String(p.id || idx),
-        chequeNo: p.cheque_no,
-        date: p.cheque_date,
-        grossAmount: p.gross_amount || 0,
-        tdsAmount: p.tds_amount || 0,
-        adminCharges: p.admin_charges || 0,
-        netAmount: p.net_amount || 0,
-        status: p.status || "Paid",
-        transactionNo: p.transaction_no || "—",
-      }));
+      return dbPayouts.map((p, idx) => {
+        const sao = Number(p.sao_sp || 0);
+        const sgo = Number(p.sgo_sp || 0);
+        const step = Number(p.step || 0);
+        const others = (p.other_incomes && typeof p.other_incomes === "object" ? p.other_incomes : {}) as Record<string, number>;
+
+        // Dynamic Calculations:
+        // Sum all non-growth extra bonuses
+        const otherTotal = Object.values(others).reduce((a, b) => a + Number(b || 0), 0);
+        // Sales Growth Commission = Gross - all other bonuses
+        const salesGrowth = Math.max(0, (p.gross_amount || 0) - otherTotal);
+        // Matched SP = Sales Growth / 10 (1 SP = ₹10)
+        const matchedSp = Math.round(salesGrowth / 10);
+
+        return {
+          id: String(p.id || idx),
+          chequeNo: p.cheque_no,
+          date: p.cheque_date,
+          saoSp: sao,
+          sgoSp: sgo,
+          matchedSp: matchedSp,
+          step: step,
+          grossAmount: p.gross_amount || 0,
+          tdsAmount: p.tds_amount || 0,
+          adminCharges: p.admin_charges || 0,
+          netAmount: p.net_amount || 0,
+          salesGrowth: salesGrowth,
+          otherIncomes: others,
+          status: p.status || "Paid",
+          transactionNo: p.transaction_no || "—",
+        };
+      });
     }
 
     const legacy = (leader?.chequeData as unknown as Array<Record<string, unknown>>) || [];
@@ -91,10 +150,16 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
             id: String(p["Id"] || idx),
             chequeNo: String(p["Cheque No."] || `CHQ-${idx + 1}`),
             date: String(p["Cheque Date"]),
+            saoSp: 0,
+            sgoSp: 0,
+            matchedSp: 0,
+            step: 0,
             grossAmount: gross,
             tdsAmount: tds,
             adminCharges: admin,
             netAmount: net,
+            salesGrowth: gross,
+            otherIncomes: {},
             status: String(p["Payment Status"] || "Paid"),
             transactionNo: String(p["Transaction No"] || "—"),
           };
@@ -104,10 +169,16 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
             id: String(idx),
             chequeNo: `CHQ-${idx + 100}`,
             date: String(p.date),
+            saoSp: 0,
+            sgoSp: 0,
+            matchedSp: 0,
+            step: 0,
             grossAmount: amt,
             tdsAmount: Math.round(amt * 0.05),
             adminCharges: Math.round(amt * 0.05),
             netAmount: amt,
+            salesGrowth: amt,
+            otherIncomes: {},
             status: "Paid",
             transactionNo: "—",
           };
@@ -116,10 +187,16 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
           id: String(idx),
           chequeNo: "—",
           date: "—",
+          saoSp: 0,
+          sgoSp: 0,
+          matchedSp: 0,
+          step: 0,
           grossAmount: 0,
           tdsAmount: 0,
           adminCharges: 0,
           netAmount: 0,
+          salesGrowth: 0,
+          otherIncomes: {},
           status: "Paid",
           transactionNo: "—",
         };
@@ -133,10 +210,14 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
   const metrics = useMemo(() => {
     const totalNet = cheques.reduce((acc, c) => acc + c.netAmount, 0);
     const totalTds = cheques.reduce((acc, c) => acc + c.tdsAmount, 0);
+    const totalMilestones = cheques.reduce((acc, c) => acc + (c.otherIncomes.sales_performance || 0), 0);
     const avg = cheques.length > 0 ? totalNet / cheques.length : 0;
+    const milestoneCount = cheques.filter((c) => c.step > 0).length;
     return {
       totalNet,
       totalTds,
+      totalMilestones,
+      milestoneCount,
       avg,
       count: cheques.length,
     };
@@ -147,7 +228,13 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
     const headers = [
       "Cheque No",
       "Date",
+      "Step",
+      "Matched SP",
+      "SAO SP",
+      "SGO SP",
       "Gross Amount (INR)",
+      "Sales Growth (INR)",
+      "Level Bonus (INR)",
       "TDS Amount (INR)",
       "Admin Charges (INR)",
       "Net Amount (INR)",
@@ -158,7 +245,13 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
     const rows = cheques.map((c) => [
       `"${c.chequeNo}"`,
       `"${c.date}"`,
+      c.step,
+      c.matchedSp,
+      c.saoSp,
+      c.sgoSp,
       c.grossAmount,
+      c.salesGrowth,
+      c.otherIncomes.sales_performance || 0,
       c.tdsAmount,
       c.adminCharges,
       c.netAmount,
@@ -173,7 +266,7 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `awpl_cheques_${leader?.awplid || "export"}.csv`);
+    link.setAttribute("download", `awpl_cheques_${effectiveId || "export"}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -195,31 +288,140 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="gap-1 font-bold -ml-3 text-xs sm:text-sm"
         >
-          Cheque Date
+          Date / Milestone
           <ArrowUpDown className="size-3.5" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <span className="font-semibold text-foreground">{row.original.date}</span>
-      ),
+      cell: ({ row }) => {
+        const { date, step } = row.original;
+        const rankName = STEP_NAME_MAP[step];
+        return (
+          <div className="flex flex-col gap-1">
+            <span className="font-semibold text-foreground whitespace-nowrap">{date}</span>
+            {step > 0 && (
+              <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] sm:text-[11px] font-extrabold px-2 py-0.5 w-fit gap-1 shadow-sm">
+                <Sparkles className="size-3 text-amber-500" />
+                Step {step}: {rankName || "Milestone"}
+              </Badge>
+            )}
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "chequeNo",
-      header: "Cheque #",
-      cell: ({ row }) => (
-        <span className="font-mono font-medium text-xs sm:text-sm text-muted-foreground">
-          {row.original.chequeNo}
-        </span>
-      ),
+      id: "points",
+      header: "Sales Points (SP)",
+      cell: ({ row }) => {
+        const { saoSp, sgoSp, matchedSp } = row.original;
+        if (saoSp === 0 && sgoSp === 0 && matchedSp === 0) {
+          return <span className="text-muted-foreground font-mono text-xs">—</span>;
+        }
+        return (
+          <div className="flex flex-col text-xs font-mono">
+            <span className="font-semibold text-foreground">
+              {matchedSp > 0 ? `${matchedSp.toLocaleString("en-IN")} SP Matched` : "—"}
+            </span>
+            <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+              SAO: {Math.round(saoSp).toLocaleString("en-IN")} | SGO: {Math.round(sgoSp).toLocaleString("en-IN")}
+            </span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "grossAmount",
       header: () => <div className="text-right">Gross Total</div>,
-      cell: ({ row }) => (
-        <div className="text-right font-mono text-muted-foreground">
-          {formatINR(row.original.grossAmount)}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const { grossAmount, salesGrowth, otherIncomes, step, tdsAmount, adminCharges, netAmount } = row.original;
+        const rankName = STEP_NAME_MAP[step] || `Step ${step}`;
+        const hasBreakdown = Object.keys(otherIncomes).length > 0 || step > 0;
+
+        return (
+          <div className="flex items-center justify-end gap-1.5 font-mono">
+            <span className="text-muted-foreground font-medium">{formatINR(grossAmount)}</span>
+            {hasBreakdown && (
+              <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="View breakdown"
+                      className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                    >
+                      <Info className="size-3.5 text-primary/80" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    className="max-w-xs p-3 space-y-1.5 text-xs bg-popover text-popover-foreground border shadow-xl rounded-xl"
+                  >
+                    <div className="font-bold border-b border-border/50 pb-1 text-foreground flex items-center justify-between">
+                      <span>Commission Breakdown</span>
+                      {step > 0 && <span className="text-amber-500 font-extrabold">{rankName}</span>}
+                    </div>
+                    <div className="space-y-1 text-muted-foreground text-[11px]">
+                      {salesGrowth > 0 && (
+                        <div className="flex justify-between">
+                          <span>Sales Growth (Weekly):</span>
+                          <span className="font-mono text-foreground font-semibold">{formatINR(salesGrowth)}</span>
+                        </div>
+                      )}
+                      {otherIncomes.sales_performance > 0 && (
+                        <div className="flex justify-between text-amber-600 dark:text-amber-400 font-medium">
+                          <span>Rank Milestone Bonus:</span>
+                          <span className="font-mono font-bold">{formatINR(otherIncomes.sales_performance)}</span>
+                        </div>
+                      )}
+                      {otherIncomes.bonanza > 0 && (
+                        <div className="flex justify-between text-indigo-500 font-medium">
+                          <span>Bonanza Contest Reward:</span>
+                          <span className="font-mono font-bold">{formatINR(otherIncomes.bonanza)}</span>
+                        </div>
+                      )}
+                      {otherIncomes.reward_income > 0 && (
+                        <div className="flex justify-between">
+                          <span>Reward Income:</span>
+                          <span className="font-mono text-foreground">{formatINR(otherIncomes.reward_income)}</span>
+                        </div>
+                      )}
+                      {otherIncomes.diamond_royalty > 0 && (
+                        <div className="flex justify-between text-blue-500">
+                          <span>Diamond Royalty:</span>
+                          <span className="font-mono font-bold">{formatINR(otherIncomes.diamond_royalty)}</span>
+                        </div>
+                      )}
+                      {otherIncomes.blue_diamond_royalty > 0 && (
+                        <div className="flex justify-between text-blue-500">
+                          <span>Blue Diamond Royalty:</span>
+                          <span className="font-mono font-bold">{formatINR(otherIncomes.blue_diamond_royalty)}</span>
+                        </div>
+                      )}
+                      <div className="border-t border-border/40 pt-1 flex justify-between font-semibold text-foreground">
+                        <span>Total Gross:</span>
+                        <span className="font-mono">{formatINR(grossAmount)}</span>
+                      </div>
+                      <div className="flex justify-between text-rose-500 text-[10px]">
+                        <span>TDS Deduction:</span>
+                        <span className="font-mono">-{formatINR(tdsAmount)}</span>
+                      </div>
+                      {adminCharges > 0 && (
+                        <div className="flex justify-between text-rose-500 text-[10px]">
+                          <span>Admin / Foundation:</span>
+                          <span className="font-mono">-{formatINR(adminCharges)}</span>
+                        </div>
+                      )}
+                      <div className="border-t border-border/50 pt-1 flex justify-between font-extrabold text-emerald-600 dark:text-emerald-400">
+                        <span>Net Credited:</span>
+                        <span className="font-mono">{formatINR(netAmount)}</span>
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "tdsAmount",
@@ -356,18 +558,18 @@ export default function ChequeData({ distributorId: propDistributorId, distribut
         <Card className="border bg-card/75 rounded-2xl p-6">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Avg Cheque Size
+              Level Bonuses
             </span>
-            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-              <IndianRupee className="size-5" />
+            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <Award className="size-5" />
             </div>
           </div>
           <div className="mt-3">
             <h3 className="text-3xl font-extrabold inter text-foreground">
-              {formatINR(metrics.avg)}
+              {formatCompactINR(metrics.totalMilestones)}
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Per Closing Cycle
+              {metrics.milestoneCount} Rank Milestones Reached
             </p>
           </div>
         </Card>
