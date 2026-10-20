@@ -15,6 +15,10 @@ export interface AwplDashboardProfile {
   nextLevelName: string | null;
   nextLevelTargetSao: number | null;
   nextLevelTargetSgo: number | null;
+  phone?: string | null;
+  email?: string | null;
+  state?: string | null;
+  userId?: number | null;
 }
 
 export interface AwplWeeklySP {
