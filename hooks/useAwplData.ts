@@ -91,7 +91,8 @@ export function useAwplData(leader: LeaderRow | null | undefined) {
     gcTime: 24 * 60 * 60 * 1000,
     // Initialize immediately with local storage or Supabase data
     initialData: () => getLocalCache() ?? undefined,
-    enabled: !!leader?.id && (isOlderThan6Hours || !!leader?.awplid),
+    // Do NOT run query automatically by default; data is served directly from Supabase
+    enabled: false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -138,9 +139,14 @@ export function useAwplData(leader: LeaderRow | null | undefined) {
         fresh
       );
 
-      // Update query cache directly
+      // Invalidate all relational Supabase queries so UI re-reads immediately
       queryClient.setQueryData(queryKey, fresh);
       queryClient.invalidateQueries({ queryKey: ["leaders"] });
+      queryClient.invalidateQueries({ queryKey: ["distributors"] });
+      queryClient.invalidateQueries({ queryKey: ["payouts"] });
+      queryClient.invalidateQueries({ queryKey: ["weekly_sp"] });
+      queryClient.invalidateQueries({ queryKey: ["bonanza_targets"] });
+      queryClient.invalidateQueries({ queryKey: ["team_members"] });
 
       return fresh;
     },

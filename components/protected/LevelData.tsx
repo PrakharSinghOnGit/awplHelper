@@ -10,7 +10,7 @@ import {
   CheckCircle2,
   Sparkles,
 } from "lucide-react";
-import { useProfile } from "@/hooks/useDatabase";
+import { useProfile, useDistributor } from "@/hooks/useDatabase";
 import { calcLevel } from "@/utils/awpl.helper";
 
 interface LevelStep {
@@ -44,12 +44,18 @@ const ALL_LEVELS: LevelStep[] = [
   { step: 20, name: "Global Brand Ambassador", reqSao: 393213200, reqSgo: 196605200, image: "/Royal.png" },
 ];
 
-export default function LevelData() {
-  const { data: leader } = useProfile();
+interface LevelDataProps {
+  distributorId?: string;
+}
 
-  const sao = leader?.levelsao || 0;
-  const sgo = leader?.levelsgo || 0;
-  const currentRank = leader?.rank || calcLevel(sao, sgo);
+export default function LevelData({ distributorId: propDistributorId }: LevelDataProps = {}) {
+  const { data: leader } = useProfile();
+  const effectiveId = propDistributorId || leader?.awplid;
+  const { data: distributor } = useDistributor(effectiveId);
+
+  const sao = distributor?.sao_sp ?? leader?.levelsao ?? 0;
+  const sgo = distributor?.sgo_sp ?? leader?.levelsgo ?? 0;
+  const currentRank = distributor?.current_level_name || leader?.rank || calcLevel(sao, sgo);
 
   const currentStep = useMemo(() => {
     const found = ALL_LEVELS.find((l) => l.name.toLowerCase() === currentRank.toLowerCase());

@@ -123,7 +123,7 @@ export const usePayouts = (distributorId?: string | null) => {
       const { data, error } = await supabase
         .from("payouts")
         .select("*")
-        .eq("distributor_id", cleanId)
+        .ilike("distributor_id", cleanId)
         .order("cheque_date", { ascending: false });
 
       if (error) throw error;
@@ -145,10 +145,60 @@ export const useWeeklySp = (distributorId?: string | null) => {
       const { data, error } = await supabase
         .from("weekly_sp")
         .select("*")
-        .eq("distributor_id", cleanId)
+        .ilike("distributor_id", cleanId)
         .order("closing_date", { ascending: true });
 
       if (error) throw error;
+      return data || [];
+    },
+    enabled: !!distributorId,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useDistributor = (distributorId?: string | null) => {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: ["distributors", distributorId],
+    queryFn: async () => {
+      if (!distributorId) return null;
+      const cleanId = distributorId.trim().toUpperCase();
+      const { data, error } = await supabase
+        .from("distributors")
+        .select("*")
+        .ilike("awplid", cleanId)
+        .maybeSingle();
+
+      if (error) {
+        console.warn("Error fetching distributor:", error.message);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!distributorId,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useBonanzaTargets = (distributorId?: string | null) => {
+  const supabase = useSupabase();
+
+  return useQuery({
+    queryKey: ["bonanza_targets", distributorId],
+    queryFn: async () => {
+      if (!distributorId) return [];
+      const cleanId = distributorId.trim().toUpperCase();
+      const { data, error } = await supabase
+        .from("bonanza_targets")
+        .select("*")
+        .ilike("distributor_id", cleanId)
+        .order("updated_at", { ascending: false });
+
+      if (error) {
+        console.warn("Error fetching bonanza_targets:", error.message);
+        return [];
+      }
       return data || [];
     },
     enabled: !!distributorId,

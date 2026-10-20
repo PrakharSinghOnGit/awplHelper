@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -12,15 +12,41 @@ import {
   Clock,
   Sparkles,
 } from "lucide-react";
-import { useProfile } from "@/hooks/useDatabase";
-import { useAwplData } from "@/hooks/useAwplData";
+import { useProfile, useBonanzaTargets } from "@/hooks/useDatabase";
 
-export default function TargetData() {
+interface TargetDataProps {
+  distributorId?: string;
+}
+
+export default function TargetData({ distributorId: propDistributorId }: TargetDataProps = {}) {
   const { data: leader } = useProfile();
-  const { data: portalData } = useAwplData(leader);
+  const effectiveId = propDistributorId || leader?.awplid;
+  const { data: dbBonanza } = useBonanzaTargets(effectiveId);
 
-  const targets = (portalData?.bonanzaTargets || (leader?.targetdata as unknown as Array<Record<string, unknown>>) || []);
-  const trips = (portalData?.tripAchievers || []);
+  // Directly map from Supabase bonanza_targets table with legacy fallback
+  const targets = useMemo(() => {
+    if (dbBonanza && dbBonanza.length > 0) {
+      return dbBonanza.map((b) => {
+        const reqSAO = Number(b.req_sao || 0);
+        const reqSGO = Number(b.req_sgo || 0);
+        const saoDone = Number(b.achieved_sao || 0);
+        const sgoDone = Number(b.achieved_sgo || 0);
+        const penSAO = Math.max(0, reqSAO - saoDone);
+        const penSGO = Math.max(0, reqSGO - sgoDone);
+
+        return {
+          name: b.name,
+          reqSAO,
+          reqSGO,
+          penSAO,
+          penSGO,
+        };
+      });
+    }
+    return (leader?.targetdata as unknown as Array<Record<string, unknown>>) || [];
+  }, [dbBonanza, leader?.targetdata]);
+
+  const trips: Array<Record<string, unknown>> = [];
 
   const hasTargets = Array.isArray(targets) && targets.length > 0;
   const hasTrips = Array.isArray(trips) && trips.length > 0;

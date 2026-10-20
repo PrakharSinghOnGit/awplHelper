@@ -47,9 +47,15 @@ interface NormalizedCheque {
   transactionNo: string;
 }
 
-export default function ChequeData() {
+interface ChequeDataProps {
+  distributorId?: string;
+  distributorName?: string;
+}
+
+export default function ChequeData({ distributorId: propDistributorId, distributorName: propDistributorName }: ChequeDataProps = {}) {
   const { data: leader, isLoading: isProfileLoading } = useProfile();
-  const { data: dbPayouts, isLoading: isPayoutsLoading } = usePayouts(leader?.awplid);
+  const effectiveId = propDistributorId || leader?.awplid;
+  const { data: dbPayouts, isLoading: isPayoutsLoading } = usePayouts(effectiveId);
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: "date", desc: true },
@@ -286,10 +292,12 @@ export default function ChequeData() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight inter">
-            Payout Disbursements
+            {propDistributorName ? `${propDistributorName}'s Disbursements` : "Payout Disbursements"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Complete record of weekly commissions and bank transfers issued by AWPL
+            {propDistributorId
+              ? `Audited record of weekly commissions for AWPL ID: ${propDistributorId}`
+              : "Complete record of weekly commissions and bank transfers issued by AWPL"}
           </p>
         </div>
 

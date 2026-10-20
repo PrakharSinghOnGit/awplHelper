@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { motion, type Variants } from "framer-motion";
-import { useProfile, usePayouts, useWeeklySp } from "@/hooks/useDatabase";
+import { useProfile, usePayouts, useWeeklySp, useDistributor } from "@/hooks/useDatabase";
 import { useAwplData } from "@/hooks/useAwplData";
 import { calcLevel, getRequiredSp } from "@/utils/awpl.helper";
 import { parseCleanNumber } from "@/lib/api/awplBackend";
@@ -16,33 +16,27 @@ import { SyncProgressBar } from "./SyncProgressBar";
 
 export default function Dashboard() {
   const { data: leader, isLoading: isProfileLoading, error: profileError } = useProfile();
-  const {
-    data: portalData,
-    isSyncing,
-    syncError,
-    syncNow,
-  } = useAwplData(leader);
-
-  // Directly query normalized tables from Supabase
+  const { data: distributor, isLoading: isDistributorLoading } = useDistributor(leader?.awplid);
   const { data: dbPayouts } = usePayouts(leader?.awplid);
   const { data: dbWeeklySp } = useWeeklySp(leader?.awplid);
+  const { isSyncing, syncError, syncNow } = useAwplData(leader);
 
-  // Compute values gracefully merging Live Portal Data > Supabase Leader Profile > Local calculations
-  const sao = portalData?.dashboard?.saoTeamSp ?? (leader?.levelsao || 0);
-  const sgo = portalData?.dashboard?.sgoTeamSp ?? (leader?.levelsgo || 0);
+  // Directly derive values from Supabase tables: distributors > leaders > helper calculation
+  const sao = distributor?.sao_sp ?? leader?.levelsao ?? 0;
+  const sgo = distributor?.sgo_sp ?? leader?.levelsgo ?? 0;
 
   const fallbackLevel = calcLevel(sao, sgo);
   const currentRank =
-    portalData?.dashboard?.currentLevelName || leader?.rank || fallbackLevel;
-  const currentLevelNum = portalData?.dashboard?.currentLevel || undefined;
+    distributor?.current_level_name || leader?.rank || fallbackLevel;
+  const currentLevelNum = distributor?.current_level ?? undefined;
 
-  const nextRank = portalData?.dashboard?.nextLevelName || null;
+  const nextRank = distributor?.next_level_name || null;
   const targetSao =
-    portalData?.dashboard?.nextLevelTargetSao ?? getRequiredSp("SAO", sao);
+    distributor?.next_target_sao ?? getRequiredSp("SAO", sao);
   const targetSgo =
-    portalData?.dashboard?.nextLevelTargetSgo ?? getRequiredSp("SGO", sgo);
+    distributor?.next_target_sgo ?? getRequiredSp("SGO", sgo);
 
-  // Payout cheques normalized from DB or Portal Cache
+  // Payout cheques normalized directly from Supabase payouts table
   const payouts = useMemo(() => {
     if (dbPayouts && dbPayouts.length > 0) {
       return dbPayouts.map((p) => ({
@@ -57,13 +51,12 @@ export default function Dashboard() {
       }));
     }
     return (
-      (portalData?.payouts as unknown as Record<string, unknown>[]) ||
       (leader?.chequeData as unknown as Record<string, unknown>[]) ||
       []
     );
-  }, [dbPayouts, portalData?.payouts, leader?.chequeData]);
+  }, [dbPayouts, leader?.chequeData]);
 
-  // Weekly SP history normalized from DB or Portal Cache
+  // Weekly SP history normalized directly from Supabase weekly_sp table
   const weeklySP = useMemo(() => {
     if (dbWeeklySp && dbWeeklySp.length > 0) {
       return dbWeeklySp.map((w) => ({
@@ -73,13 +66,13 @@ export default function Dashboard() {
         "Total SP": String(w.total_sp),
       }));
     }
-    return portalData?.weeklySP || [];
-  }, [dbWeeklySp, portalData?.weeklySP]);
+    return [];
+  }, [dbWeeklySp]);
 
-  // Lifetime Income calculation
+  // Lifetime Income loaded directly from distributor.total_income or payouts sum
   const totalIncome = useMemo(() => {
-    if (portalData?.dashboard?.totalIncome !== undefined) {
-      return portalData.dashboard.totalIncome;
+    if (distributor?.total_income != null && distributor.total_income > 0) {
+      return distributor.total_income;
     }
     if (dbPayouts && dbPayouts.length > 0) {
       return dbPayouts.reduce((acc, p) => acc + (p.net_amount || 0), 0);
@@ -94,9 +87,10 @@ export default function Dashboard() {
       }, 0);
     }
     return 0;
-  }, [portalData, dbPayouts, leader?.chequeData]);
+  }, [distributor?.total_income, dbPayouts, leader?.chequeData]);
 
-  if (isProfileLoading) return <DashboardSkeleton />;
+  const isLoading = isProfileLoading || (!!leader?.awplid && isDistributorLoading && !distributor);
+  if (isLoading) return <DashboardSkeleton />;
 
   if (profileError) {
     return (
@@ -144,20 +138,20 @@ export default function Dashboard() {
       animate="show"
       className="space-y-6 sm:space-y-8 w-full pb-12"
     >
-      {/* 1. 15-Second Sync Progress Bar (Displays whenever sync is active) */}
+      {/* 1. Sync Progress Bar (Displays only when manual sync is running) */}
       <SyncProgressBar isSyncing={isSyncing} error={syncError} />
 
       {/* 2. Top Profile Header Banner */}
       <motion.div variants={itemVariants}>
         <DashboardHeader
-          name={portalData?.dashboard?.name || leader.name || "Leader"}
+          name={distributor?.name || leader.name || "Leader"}
           dsCode={leader.awplid}
           rank={currentRank}
           levelNumber={currentLevelNum}
           isPaid={leader.ispro || false}
           memberCount={leader.memcount || 0}
           weeksLeft={leader.weekleft || 0}
-          lastSync={leader.lastFetch}
+          lastSync={distributor?.last_mined_at || leader.lastFetch}
           onSync={syncNow}
           isSyncing={isSyncing}
         />

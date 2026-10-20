@@ -29,14 +29,18 @@ export interface AwplWeeklySP {
 }
 
 export interface AwplPayout {
+  [key: string]: string | undefined;
   "Id"?: string;
-  "Cheque No.": string;
-  "Cheque Date": string;
-  "Total Amount": string;
-  "TDS Amount": string;
-  "Admin Charges": string;
-  "Net Amount": string;
-  "Payment Status": string;
+  "Cheque No."?: string;
+  "Cheque Date"?: string;
+  "Pay Date"?: string;
+  "Total Amount"?: string;
+  "TDS Amount"?: string;
+  "TDS"?: string;
+  "AWPL Foundation"?: string;
+  "Admin Charges"?: string;
+  "Net Amount"?: string;
+  "Payment Status"?: string;
   "Transaction No"?: string;
 }
 

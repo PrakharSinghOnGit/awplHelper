@@ -140,19 +140,20 @@ export async function persistAwplDataToDatabase(
 
           for (const [key, val] of Object.entries(b)) {
             const lower = key.toLowerCase();
+            const stringOrNum = typeof val === "string" || typeof val === "number" ? val : String(val ?? "");
             if (lower.startsWith("req sao")) {
-              reqSao = parseCleanNumber(val);
+              reqSao = parseCleanNumber(stringOrNum);
               if (!targetName) {
                 targetName = key.replace(/req\s*sao\s*(self)?/i, "").trim() || "Bonanza";
               }
             } else if (lower.startsWith("req sgo")) {
-              reqSgo = parseCleanNumber(val);
+              reqSgo = parseCleanNumber(stringOrNum);
             } else if (lower.includes("pending") && lower.includes("sao")) {
-              remSao = parseCleanNumber(val);
+              remSao = parseCleanNumber(stringOrNum);
             } else if (lower.includes("pending") && lower.includes("sgo")) {
-              remSgo = parseCleanNumber(val);
+              remSgo = parseCleanNumber(stringOrNum);
             } else if (lower.startsWith("status")) {
-              status = String(val).trim();
+              status = String(val ?? "").trim();
             }
           }
 
